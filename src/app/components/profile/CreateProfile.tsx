@@ -1,7 +1,22 @@
+"use client"
+import { useState } from "react";
 import { FiCamera } from "react-icons/fi";
+import { z  } from "zod";
 
 
-export default function Home() {
+export default function CreateProfile() {
+  const [name, setName] = useState<typeof nameSchema>()
+  const createProfile = z.object({
+  photo : z.string(),
+  name : z.string() ,
+  about : z.string() ,
+  socialmedia : z.string()
+  }) 
+  const nameSchema = z.string().min(2)
+  const validate = (e:any) => {
+     setName(e.target.value);
+  }
+  console.log(name)
   return (
     <div className="p-4 max-w-md mx-auto">
           <p className="text-lg font-bold">Complete your profile page</p>
@@ -18,7 +33,7 @@ export default function Home() {
               type="text"
               placeholder="Enter your name here"
               className="border rounded-md w-full p-2 mt-1"
-
+              onChange={(e) => {validate(e)}}
             />
           </div>
      
