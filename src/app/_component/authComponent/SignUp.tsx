@@ -2,126 +2,142 @@
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Eye } from "lucide-react";
-import { EyeClosed } from "lucide-react";
+import { Eye, EyeClosed } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function SignUp() {
+  const [username, setUsername] = useState("");
+  const [isUsernameValid, setIsUsernameValid] = useState(false);
+  const [showEmailPassword, setShowEmailPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [type, setType] = useState("password");
 
-  let newErrors = {
-    mail: "",
-    password: "",
-    confirmPassword: "",
-  };
-
-  function hanleCheck() {
-    let isValid = true;
-    if (email) {
-      const emailCheck = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailCheck.test(email)) {
-        isValid = false;
-        newErrors.mail = "Invalid email. Use a format like example@email.com";
-      }
+  function handleUsernameCheck() {
+    if (username.length >= 3) {
+      setIsUsernameValid(true);
+    } else {
+      setIsUsernameValid(false);
     }
-    return isValid;
+  }
+
+  function handleContinue() {
+    if (isUsernameValid) {
+      setShowEmailPassword(true);
+    }
+  }
+
+  function handleCheckEmail() {
+    const emailCheck = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailCheck.test(email);
   }
 
   function handleCheckPassword() {
-    let isCorrect = true;
-    if (password.length <= 7) {
-      isCorrect = false;
-      newErrors.password = "Incorrect password. Please try again.";
-    }
-    return isCorrect;
+    return password.length > 7;
   }
 
   function changeType() {
-    if (type == "password") {
-      setType("text");
-    } else if (type == "text") {
-      setType("password");
-    }
+    setType((prevType) => (prevType === "password" ? "text" : "password"));
   }
 
   return (
-    <div className="max-w-md mx-auto mt-[100px] text-black">
-      <div className="h-auto rounded-xl bg-[#ffffff]">
-        <div className="box-border p-[32px]">
-          <div>
-            <b className="text-[24px]">Create your account</b>
-            <p className="text-[16px] text-gray-500">
-              Sign up to explore your favorite dishes.
-            </p>
-          </div>
-        </div>
-        <form className="space-y-4">
-          <label className="pl-[20px] text-sm"></label>
-          <Input
-            className="block mx-auto w-[90%] p-4 h-10 border-2 border-black-500 rounded-lg"
-            id="mail"
-            required
-            type="text"
-            placeholder="Enter your email address"
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-          />
-          {!hanleCheck() && (
-            <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
-              {newErrors.mail}
-            </p>
+    <div>
+      <div className="flex justify-end items-center p-6 mx-6">
+        <Link href="/login">
+          <Button variant="secondary">Log in</Button>
+        </Link>
+      </div>
+      <div className="max-w-md mx-auto mt-[160px] text-black space-y-4">
+        <div className="h-auto rounded-xl p-[20px]">
+          <b className="text-[24px]">Welcome, {username}</b>
+          <p className="text-[12px] text-gray-500">
+            {showEmailPassword
+              ? "Connect email and set a password"
+              : "Choose a username to continue"}
+          </p>
+
+          {!showEmailPassword && (
+            <>
+              <label className="text-sm font-bold">Username</label>
+              <Input
+                className="block mx-auto w-full p-4 h-10 border-2 border-black-500 rounded-lg"
+                id="username"
+                required
+                type="text"
+                placeholder="Enter a username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                onBlur={handleUsernameCheck}
+              />
+              {!isUsernameValid && username.length > 0 && (
+                <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
+                  Username must be at least 3 characters.
+                </p>
+              )}
+
+              <div className="flex p-[24px]">
+                <button
+                  className="block mx-auto w-full box-border p-2 rounded-xl mt-[20px] bg-primary text-white"
+                  disabled={!isUsernameValid}
+                  onClick={handleContinue}
+                >
+                  Continue
+                </button>
+              </div>
+            </>
           )}
-          <div className="relative">
-            <Input
-              className="block mx-auto w-[90%] p-4 h-10 border-2 border-black-500 rounded-lg"
-              id="password"
-              required
-              type={type}
-              placeholder="Password"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-            />
-            {!handleCheckPassword() && (
-              <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
-                {newErrors.password}
-              </p>
-            )}
-            <div
-              onClick={changeType}
-              className="absolute top-[9px] left-[370px] text-gray-200 hover:text-gray-500 "
-            >
-              {type == "text" && <Eye />}
-              {type == "password" && <EyeClosed />}
-            </div>
-          </div>
-          <p className="block text-[12px] underline mx-auto w-[90%]">
-            Forgot password ?
-          </p>
-        </form>
-        <div className="flex p-[24px]">
-          <button
-            // onClick={() => {
-            //   if (isValid) {
-            //     setCurrentStep(3);
-            //   } else {
-            //     setErorrs(newErrors);
-            //   }
-            //   ``;
-            // }}
-            className="block mx-auto w-[90%] box-border p-2 rounded-xl mt-[20px] bg-primary text-white"
-          >
-            Lets go
-          </button>
-        </div>
-        <div className="flex text-sm justify-center p-4 gap-2">
-          <p className="cursor-pointer">Don’t have an account?</p>
-          {/* <Link></Link> */}
-          <p className="text-[#2563EB] cursor-pointer hover:underline ">
-            Sign up
-          </p>
+
+          {showEmailPassword && (
+            <>
+              <label className="pl-[20px] text-sm font-bold">E-mail</label>
+              <Input
+                className="block mx-auto w-full p-4 h-10 border-2 border-black-500 rounded-lg"
+                id="mail"
+                required
+                type="text"
+                placeholder="Enter your email address"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              {!handleCheckEmail() && email.length > 0 && (
+                <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
+                  Invalid email. Use a format like example@email.com
+                </p>
+              )}
+
+              <div className="relative">
+                <label className="pl-[20px] text-sm font-bold">Password</label>
+                <Input
+                  className="block mx-auto w-full p-4 h-10 border-2 border-black-500 rounded-lg"
+                  id="password"
+                  required
+                  type={type}
+                  placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {!handleCheckPassword() && password.length > 0 && (
+                  <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
+                    Password must be at least 8 characters.
+                  </p>
+                )}
+                <div
+                  onClick={changeType}
+                  className="absolute top-[30px] left-[370px] text-gray-200 hover:text-gray-500 cursor-pointer"
+                >
+                  {type === "text" ? <Eye /> : <EyeClosed />}
+                </div>
+              </div>
+
+              <div className="flex p-[24px]">
+                <button
+                  className="block mx-auto w-full box-border p-2 rounded-xl mt-[20px] bg-primary text-white"
+                  disabled={!handleCheckEmail() || !handleCheckPassword()}
+                >
+                  Continue
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
