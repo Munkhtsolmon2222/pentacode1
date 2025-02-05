@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-type User = [{ username: string; email: string; password: string }];
+
 export function SignUp() {
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [showEmailPassword, setShowEmailPassword] = useState(false);
@@ -13,13 +13,14 @@ export function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [type, setType] = useState("password");
+  const [touched, setTouched] = useState({
+    username: false,
+    email: false,
+    password: false,
+  });
 
   function handleUsernameCheck() {
-    if (username.length >= 3) {
-      setIsUsernameValid(true);
-    } else {
-      setIsUsernameValid(false);
-    }
+    setIsUsernameValid(username.length >= 3);
   }
 
   function handleContinue() {
@@ -44,7 +45,7 @@ export function SignUp() {
   useEffect(() => {
     localStorage.setItem(
       "userInfo",
-      JSON.stringify([{ username: username, email: email, password: password }])
+      JSON.stringify([{ username, email, password }])
     );
   }, [username, email, password]);
 
@@ -61,9 +62,7 @@ export function SignUp() {
             <>
               <b className="text-[24px]">Create Your Account</b>
               <p className="text-[12px] text-gray-500">
-                {showEmailPassword
-                  ? "Connect email and set a password"
-                  : " Choose a username for your page"}
+                Choose a username for your page
               </p>
               <label className="text-sm font-bold mt-4">Username</label>
               <Input
@@ -74,9 +73,12 @@ export function SignUp() {
                 placeholder="Enter a username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                onBlur={handleUsernameCheck}
+                onBlur={() => {
+                  setTouched((prev) => ({ ...prev, username: true }));
+                  handleUsernameCheck();
+                }}
               />
-              {!isUsernameValid && username.length > 0 && (
+              {touched.username && !isUsernameValid && (
                 <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
                   Username must be at least 3 characters.
                 </p>
@@ -98,9 +100,7 @@ export function SignUp() {
             <>
               <b className="text-[24px]">Welcome, {username}</b>
               <p className="text-[12px] text-gray-500">
-                {showEmailPassword
-                  ? "Connect email and set a password"
-                  : " Choose a username for your page"}
+                Connect email and set a password
               </p>
               <label className="pl-[20px] text-sm font-bold">E-mail</label>
               <Input
@@ -109,9 +109,11 @@ export function SignUp() {
                 required
                 type="text"
                 placeholder="Enter your email address"
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
               />
-              {!handleCheckEmail() && email.length > 0 && (
+              {touched.email && !handleCheckEmail() && (
                 <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
                   Invalid email. Use a format like example@email.com
                 </p>
@@ -125,9 +127,13 @@ export function SignUp() {
                   required
                   type={type}
                   placeholder="Password"
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onBlur={() =>
+                    setTouched((prev) => ({ ...prev, password: true }))
+                  }
                 />
-                {!handleCheckPassword() && password.length > 0 && (
+                {touched.password && !handleCheckPassword() && (
                   <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
                     Password must be at least 8 characters.
                   </p>
