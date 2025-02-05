@@ -1,5 +1,5 @@
-"use client"
-import { useState } from "react";
+"use client";
+import { useEffect, useState } from "react";
 import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
 import { z } from "zod";
@@ -7,43 +7,77 @@ import { z } from "zod";
 export default function CreateProfile() {
   const profileSchema = z.object({
     photo: z.string().optional(),
-    name: z.string().min(2, { message: "Please enter name" })
+    name: z
+      .string()
+      .min(2, { message: "Please enter name" })
       .regex(/^[A-Za-zА-Яа-я\s]+$/, { message: "Please enter alphabet" }),
     about: z.string().min(10, { message: "Please enter info about yourself" }),
-    socialMedia: z.string().startsWith("https://", { message: "Please enter a social link" })
+    socialMedia: z
+      .string()
+      .startsWith("https://", { message: "Please enter a social link" }),
   });
 
   const [form, setForm] = useState({
-    photo: "",
+    photo: null,
     name: "",
     about: "",
-    socialMedia: ""
+    socialMedia: "",
   });
+  const [result, setResult] = useState<any>();
 
-  const [error, setError] = useState<{ name?: string; about?: string; socialMedia?: string }>({});
+  const [error, setError] = useState<{
+    name?: string;
+    about?: string;
+    socialMedia?: string;
+  }>({});
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const [isClicked, setIsClicked] = useState(false);
+  useEffect(() => {
+    if (isClicked) {
+      if (!result.success) {
+        const resultError = result.error.format();
+        setError({
+          name: resultError.name?._errors[0],
+          about: resultError.about?._errors[0],
+          socialMedia: resultError.socialMedia?._errors[0],
+        });
+      } else {
+        setError({});
+      }
+    }
+  }, [isClicked, result]);
+
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     const updatedForm = { ...form, [name]: value };
     setForm(updatedForm);
-
-    const result = profileSchema.safeParse(updatedForm);
-    if (!result.success) {
-      const resultError = result.error.format();
-      setError({
-        name: resultError.name?._errors[0],
-        about: resultError.about?._errors[0],
-        socialMedia: resultError.socialMedia?._errors[0],
-      });
-    } else {
-      setError({}); 
-    }
+    setResult(profileSchema.safeParse(updatedForm));
   };
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+  console.log(error);
+  console.log(isClicked);
+
+  const [ImageUrl, setImageUrl] = useState(null);
+  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      setForm((prev) => ({ ...prev, photo: URL.createObjectURL(file) }));
+
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "food-delivery");
+
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/do0qq0f0b/upload`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      const dataJson = await response.json();
+      setImageUrl(dataJson.secure_url);
     }
   };
 
@@ -52,12 +86,17 @@ export default function CreateProfile() {
       <p className="text-lg font-bold">Complete your profile page</p>
 
       <h4 className="mt-4 font-medium">Add photo</h4>
-      <label className={`mt-2 rounded-full w-40 h-40 border-dashed border-2 flex justify-center items-center ${form.photo ? "" : "border-red-500"}`}>
+      <label
+        className={`mt-2 rounded-full w-40 h-40 border-dashed border-2 flex justify-center items-center  `}
+      >
         <input type="file" hidden onChange={onFileChange} />
-        {form.photo ? (
-          <img src={form.photo} className="w-full h-full rounded-full" />
+        {ImageUrl ? (
+          <img
+            style={{ background: `url(${ImageUrl})` }}
+            className="w-full h-full rounded-full"
+          />
         ) : (
-          <FiCamera className="text-2xl text-[#18181B80]" />
+          <FiCamera className="text-2xl text-[#18181B80] " />
         )}
       </label>
 
@@ -67,11 +106,18 @@ export default function CreateProfile() {
           type="text"
           name="name"
           placeholder="Enter your name here"
-          className={`border rounded-md w-full p-2 mt-1 ${error.name ? "border-red-500" : ""}`}
+          className={`border rounded-md w-full p-2 mt-1 ${
+            error.name ? "border-red-500" : ""
+          }`}
           value={form.name}
           onChange={onChange}
         />
-        {error.name && <div className="text-red-500 text-sm flex items-center gap-1 pt-2"><VscError />{error.name}</div>}
+        {error.name && (
+          <div className="text-red-500 text-sm flex items-center gap-1 pt-2">
+            <VscError />
+            {error.name}
+          </div>
+        )}
       </div>
 
       <div className="mt-4">
@@ -79,11 +125,15 @@ export default function CreateProfile() {
         <textarea
           name="about"
           placeholder="Write about yourself here"
-          className={`border rounded-md w-full p-2 mt-1 ${error.about ? "border-red-500" : ""}`}
+          className={`border rounded-md w-full p-2 mt-1 ${
+            error.about ? "border-red-500" : ""
+          }`}
           value={form.about}
           onChange={onChange}
         />
-        {error.about && <div className="text-red-500 text-sm">{error.about}</div>}
+        {error.about && (
+          <div className="text-red-500 text-sm">{error.about}</div>
+        )}
       </div>
 
       <div className="mt-4">
@@ -92,14 +142,23 @@ export default function CreateProfile() {
           type="text"
           name="socialMedia"
           placeholder="https://"
-          className={`border rounded-md w-full p-2 mt-1 ${error.socialMedia ? "border-red-500" : ""}`}
+          className={`border rounded-md w-full p-2 mt-1 ${
+            error.socialMedia ? "border-red-500" : ""
+          }`}
           value={form.socialMedia}
           onChange={onChange}
         />
-        {error.socialMedia && <div className="text-red-500 text-sm">{error.socialMedia}</div>}
+        {error.socialMedia && (
+          <div className="text-red-500 text-sm">{error.socialMedia}</div>
+        )}
       </div>
 
-      <button className="mt-6 lg:w-60 md:w-40 p-2 bg-[#18181B] text-white py-2 rounded-md">
+      <button
+        onClick={() => {
+          setIsClicked(!isClicked);
+        }}
+        className="mt-6 lg:w-60 md:w-40 p-2 bg-[#18181B] text-white py-2 rounded-md"
+      >
         Continue
       </button>
     </div>
