@@ -1,5 +1,6 @@
 "use client";
 
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -7,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,6 +17,13 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
+
+// ✅ Import and use Plus Jakarta Sans
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-plus-jakarta",
+});
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -36,11 +43,14 @@ export function Login() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
   }
+
   function changeType() {
     setType((prevType) => (prevType === "password" ? "text" : "password"));
   }
+
   return (
-    <div>
+    // ✅ Apply the font variable to a top-level container
+    <div className={`${plusJakartaSans.variable} font-sans min-h-screen`}>
       <div className="flex justify-end items-center p-6 mx-6">
         <Link href="/signup">
           <Button variant="secondary">Sign up</Button>
@@ -62,7 +72,6 @@ export function Login() {
                     <FormControl>
                       <Input placeholder="Enter email here" {...field} />
                     </FormControl>
-                    <FormDescription></FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -84,13 +93,12 @@ export function Login() {
                         />
                         <div
                           onClick={changeType}
-                          className="absolute top-2 left-[300px] text-gray-200 hover:text-gray-500 cursor-pointer"
+                          className="absolute top-2 left-[300px] text-gray-400 hover:text-gray-600 cursor-pointer"
                         >
                           {type === "text" ? <Eye /> : <EyeClosed />}
                         </div>
                       </div>
                     </FormControl>
-                    <FormDescription></FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

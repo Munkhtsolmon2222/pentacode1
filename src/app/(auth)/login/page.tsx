@@ -1,9 +1,17 @@
 import { Login } from "@/app/components/auth/LogIn";
-import { Button } from "@/components/ui/button";
+import { Plus_Jakarta_Sans } from "next/font/google";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-plus-jakarta",
+});
 
 export default function Page() {
   return (
-    <div className="flex w-full h-screen">
+    <div
+      className={`${plusJakartaSans.variable} font-sans flex w-full h-screen`}
+    >
       <div className="w-[50%] h-screen bg-amber-400">
         <div className="flex justify-start items-start p-6 mx-6">
           <img
@@ -23,8 +31,8 @@ export default function Page() {
           <div className="flex flex-col justify-center items-center text-center space-y-2">
             <p className="text-lg font-bold">Fund your creative work</p>
             <p className="text-gray-700">
-              Accept support. Start a membership. Setup a shop. It’s easier than
-              you think.
+              Accept support. Start a membership. Set up a shop. It’s easier
+              than you think.
             </p>
           </div>
         </div>

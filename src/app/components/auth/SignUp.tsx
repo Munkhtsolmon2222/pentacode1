@@ -1,10 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-plus-jakarta",
+});
 
 export function SignUp() {
   const [isUsernameValid, setIsUsernameValid] = useState(false);
@@ -13,6 +20,7 @@ export function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [type, setType] = useState("password");
+
   const [touched, setTouched] = useState({
     username: false,
     email: false,
@@ -50,7 +58,7 @@ export function SignUp() {
   }, [username, email, password]);
 
   return (
-    <div>
+    <div className={`${plusJakartaSans.variable} font-sans`}>
       <div className="flex justify-end items-center p-6 mx-6">
         <Link href="/login">
           <Button variant="secondary">Log in</Button>
