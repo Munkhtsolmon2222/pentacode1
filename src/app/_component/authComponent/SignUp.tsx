@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-
+type User = [{ username: string; email: string; password: string }];
 export function SignUp() {
-  const [username, setUsername] = useState("");
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [showEmailPassword, setShowEmailPassword] = useState(false);
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [type, setType] = useState("password");
@@ -41,6 +41,13 @@ export function SignUp() {
     setType((prevType) => (prevType === "password" ? "text" : "password"));
   }
 
+  useEffect(() => {
+    localStorage.setItem(
+      "userInfo",
+      JSON.stringify([{ username: username, email: email, password: password }])
+    );
+  }, [username, email, password]);
+
   return (
     <div>
       <div className="flex justify-end items-center p-6 mx-6">
@@ -50,16 +57,15 @@ export function SignUp() {
       </div>
       <div className="max-w-md mx-auto mt-[160px] text-black space-y-4">
         <div className="h-auto rounded-xl p-[20px]">
-          <b className="text-[24px]">Welcome, {username}</b>
-          <p className="text-[12px] text-gray-500">
-            {showEmailPassword
-              ? "Connect email and set a password"
-              : "Choose a username to continue"}
-          </p>
-
           {!showEmailPassword && (
             <>
-              <label className="text-sm font-bold">Username</label>
+              <b className="text-[24px]">Create Your Account</b>
+              <p className="text-[12px] text-gray-500">
+                {showEmailPassword
+                  ? "Connect email and set a password"
+                  : " Choose a username for your page"}
+              </p>
+              <label className="text-sm font-bold mt-4">Username</label>
               <Input
                 className="block mx-auto w-full p-4 h-10 border-2 border-black-500 rounded-lg"
                 id="username"
@@ -90,6 +96,12 @@ export function SignUp() {
 
           {showEmailPassword && (
             <>
+              <b className="text-[24px]">Welcome, {username}</b>
+              <p className="text-[12px] text-gray-500">
+                {showEmailPassword
+                  ? "Connect email and set a password"
+                  : " Choose a username for your page"}
+              </p>
               <label className="pl-[20px] text-sm font-bold">E-mail</label>
               <Input
                 className="block mx-auto w-full p-4 h-10 border-2 border-black-500 rounded-lg"
