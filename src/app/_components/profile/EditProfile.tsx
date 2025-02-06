@@ -24,8 +24,12 @@ export default function CreateProfile() {
     socialMedia: "",
   });
 
-  const [result, setResult] = useState<any>({ success: true });
-  const [error, setError] = useState<{ photo?: string; name?: string; about?: string; socialMedia?: string }>({});
+  const [error, setError] = useState<{
+    photo?: string;
+    name?: string;
+    about?: string;
+    socialMedia?: string;
+  }>({});
 
   const [isClicked, setIsClicked] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -33,7 +37,6 @@ export default function CreateProfile() {
   useEffect(() => {
     if (isClicked) {
       const validation = profileSchema.safeParse(form);
-      setResult(validation);
       if (!validation.success) {
         const resultError = validation.error.format();
         setError({
@@ -48,7 +51,9 @@ export default function CreateProfile() {
     }
   }, [isClicked, form]);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     const updatedForm = { ...form, [name]: value };
     setForm(updatedForm);
@@ -62,10 +67,13 @@ export default function CreateProfile() {
       data.append("file", file);
       data.append("upload_preset", "food-delivery");
 
-      const response = await fetch(`https://api.cloudinary.com/v1_1/do0qq0f0b/upload`, {
-        method: "POST",
-        body: data,
-      });
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/do0qq0f0b/upload`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
 
       const dataJson = await response.json();
       setImageUrl(dataJson.secure_url);
@@ -74,14 +82,21 @@ export default function CreateProfile() {
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <p className="text-lg font-bold">Complete your profile page</p>
+    <div className="p-4 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
+      <p className="text-lg font-bold">Personal info</p>
 
       <h4 className="mt-4 font-medium">Add photo</h4>
-      <label className={`mt-2 rounded-full w-40 h-40 border-dashed border-2 flex justify-center items-center ${error.photo ? "border-red-500" : ""}`}>
+      <label
+        className={`mt-2 rounded-full w-40 h-40 border-dashed border-2 flex justify-center items-center ${
+          error.photo ? "border-red-500" : ""
+        }`}
+      >
         <input type="file" hidden onChange={onFileChange} />
         {imageUrl ? (
-          <img src={imageUrl} className="w-full h-full rounded-full object-cover" />
+          <img
+            src={imageUrl}
+            className="w-full h-full rounded-full object-cover"
+          />
         ) : (
           <FiCamera className="text-2xl text-gray-500" />
         )}
@@ -99,7 +114,9 @@ export default function CreateProfile() {
           type="text"
           name="name"
           placeholder="Enter your name here"
-          className={`border rounded-md w-full p-2 mt-1 ${error.name ? "border-red-500" : ""}`}
+          className={`border rounded-md w-full p-2 mt-1 ${
+            error.name ? "border-red-500" : ""
+          }`}
           value={form.name}
           onChange={onChange}
         />
@@ -116,11 +133,15 @@ export default function CreateProfile() {
         <textarea
           name="about"
           placeholder="Write about yourself here"
-          className={`border rounded-md w-full p-2 mt-1 ${error.about ? "border-red-500" : ""}`}
+          className={`border rounded-md w-full p-2 mt-1 ${
+            error.about ? "border-red-500" : ""
+          }`}
           value={form.about}
           onChange={onChange}
         />
-        {error.about && <div className="text-red-500 text-sm">{error.about}</div>}
+        {error.about && (
+          <div className="text-red-500 text-sm">{error.about}</div>
+        )}
       </div>
 
       <div className="mt-4">
@@ -129,17 +150,23 @@ export default function CreateProfile() {
           type="text"
           name="socialMedia"
           placeholder="https://"
-          className={`border rounded-md w-full p-2 mt-1 ${error.socialMedia ? "border-red-500" : ""}`}
+          className={`border rounded-md w-full p-2 mt-1 ${
+            error.socialMedia ? "border-red-500" : ""
+          }`}
           value={form.socialMedia}
           onChange={onChange}
         />
-        {error.socialMedia && <div className="text-red-500 text-sm">{error.socialMedia}</div>}
+        {error.socialMedia && (
+          <div className="text-red-500 text-sm">{error.socialMedia}</div>
+        )}
       </div>
 
-      <button onClick={() => setIsClicked(true)} className="mt-6 w-full p-2 bg-black text-white rounded-md">
-        Continue
+      <button
+        onClick={() => setIsClicked(true)}
+        className="mt-6 w-full p-2 bg-black text-white rounded-md"
+      >
+        Save changes
       </button>
     </div>
   );
 }
-
