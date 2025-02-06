@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 import { CiCamera } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { FiCoffee } from "react-icons/fi";
+import EditProfileDialogue from "../_components/profile/EditProfileDialogue";
 
 export default function ViewPage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [previewImg, setPreviewImg] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const savedImage = localStorage.getItem("coverImage");
@@ -144,9 +146,15 @@ export default function ViewPage() {
                 <img src="Avatar-Image.png" alt="" />
                 <p className="font-bold">Jake</p>
               </div>
-              <button className="w-[6.25rem] rounded-md bg-[#F4F4F5] p-2">
+              <button
+                onClick={() => {
+                  setModalOpen(true);
+                }}
+                className="w-[6.25rem] rounded-md bg-[#F4F4F5] p-2"
+              >
                 Edit page
               </button>
+              {modalOpen && <EditProfileDialogue onClose={setModalOpen} />}
             </div>
             <div className="mt-10">
               <p className="text-xl font-semibold">About Jake</p>
@@ -204,7 +212,7 @@ export default function ViewPage() {
               placeholder="Please write your message here"
             />
           </div>
-          <button className="w-full h-12 bg-[#18181B] opacity-20 text-white rounded-md font-md hover:bg-[#18181B]">
+          <button className="w-full h-12 bg-[#18181B]  text-white rounded-md font-md hover:bg-[#18181B]">
             Support
           </button>
         </div>
