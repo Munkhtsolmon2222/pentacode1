@@ -57,6 +57,27 @@ export function SignUp() {
     );
   }, [username, email, password]);
 
+  const addUser = async (username: string, email: string, password: string) => {
+    try {
+      const user = await fetch("http://localhost:5000/user/addUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      });
+
+      const response = await user.json();
+      console.log(response);
+    } catch (error) {
+      console.error("Error adding user:", error);
+    }
+  };
+
   return (
     <div className={`${plusJakartaSans.variable} font-sans`}>
       <div className="flex justify-end items-center p-6 mx-6">
@@ -158,6 +179,9 @@ export function SignUp() {
                 <button
                   className="block mx-auto w-full box-border p-2 rounded-xl mt-[20px] bg-primary text-white"
                   disabled={!handleCheckEmail() || !handleCheckPassword()}
+                  onClick={() => {
+                    addUser(username, email, password);
+                  }}
                 >
                   Continue
                 </button>
