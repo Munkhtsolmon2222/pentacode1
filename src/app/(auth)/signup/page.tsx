@@ -1,33 +1,44 @@
-import { SignUp } from "@/app/_component/authComponent/SignUp";
-import { Button } from "@/components/ui/button";
+import { SignUp } from "@/app/components/auth/SignUp";
+import { Plus_Jakarta_Sans } from "next/font/google";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-plus-jakarta",
+});
 
 export default function Page() {
   return (
-    <div className="flex justify-items-center items-center">
-      <div className="w-[50%] h-screen bg-amber-400 flex flex-col justify-center items-center">
-        <img
-          src="/assets/Logo-coffee.svg"
-          alt="Login"
-          className="rounded-xl mt-[50px] ml-[40px] w-[140px] h-auto"
-        />
-        <div className="flex justify-center items-center h-screen">
+    <div
+      className={`${plusJakartaSans.variable} font-sans flex w-full h-screen`}
+    >
+      <div className="w-[50%] h-screen bg-amber-400">
+        <div className="flex justify-start items-start p-6 mx-6">
           <img
-            src="/assets/Illustration.svg"
+            src="/assets/Logo-coffee.svg"
             alt="Login"
-            className="rounded-xl w-[240px] h-auto mb-8"
+            className="w-[140px] h-auto"
           />
         </div>
-        <div className="flex flex-col justify-center items-center text-center px-4 mt-4 space-y-3">
-          <p className="text-lg font-bold">Fund your creative work</p>
-          <p className="text-gray-700 mt-2">
-            Accept support. Start a membership. Setup a shop. It’s easier than
-            you think.
-          </p>
+        <div className="mt-[180px]">
+          <div className="flex justify-center items-center">
+            <img
+              src="/assets/Illustration.svg"
+              alt="Login"
+              className="rounded-xl w-[240px] h-auto mb-8"
+            />
+          </div>
+          <div className="flex flex-col justify-center items-center text-center space-y-2">
+            <p className="text-lg font-bold">Fund your creative work</p>
+            <p className="text-gray-700">
+              Accept support. Start a membership. Set up a shop. It’s easier
+              than you think.
+            </p>
+          </div>
         </div>
       </div>
 
       <div className="w-[50%]">
-        <Button variant="secondary">Sign up</Button>
         <SignUp />
       </div>
     </div>
