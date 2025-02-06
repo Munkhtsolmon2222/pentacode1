@@ -18,7 +18,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 
-// ✅ Import and use Plus Jakarta Sans
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -49,7 +48,6 @@ export function Login() {
   }
 
   return (
-    // ✅ Apply the font variable to a top-level container
     <div className={`${plusJakartaSans.variable} font-sans min-h-screen`}>
       <div className="flex justify-end items-center p-6 mx-6">
         <Link href="/signup">
