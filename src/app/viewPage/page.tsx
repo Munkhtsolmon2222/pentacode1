@@ -28,7 +28,8 @@ export default function ViewPage() {
 
   const handleCancel = () => {
     localStorage.removeItem("coverImage");
-    setImageUrl(null);
+    setIsSaved(false);
+    setPreviewImg(null);
   };
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -73,12 +74,13 @@ export default function ViewPage() {
       );
 
       const dataJson = await response.json();
-      setImageUrl(dataJson.secure_url);
+      setIsSaved(false);
+      setPreviewImg(dataJson.secure_url);
     }
   };
   useEffect(() => {
     setImageUrl(previewImg);
-  }, [isSaved]);
+  }, [isSaved, previewImg]);
 
   console.log(imageUrl);
   console.log(previewImg);
@@ -137,7 +139,7 @@ export default function ViewPage() {
       <div className="w-full flex justify-center gap-6 -my-20 relative">
         <div className="w-[60rem] h-[50rem] bg-[#ffffff] rounded-md">
           <div className="min-h-[20rem] gap-3 border rounded-md p-4">
-            <div className="flex justify-between border-b-[1px] pb-3">
+            <div className="flex justify-between border-b-[1px] pb-6">
               <div className="flex items-center gap-2">
                 <img src="Avatar-Image.png" alt="" />
                 <p className="font-bold">Jake</p>
@@ -146,9 +148,9 @@ export default function ViewPage() {
                 Edit page
               </button>
             </div>
-            <div className="mt-4">
-              <p className="font-md font-semibold">About Jake</p>
-              <p className="max-w-[39.5rem]">
+            <div className="mt-10">
+              <p className="text-xl font-semibold">About Jake</p>
+              <p className="max-w-[39.5rem] text-lg mt-4">
                 I'm a typical person who enjoys exploring different things. I
                 also make music art as a hobby. Follow me along.
               </p>
