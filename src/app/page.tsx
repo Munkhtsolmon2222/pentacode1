@@ -1,6 +1,6 @@
-import CreateProfile from "./components/profile/CreateProfile";
-import EditProfile from "./components/profile/EditProfile";
-import EditProfileDialogue from "./components/profile/EditProfileDialogue";
+import CreateProfile from "./_components/profile/EditProfile";
+import EditProfile from "./_components/profile/EditProfile";
+import EditProfileDialogue from "./_components/profile/EditProfileDialogue";
 
 export default function Home() {
   return (
