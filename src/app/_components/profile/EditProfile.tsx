@@ -82,8 +82,8 @@ export default function CreateProfile() {
   };
 
   return (
-    <div className="p-4 max-w-lg mx-auto">
-      <p className="text-lg font-bold">Complete your profile page</p>
+    <div className="p-4 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
+      <p className="text-lg font-bold">Personal info</p>
 
       <h4 className="mt-4 font-medium">Add photo</h4>
       <label
@@ -160,14 +160,13 @@ export default function CreateProfile() {
           <div className="text-red-500 text-sm">{error.socialMedia}</div>
         )}
       </div>
-      <div className="flex justify-end">
-        <button
-          onClick={() => setIsClicked(true)}
-          className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
-        >
-          Continue
-        </button>
-      </div>
+
+      <button
+        onClick={() => setIsClicked(true)}
+        className="mt-6 w-full p-2 bg-black text-white rounded-md"
+      >
+        Save changes
+      </button>
     </div>
   );
 }

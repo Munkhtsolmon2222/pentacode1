@@ -4,7 +4,7 @@ import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
 import { z } from "zod";
 
-export default function CreateProfile() {
+export default function EditProfileDialogue() {
   const profileSchema = z.object({
     photo: z.string().url({ message: "Please upload an image" }),
     name: z
@@ -82,8 +82,12 @@ export default function CreateProfile() {
   };
 
   return (
-    <div className="p-4 max-w-lg mx-auto">
-      <p className="text-lg font-bold">Complete your profile page</p>
+    <div className="p-4 max-w-lg mx-auto rounded-lg border ">
+      <p className="text-lg font-bold">Edit profile</p>
+
+      <span className="text-[14px] text-[#71717A]">
+        Make changes to your profile here. Click save when you're done
+      </span>
 
       <h4 className="mt-4 font-medium">Add photo</h4>
       <label
@@ -160,12 +164,13 @@ export default function CreateProfile() {
           <div className="text-red-500 text-sm">{error.socialMedia}</div>
         )}
       </div>
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-4">
+        <button className=" bg-[#F4F4F5] p-2 mt-6 rounded-md ">Cancel</button>
         <button
           onClick={() => setIsClicked(true)}
-          className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
+          className="mt-6 p-2 bg-black text-white rounded-md"
         >
-          Continue
+          Save changes
         </button>
       </div>
     </div>
