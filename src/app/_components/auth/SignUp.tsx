@@ -20,6 +20,31 @@ export function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [type, setType] = useState("password");
+  const [userData, setUserData] = useState([]);
+
+  // const getUser = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:5000/auth/", {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
+
+  //     const user = await response.json();
+  //     setUserData(user);
+  //   } catch (error) {
+  //     console.error("Error getting user data:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getUser();
+  // }, []);
 
   const [touched, setTouched] = useState({
     username: false,
@@ -32,6 +57,8 @@ export function SignUp() {
   }
 
   function handleContinue() {
+    console.log(showEmailPassword);
+
     if (isUsernameValid) {
       setShowEmailPassword(true);
     }
@@ -58,8 +85,9 @@ export function SignUp() {
   }, [username, email, password]);
 
   const addUser = async (username: string, email: string, password: string) => {
+    console.log("calling");
     try {
-      const user = await fetch("http://localhost:5000/user/addUser", {
+      const user = await fetch("http://localhost:5000/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,11 +101,17 @@ export function SignUp() {
 
       const response = await user.json();
       console.log(response);
+      if (response.message == "username taken") {
+        alert(response.message);
+      } else {
+        console.log(showEmailPassword);
+        setShowEmailPassword(true);
+      }
+      console.log(response);
     } catch (error) {
       console.error("Error adding user:", error);
     }
   };
-
   return (
     <div className={`${plusJakartaSans.variable} font-sans`}>
       <div className="flex justify-end items-center p-6 mx-6">
@@ -117,7 +151,11 @@ export function SignUp() {
                 <button
                   className="block mx-auto w-full box-border p-2 rounded-xl mt-[20px] bg-primary text-white"
                   disabled={!isUsernameValid}
-                  onClick={handleContinue}
+                  onClick={() => {
+                    if (isUsernameValid) {
+                      addUser(username, email, password);
+                    }
+                  }}
                 >
                   Continue
                 </button>
