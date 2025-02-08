@@ -1,4 +1,6 @@
 "use client";
+import { request } from "http";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
@@ -6,7 +8,7 @@ import { z } from "zod";
 
 export default function CreateProfile() {
   const profileSchema = z.object({
-    photo: z.string().url({ message: "Please upload an image" } ),
+    photo: z.string().url({ message: "Please upload an image" }),
     name: z
       .string()
       .min(2, { message: "Please enter a name" })
@@ -33,6 +35,7 @@ export default function CreateProfile() {
 
   const [isClicked, setIsClicked] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>("");
+  const params = useParams();
 
   useEffect(() => {
     if (isClicked) {
@@ -79,6 +82,29 @@ export default function CreateProfile() {
       setImageUrl(dataJson.secure_url);
       setForm((prev) => ({ ...prev, photo: dataJson.secure_url }));
     }
+    const addProfile = async (
+      name: string,
+      about: string,
+      photo: string,
+      socialMedia: string
+    ) => {
+      const response = await fetch(
+        `http://localhost:5000/profile/${params.userId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify({
+            name,
+            about,
+            avatarImage: photo,
+            socialMediaURL: socialMedia,
+          }),
+        }
+      );
+      setIsClicked(true);
+    };
   };
 
   return (
@@ -162,7 +188,7 @@ export default function CreateProfile() {
       </div>
       <div className="flex justify-end">
         <button
-          onClick={() => setIsClicked(true)}
+          onClick={addProfile()}
           className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
         >
           Continue
