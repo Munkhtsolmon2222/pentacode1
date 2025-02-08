@@ -27,6 +27,7 @@ export function SignUp() {
   const [password, setPassword] = useState("");
   const [type, setType] = useState("password");
   const [responses, setResponses] = useState<response>();
+  const [data, setData] = useState();
 
   const [touched, setTouched] = useState({
     username: false,
@@ -69,7 +70,7 @@ export function SignUp() {
   const addUser = async (username: string, email: string, password: string) => {
     console.log("calling");
     try {
-      const user = await fetch("http://localhost:5000/auth/signup", {
+      const user = await fetch("http://localhost:5000/auth/sign-up", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,9 +81,7 @@ export function SignUp() {
           password,
         }),
       });
-
       const response = await user.json();
-      console.log(response);
       if (response.message == "Username has already taken") {
         setResponses(response);
       } else {
@@ -131,7 +130,7 @@ export function SignUp() {
               )}
               {responses && (
                 <div className="block mx-auto w-[90%] text-red-500 text-[12px]">
-                  {responses?.message}{" "}
+                  {responses?.message}
                   <Link href="/login">
                     <div className="text-black hover:underline">
                       Do you want to Log in?
