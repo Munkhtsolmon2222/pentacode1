@@ -1,3 +1,8 @@
+import UserProfile from "./_components/UserProfile";
+
+
 export default function Home() {
-  return <div></div>;
+  return <div>
+    <UserProfile/>
+  </div>;
 }
