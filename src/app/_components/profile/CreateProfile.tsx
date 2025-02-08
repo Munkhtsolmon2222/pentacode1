@@ -4,7 +4,7 @@ import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
 import { z } from "zod";
 
-export default function CreateProfile() {
+export default function CreateProfile({ setStep }: any) {
   const profileSchema = z.object({
     photo: z.string().url({ message: "Please upload an image" }),
     name: z
@@ -80,7 +80,19 @@ export default function CreateProfile() {
       setForm((prev) => ({ ...prev, photo: dataJson.secure_url }));
     }
   };
-
+  const handleDisabled = () => {
+    if (
+      error.about == undefined &&
+      error.name == undefined &&
+      error.photo == undefined &&
+      error.socialMedia == undefined
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  console.log(error);
   return (
     <div className="p-4 max-w-lg mx-auto">
       <p className="text-lg font-bold">Complete your profile page</p>
@@ -161,12 +173,22 @@ export default function CreateProfile() {
         )}
       </div>
       <div className="flex justify-end">
-        <button
-          onClick={() => setIsClicked(true)}
-          className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
-        >
-          Continue
-        </button>
+        {isClicked ? (
+          <button
+            disabled={handleDisabled()}
+            onClick={() => setStep(2)}
+            className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
+          >
+            Continue
+          </button>
+        ) : (
+          <button
+            onClick={() => setIsClicked(true)}
+            className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
+          >
+            Continue
+          </button>
+        )}
       </div>
     </div>
   );
