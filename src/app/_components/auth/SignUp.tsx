@@ -6,12 +6,18 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { set } from "zod";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
   variable: "--font-plus-jakarta",
 });
+
+export type response = {
+  message: string;
+  id: string;
+};
 
 export function SignUp() {
   const [isUsernameValid, setIsUsernameValid] = useState(false);
@@ -20,31 +26,7 @@ export function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [type, setType] = useState("password");
-  const [userData, setUserData] = useState([]);
-
-  // const getUser = async () => {
-  //   try {
-  //     const response = await fetch("http://localhost:5000/auth/", {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! Status: ${response.status}`);
-  //     }
-
-  //     const user = await response.json();
-  //     setUserData(user);
-  //   } catch (error) {
-  //     console.error("Error getting user data:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getUser();
-  // }, []);
+  const [responses, setResponses] = useState<response>();
 
   const [touched, setTouched] = useState({
     username: false,
@@ -101,11 +83,10 @@ export function SignUp() {
 
       const response = await user.json();
       console.log(response);
-      if (response.message == "username taken") {
-        alert(response.message);
+      if (response.message == "Username has already taken") {
+        setResponses(response);
       } else {
-        console.log(showEmailPassword);
-        setShowEmailPassword(true);
+        handleContinue();
       }
       console.log(response);
     } catch (error) {
@@ -142,9 +123,21 @@ export function SignUp() {
                 }}
               />
               {touched.username && !isUsernameValid && (
-                <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
-                  Username must be at least 3 characters.
-                </p>
+                <>
+                  <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
+                    Username must be at least 3 characters.
+                  </p>
+                </>
+              )}
+              {responses && (
+                <div className="block mx-auto w-[90%] text-red-500 text-[12px]">
+                  {responses?.message}{" "}
+                  <Link href="/login">
+                    <div className="text-black hover:underline">
+                      Do you want to Log in?
+                    </div>
+                  </Link>
+                </div>
               )}
 
               <div className="flex p-[24px]">

@@ -47,6 +47,32 @@ export function Login() {
     setType((prevType) => (prevType === "password" ? "text" : "password"));
   }
 
+  const addUser = async (username: string, email: string, password: string) => {
+    console.log("calling");
+    try {
+      const user = await fetch("http://localhost:5000/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      });
+
+      const response = await user.json();
+      console.log(response);
+      if (response.message == "Username has already taken") {
+      } else {
+      }
+      console.log(response);
+    } catch (error) {
+      console.error("Error adding user:", error);
+    }
+  };
+
   return (
     <div className={`${plusJakartaSans.variable} font-sans min-h-screen`}>
       <div className="flex justify-end items-center p-6 mx-6">
