@@ -88,8 +88,10 @@ export default function ViewPage() {
   return (
     <div className="w-full h-screen">
       <div
+    
         className={`w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center`}
       >
+        <div></div>
         {previewImg ? (
           <div
             style={{
@@ -204,7 +206,7 @@ export default function ViewPage() {
               placeholder="Please write your message here"
             />
           </div>
-          <button className="w-full h-12 bg-[#18181B] opacity-20 text-white mt-4 rounded-md font-md hover:bg-[#18181B]">
+          <button className="w-full h-12 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]">
             Support
           </button>
         </div>
