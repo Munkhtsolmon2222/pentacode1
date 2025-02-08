@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export default function CreateProfile() {
   const profileSchema = z.object({
-    photo: z.string().url({ message: "Please upload an image" }),
+    photo: z.string().url({ message: "Please upload an image" } ),
     name: z
       .string()
       .min(2, { message: "Please enter a name" })
@@ -24,8 +24,7 @@ export default function CreateProfile() {
     socialMedia: "",
   });
 
-  const [result, setResult] = useState<any>({ success: true });
-  const [error, setError] = useState<{ photo?: string; name?: string; about?: string; socialMedia?: string }>({});
+const [error, setError] = useState<{ photo?: string; name?: string; about?: string; socialMedia?: string }>({});
 
   const [isClicked, setIsClicked] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -33,7 +32,6 @@ export default function CreateProfile() {
   useEffect(() => {
     if (isClicked) {
       const validation = profileSchema.safeParse(form);
-      setResult(validation);
       if (!validation.success) {
         const resultError = validation.error.format();
         setError({
