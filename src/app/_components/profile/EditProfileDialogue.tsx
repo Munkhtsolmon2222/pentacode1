@@ -1,10 +1,12 @@
 "use client";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
 import { z } from "zod";
 
 export default function EditProfileDialogue({ onClose }: any) {
+  const params = useParams();
   const profileSchema = z.object({
     photo: z.string().url({ message: "Please upload an image" }),
     name: z
@@ -79,6 +81,29 @@ export default function EditProfileDialogue({ onClose }: any) {
       setImageUrl(dataJson.secure_url);
       setForm((prev) => ({ ...prev, photo: dataJson.secure_url }));
     }
+  };
+  const editProfile = async (
+    name: string,
+    about: string,
+    photo: string,
+    socialMedia: string
+  ) => {
+    setIsClicked(true);
+
+    console.log("baaska");
+    const response = await fetch(`http://localhost:5000/profile/${params.id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+      body: JSON.stringify({
+        name,
+        about,
+        avatarImage: photo,
+        socialMediaURL: socialMedia,
+      }),
+    });
+    onClose(false);
   };
 
   return (
@@ -175,7 +200,9 @@ export default function EditProfileDialogue({ onClose }: any) {
             Cancel
           </button>
           <button
-            onClick={() => setIsClicked(true)}
+            onClick={() =>
+              editProfile(form.name, form.about, form.photo, form.socialMedia)
+            }
             className="mt-6 p-2 bg-black text-white rounded-md"
           >
             Save changes

@@ -6,7 +6,7 @@ import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
 import { z } from "zod";
 
-export default function CreateProfile() {
+export default function CreateProfile({ setStep }: any) {
   const profileSchema = z.object({
     photo: z.string().url({ message: "Please upload an image" }),
     name: z
@@ -82,31 +82,42 @@ export default function CreateProfile() {
       setImageUrl(dataJson.secure_url);
       setForm((prev) => ({ ...prev, photo: dataJson.secure_url }));
     }
-    const addProfile = async (
-      name: string,
-      about: string,
-      photo: string,
-      socialMedia: string
-    ) => {
-      const response = await fetch(
-        `http://localhost:5000/profile/${params.userId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify({
-            name,
-            about,
-            avatarImage: photo,
-            socialMediaURL: socialMedia,
-          }),
-        }
-      );
-      setIsClicked(true);
-    };
   };
-
+  const handleDisabled = () => {
+    if (
+      error.about == undefined &&
+      error.name == undefined &&
+      error.photo == undefined &&
+      error.socialMedia == undefined
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  const addProfile = async (
+    name: string,
+    about: string,
+    photo: string,
+    socialMedia: string
+  ) => {
+    setStep(2);
+    const response = await fetch(
+      `http://localhost:5000/profile/${params.userId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          about,
+          avatarImage: photo,
+          socialMediaURL: socialMedia,
+        }),
+      }
+    );
+  };
   return (
     <div className="p-4 max-w-lg mx-auto">
       <p className="text-lg font-bold">Complete your profile page</p>
@@ -187,12 +198,24 @@ export default function CreateProfile() {
         )}
       </div>
       <div className="flex justify-end">
-        <button
-          onClick={addProfile()}
-          className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
-        >
-          Continue
-        </button>
+        {isClicked ? (
+          <button
+            disabled={handleDisabled()}
+            onClick={() =>
+              addProfile(form.name, form.about, form.photo, form.socialMedia)
+            }
+            className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
+          >
+            Continue
+          </button>
+        ) : (
+          <button
+            onClick={() => setIsClicked(true)}
+            className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
+          >
+            Continue
+          </button>
+        )}
       </div>
     </div>
   );
