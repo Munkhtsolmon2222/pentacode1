@@ -204,7 +204,7 @@ export default function ViewPage() {
               placeholder="Please write your message here"
             />
           </div>
-          <button className="w-full h-12 bg-[#18181B] opacity-20 text-white rounded-md font-md hover:bg-[#18181B]">
+          <button className="w-full h-12 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]">
             Support
           </button>
         </div>
