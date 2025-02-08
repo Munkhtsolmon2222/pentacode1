@@ -88,8 +88,10 @@ export default function ViewPage() {
   return (
     <div className="w-full h-screen">
       <div
+    
         className={`w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center`}
       >
+        <div></div>
         {previewImg ? (
           <div
             style={{
