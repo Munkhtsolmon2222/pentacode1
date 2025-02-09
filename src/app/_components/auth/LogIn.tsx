@@ -61,7 +61,6 @@ export function Login() {
           password,
         }),
       });
-
       const response = await user.json();
       console.log(response);
       if (response.message == "Username has already taken") {
