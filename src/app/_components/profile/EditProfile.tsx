@@ -1,51 +1,57 @@
 "use client";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
 import { z } from "zod";
 
-export default function CreateProfile() {
+export default function EditProfile() {
+  const params = useParams();
   const profileSchema = z.object({
-    photo: z.string().optional(),
+    photo: z.string().url({ message: "Please upload an image" }),
     name: z
       .string()
-      .min(2, { message: "Please enter name" })
-      .regex(/^[A-Za-zА-Яа-я\s]+$/, { message: "Please enter alphabet" }),
+      .min(2, { message: "Please enter a name" })
+      .regex(/^[A-Za-zА-Яа-я\s]+$/, { message: "Please enter alphabets only" }),
     about: z.string().min(10, { message: "Please enter info about yourself" }),
     socialMedia: z
       .string()
-      .startsWith("https://", { message: "Please enter a social link" }),
+      .startsWith("https://", { message: "Please enter a valid social link" }),
   });
 
   const [form, setForm] = useState({
-    photo: null,
+    photo: "",
     name: "",
     about: "",
     socialMedia: "",
   });
-  const [result, setResult] = useState<any>();
 
   const [error, setError] = useState<{
+    photo?: string;
     name?: string;
     about?: string;
     socialMedia?: string;
   }>({});
 
   const [isClicked, setIsClicked] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string>("");
+
   useEffect(() => {
     if (isClicked) {
-      if (!result.success) {
-        const resultError = result.error.format();
+      const validation = profileSchema.safeParse(form);
+      if (!validation.success) {
+        const resultError = validation.error.format();
         setError({
-          name: resultError.name?._errors[0],
-          about: resultError.about?._errors[0],
-          socialMedia: resultError.socialMedia?._errors[0],
+          photo: resultError.photo?._errors?.[0],
+          name: resultError.name?._errors?.[0],
+          about: resultError.about?._errors?.[0],
+          socialMedia: resultError.socialMedia?._errors?.[0],
         });
       } else {
         setError({});
       }
     }
-  }, [isClicked, result]);
+  }, [isClicked, form]);
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -53,13 +59,8 @@ export default function CreateProfile() {
     const { name, value } = e.target;
     const updatedForm = { ...form, [name]: value };
     setForm(updatedForm);
-    setResult(profileSchema.safeParse(updatedForm));
   };
 
-  console.log(error);
-  console.log(isClicked);
-
-  const [ImageUrl, setImageUrl] = useState(null);
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
@@ -78,27 +79,57 @@ export default function CreateProfile() {
 
       const dataJson = await response.json();
       setImageUrl(dataJson.secure_url);
+      setForm((prev) => ({ ...prev, photo: dataJson.secure_url }));
     }
+  };
+  const editProfile = async (
+    name: string,
+    about: string,
+    photo: string,
+    socialMedia: string
+  ) => {
+    setIsClicked(true);
+    console.log("baaska");
+    const response = await fetch(`http://localhost:5000/profile/${params.id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+      body: JSON.stringify({
+        name,
+        about,
+        avatarImage: photo,
+        socialMediaURL: socialMedia,
+      }),
+    });
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <p className="text-lg font-bold">Complete your profile page</p>
+    <div className="p-4 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
+      <p className="text-lg font-bold">Personal info</p>
 
       <h4 className="mt-4 font-medium">Add photo</h4>
       <label
-        className={`mt-2 rounded-full w-40 h-40 border-dashed border-2 flex justify-center items-center  `}
+        className={`mt-2 rounded-full w-40 h-40 border-dashed border-2 flex justify-center items-center ${
+          error.photo ? "border-red-500" : ""
+        }`}
       >
         <input type="file" hidden onChange={onFileChange} />
-        {ImageUrl ? (
+        {imageUrl ? (
           <img
-            style={{ background: `url(${ImageUrl})` }}
-            className="w-full h-full rounded-full"
+            src={imageUrl}
+            className="w-full h-full rounded-full object-cover"
           />
         ) : (
-          <FiCamera className="text-2xl text-[#18181B80] " />
+          <FiCamera className="text-2xl text-gray-500" />
         )}
       </label>
+      {error.photo && (
+        <div className="text-red-500 text-sm flex items-center gap-1 pt-2">
+          <VscError />
+          {error.photo}
+        </div>
+      )}
 
       <div className="mt-4">
         <label className="block font-medium">Name</label>
@@ -155,11 +186,11 @@ export default function CreateProfile() {
 
       <button
         onClick={() => {
-          setIsClicked(!isClicked);
+          editProfile(form.name, form.about, form.photo, form.socialMedia);
         }}
-        className="mt-6 lg:w-60 md:w-40 p-2 bg-[#18181B] text-white py-2 rounded-md"
+        className="mt-6 w-full p-2 bg-black text-white rounded-md"
       >
-        Continue
+        Save changes
       </button>
     </div>
   );
