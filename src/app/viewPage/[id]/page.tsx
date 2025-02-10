@@ -1,10 +1,10 @@
 "use client";
 
+import EditProfileDialogue from "@/app/_components/profile/EditProfileDialogue";
 import { useEffect, useState } from "react";
 import { CiCamera } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { FiCoffee } from "react-icons/fi";
-import EditProfileDialogue from "../_components/profile/EditProfileDialogue";
 
 type Donation = {
   donorId: string;
@@ -14,14 +14,20 @@ type Donation = {
   recipientId: string;
 };
 
-export default function ViewPage({ onClose }: { onClose: any }) {
+export default function ViewPageExplore(onClose: any, isEdit: boolean) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [previewImg, setPreviewImg] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
-  const [donations, setDonations] = useState<Donation[]>([]);
+  const [newDonation, setNewDonation] = useState({
+    donorId: "",
+    amount: 1,
+    specialMessage: "",
+    socialURLOrBuyMeACoffee: "",
+    recipientId: "",
+  });
 
   const addDonation = async () => {
     const response = await fetch("http://localhost:5000/donation/", {
@@ -37,7 +43,7 @@ export default function ViewPage({ onClose }: { onClose: any }) {
   };
 
   useEffect(() => {
-    setDonations([]);
+    // setNewDonation();
   }, []);
 
   useEffect(() => {
@@ -140,15 +146,6 @@ export default function ViewPage({ onClose }: { onClose: any }) {
         )}
       </div>
       <div className="w-full flex justify-center gap-6 -my-20 relative">
-        {donations?.map((donation) => (
-          <div>
-            <div>{donation.donorId}</div>
-            <div>{donation.amount}</div>
-            <div>{donation.recipientId}</div>
-            <div>{donation.socialURLOrBuyMeACoffee}</div>
-            <div>{donation.specialMessage}</div>
-          </div>
-        ))}
         <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
           <div className="min-h-[20rem] gap-3 border rounded-md p-4">
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
@@ -156,12 +153,14 @@ export default function ViewPage({ onClose }: { onClose: any }) {
                 <img src="Avatar-Image.png" alt="Jake" />
                 <p className="font-bold text-2xl">Jake</p>
               </div>
-              <button
-                onClick={() => setModalOpen(true)}
-                className="w-[6.25rem] rounded-md bg-[#F4F4F5] p-2"
-              >
-                Edit page
-              </button>
+              {isEdit && (
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="w-[6.25rem] rounded-md bg-[#F4F4F5] p-2"
+                >
+                  Edit page
+                </button>
+              )}
               {modalOpen && <EditProfileDialogue onClose={setModalOpen} />}
             </div>
             <div className="mt-10 ml-4">

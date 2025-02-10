@@ -1,5 +1,5 @@
 "use client";
-import ViewPage from "@/app/viewPage/page";
+import ViewPageExplore from "@/app/viewPage/[id]/page";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FiExternalLink } from "react-icons/fi";
@@ -9,11 +9,11 @@ export default function RecentSupportExplore() {
   const router = useRouter();
 
   return (
-    <div>
+    <div className="w-full">
       {modalOpen ? (
-        <ViewPage onClose={() => setModalOpen(false)} isEdit={false} />
+        <ViewPageExplore onClose={() => setModalOpen(false)} isEdit={false} />
       ) : (
-        <div className="max-w-[909px] mx-auto mt-16 p-5 max-h-56 border border-solid rounded-lg">
+        <div className="w-full mx-auto mt-16 p-5 max-h-56 border border-solid rounded-lg">
           <div className="flex justify-between">
             <div className="flex gap-3 items-center">
               <img src="Avatar-Image.png" />
