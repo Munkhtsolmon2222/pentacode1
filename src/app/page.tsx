@@ -1,9 +1,3 @@
-import UserProfile from "./_components/UserProfile";
-
 export default function Home() {
-  return (
-    <div>
-      <UserProfile />
-    </div>
-  );
+	return <div>"main page" goy yum hiine</div>;
 }
