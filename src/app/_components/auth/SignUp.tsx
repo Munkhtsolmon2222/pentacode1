@@ -6,12 +6,18 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { set } from "zod";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
   variable: "--font-plus-jakarta",
 });
+
+export type response = {
+  message: string;
+  id: string;
+};
 
 export function SignUp() {
   const [isUsernameValid, setIsUsernameValid] = useState(false);
@@ -20,6 +26,8 @@ export function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [type, setType] = useState("password");
+  const [responses, setResponses] = useState<response>();
+  const [data, setData] = useState();
 
   const [touched, setTouched] = useState({
     username: false,
@@ -32,6 +40,8 @@ export function SignUp() {
   }
 
   function handleContinue() {
+    console.log(showEmailPassword);
+
     if (isUsernameValid) {
       setShowEmailPassword(true);
     }
@@ -58,8 +68,9 @@ export function SignUp() {
   }, [username, email, password]);
 
   const addUser = async (username: string, email: string, password: string) => {
+    console.log("calling");
     try {
-      const user = await fetch("http://localhost:5000/user/addUser", {
+      const user = await fetch("http://localhost:5000/auth/sign-up", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,14 +81,17 @@ export function SignUp() {
           password,
         }),
       });
-
       const response = await user.json();
+      if (response.message == "Username has already taken") {
+        setResponses(response);
+      } else {
+        handleContinue();
+      }
       console.log(response);
     } catch (error) {
       console.error("Error adding user:", error);
     }
   };
-
   return (
     <div className={`${plusJakartaSans.variable} font-sans`}>
       <div className="flex justify-end items-center p-6 mx-6">
@@ -108,16 +122,32 @@ export function SignUp() {
                 }}
               />
               {touched.username && !isUsernameValid && (
-                <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
-                  Username must be at least 3 characters.
-                </p>
+                <>
+                  <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
+                    Username must be at least 3 characters.
+                  </p>
+                </>
+              )}
+              {responses && (
+                <div className="block mx-auto w-[90%] text-red-500 text-[12px]">
+                  {responses?.message}
+                  <Link href="/login">
+                    <div className="text-black hover:underline">
+                      Do you want to Log in?
+                    </div>
+                  </Link>
+                </div>
               )}
 
               <div className="flex p-[24px]">
                 <button
                   className="block mx-auto w-full box-border p-2 rounded-xl mt-[20px] bg-primary text-white"
                   disabled={!isUsernameValid}
-                  onClick={handleContinue}
+                  onClick={() => {
+                    if (isUsernameValid) {
+                      addUser(username, email, password);
+                    }
+                  }}
                 >
                   Continue
                 </button>

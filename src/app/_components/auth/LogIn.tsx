@@ -31,6 +31,8 @@ const formSchema = z.object({
 
 export function Login() {
   const [type, setType] = useState("password");
+  const [error, setError] = useState("");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,8 +41,36 @@ export function Login() {
     },
   });
 
+  const verifyUser = async (email: string, password: string) => {
+    try {
+      const response = await fetch("http://localhost:5000/auth/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      console.log("Response:", data);
+
+      if (data.message === "Email not found") {
+        console.log("Error: Email does not exist.");
+        setError("Email does not exist.");
+      } else if (data.message === "Incorrect password") {
+        console.log("Error: Password is incorrect.");
+        setError("Password is incorrect.");
+      } else {
+        console.log("Login successful!");
+        setError("Login successful!");
+      }
+    } catch (error) {
+      console.error("Error verifying user:", error);
+    }
+  };
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    verifyUser(values.email, values.password);
   }
 
   function changeType() {
@@ -71,6 +101,11 @@ export function Login() {
                       <Input placeholder="Enter email here" {...field} />
                     </FormControl>
                     <FormMessage />
+                    {error == "Email does not exist." && (
+                      <div className="block mx-auto w-[90%] text-red-500 text-[12px]">
+                        {error}
+                      </div>
+                    )}
                   </FormItem>
                 )}
               />
@@ -98,12 +133,17 @@ export function Login() {
                       </div>
                     </FormControl>
                     <FormMessage />
+                    {error == "Password is incorrect." && (
+                      <div className="block mx-auto w-[90%] text-red-500 text-[12px]">
+                        {error}
+                      </div>
+                    )}
                   </FormItem>
                 )}
               />
               <Button
+                className="block mx-auto w-full p-2 bg-primary text-white"
                 type="submit"
-                className="block mx-auto w-full box-border p-2 bg-primary text-white"
               >
                 Continue
               </Button>
