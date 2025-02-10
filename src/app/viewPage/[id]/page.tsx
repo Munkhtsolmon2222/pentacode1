@@ -16,11 +16,7 @@ type Donation = {
   recipientId: string;
 };
 
-export default function ViewPageExplore(
-  onClose: any,
-  isEdit: boolean,
-  setStep: any
-) {
+export default function ViewPageExplore(onClose: any, setStep: any) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [previewImg, setPreviewImg] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -81,7 +77,6 @@ export default function ViewPageExplore(
     socialURLOrBuyMeACoffee: string,
     recipientId: string
   ) => {
-    setStep(2);
     const response = await fetch("http://localhost:5000/donation", {
       method: "POST",
       headers: {
@@ -153,6 +148,7 @@ export default function ViewPageExplore(
   useEffect(() => {
     // setNewDonation();
   }, []);
+  console.log(newDonation);
   return (
     <div className="w-full h-screen">
       <div className="w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center">
