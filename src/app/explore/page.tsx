@@ -7,7 +7,7 @@ export default function Explore() {
   const [creators, setCreators] = useState();
 
   return (
-    <div className="max-w-[957px] px-4 m-6 min-h-screen">
+    <div className="w-[80%] fixed right-0 top-0 h-full bg-gray-primary text-black p-4">
       {/* <div className="max-w-[909px] gap-6">
         <h4 className="text-xl font-bold text-[#18181B]">Explore Creators</h4>
         <div className="w-[243px] mt-4 pl-2 flex items-center border rounded-lg">

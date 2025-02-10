@@ -1,9 +1,13 @@
+import { use } from "react";
+// import { useAuth } from "../_components/context/AuthContext";
 import UserProfile from "../_components/UserProfile";
 
 export default function Home() {
-	return (
-		<div>
-			<UserProfile />
-		</div>
-	);
+  //   const { userId } = useAuth();
+  return (
+    <div>
+      <UserProfile />
+      {/* {userId} */}
+    </div>
+  );
 }
