@@ -8,7 +8,6 @@ export default function Explore() {
 
   return (
     <div className="w-full px-2 min-h-screen flex">
-      <div className="w-[300px]">sidebar</div>
       {/* <div className="w-full gap-6 flex flex-col ">
         <h4 className="text-xl font-bold text-[#18181B]">Explore Creators</h4>
         <div className="w-[243px] mt-4 pl-2 flex items-center border rounded-lg">
@@ -21,7 +20,7 @@ export default function Explore() {
         </div>
       </div> */}
       {/* {creators ? ( */}
-      <div className="w-full m-20">
+      <div className="w-full mx-20">
         <RecentSupportExplore />
       </div>
       {/* ) : ( */}

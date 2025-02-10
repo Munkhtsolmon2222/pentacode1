@@ -1,4 +1,5 @@
 "use client";
+
 import ViewPageExplore from "@/app/viewPage/[id]/page";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -11,7 +12,7 @@ export default function RecentSupportExplore() {
   return (
     <div className="w-full">
       {modalOpen ? (
-        <ViewPageExplore onClose={() => setModalOpen(false)} isEdit={false} />
+        <ViewPageExplore onClose={() => setModalOpen(false)} />
       ) : (
         <div className="w-full mx-auto mt-16 p-5 max-h-56 border border-solid rounded-lg">
           <div className="flex justify-between">

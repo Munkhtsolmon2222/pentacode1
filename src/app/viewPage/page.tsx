@@ -9,36 +9,31 @@ import EditProfileDialogue from "../_components/profile/EditProfileDialogue";
 type Donation = {
   donorId: string;
   amount: number;
-  specialMessage?: string;
-  socialURLOrBuyMeACoffee?: string;
+  specialMessage: string;
+  socialURLOrBuyMeACoffee: string;
   recipientId: string;
 };
 
-export default function ViewPage({ onClose }: { onClose: any }) {
+export default function ViewPage({
+  onClose,
+  setStep,
+}: {
+  onClose: any;
+  setStep: any;
+}) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [previewImg, setPreviewImg] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
-  const [donations, setDonations] = useState<Donation[]>([]);
-
-  const addDonation = async () => {
-    const response = await fetch("http://localhost:5000/donation/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({}),
-    });
-    const data = await response.json();
-    console.log(data);
-  };
-
-  useEffect(() => {
-    setDonations([]);
-  }, []);
+  const [donations, setDonations] = useState({
+    donorId: "",
+    amount: 1,
+    specialMessage: "",
+    socialURLOrBuyMeACoffee: "",
+    recipientId: "",
+  });
 
   useEffect(() => {
     const savedImage = localStorage.getItem("coverImage");
@@ -89,6 +84,65 @@ export default function ViewPage({ onClose }: { onClose: any }) {
   useEffect(() => {
     setImageUrl(previewImg);
   }, [isSaved, previewImg]);
+  const [form, setForm] = useState({
+    donorId: "",
+    amount: 1,
+    specialMessage: "",
+    socialURLOrBuyMeACoffee: "",
+    recipientId: "",
+  });
+
+  const [error, setError] = useState<{
+    donorId?: string;
+    amount?: number;
+    specialMessage?: string;
+    socialURLOrBuyMeACoffee?: string;
+    recipientId?: string;
+  }>({});
+
+  const handleDisabled = () => {
+    if (
+      error.donorId == undefined &&
+      error.amount == undefined &&
+      error.specialMessage == undefined &&
+      error.socialURLOrBuyMeACoffee == undefined &&
+      error.recipientId == undefined
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  // const addDonation = async (
+  //   donorId: string,
+  //   amount: number,
+  //   specialMessage: string,
+  //   socialURLOrBuyMeACoffee: string,
+  //   recipientId: string
+  // ) => {
+  //   setStep(2);
+  //   const response = await fetch("http://localhost:5000/donation/", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+
+  //     body: JSON.stringify({
+  //       donorId,
+  //       amount,
+  //       specialMessage,
+  //       socialURLOrBuyMeACoffee,
+  //       recipientId,
+  //     }),
+  //   });
+  //   const data = await response.json();
+  //   console.log(data);
+  // };
+
+  // useEffect(() => {
+  //   // setNewDonation();
+  // }, []);
 
   return (
     <div className="w-full h-screen">
@@ -140,15 +194,6 @@ export default function ViewPage({ onClose }: { onClose: any }) {
         )}
       </div>
       <div className="w-full flex justify-center gap-6 -my-20 relative">
-        {donations?.map((donation) => (
-          <div>
-            <div>{donation.donorId}</div>
-            <div>{donation.amount}</div>
-            <div>{donation.recipientId}</div>
-            <div>{donation.socialURLOrBuyMeACoffee}</div>
-            <div>{donation.specialMessage}</div>
-          </div>
-        ))}
         <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
           <div className="min-h-[20rem] gap-3 border rounded-md p-4">
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
@@ -227,12 +272,14 @@ export default function ViewPage({ onClose }: { onClose: any }) {
               placeholder="Please write your message here"
             />
           </div>
-          <button
-            onClick={() => addDonation()}
-            className="w-full h-12 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
-          >
-            Support
-          </button>
+          <div className="flex items-center">
+            <button
+              disabled={handleDisabled()}
+              className="w-full h-12 bg-[#71717A] text-white rounded-md font-md"
+            >
+              Support
+            </button>
+          </div>
         </div>
       </div>
     </div>

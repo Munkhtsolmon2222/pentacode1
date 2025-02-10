@@ -14,7 +14,11 @@ type Donation = {
   recipientId: string;
 };
 
-export default function ViewPageExplore(onClose: any, isEdit: boolean) {
+export default function ViewPageExplore(
+  onClose: any,
+  isEdit: boolean,
+  setStep: any
+) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [previewImg, setPreviewImg] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -28,23 +32,6 @@ export default function ViewPageExplore(onClose: any, isEdit: boolean) {
     socialURLOrBuyMeACoffee: "",
     recipientId: "",
   });
-
-  const addDonation = async () => {
-    const response = await fetch("http://localhost:5000/donation/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({}),
-    });
-    const data = await response.json();
-    console.log(data);
-  };
-
-  useEffect(() => {
-    // setNewDonation();
-  }, []);
 
   useEffect(() => {
     const savedImage = localStorage.getItem("coverImage");
@@ -96,6 +83,65 @@ export default function ViewPageExplore(onClose: any, isEdit: boolean) {
     setImageUrl(previewImg);
   }, [isSaved, previewImg]);
 
+  const [form, setForm] = useState({
+    donorId: "",
+    amount: 1,
+    specialMessage: "",
+    socialURLOrBuyMeACoffee: "",
+    recipientId: "",
+  });
+
+  const [error, setError] = useState<{
+    donorId?: string;
+    amount?: number;
+    specialMessage?: string;
+    socialURLOrBuyMeACoffee?: string;
+    recipientId?: string;
+  }>({});
+
+  const handleDisabled = () => {
+    if (
+      error.donorId == undefined &&
+      error.amount == undefined &&
+      error.specialMessage == undefined &&
+      error.socialURLOrBuyMeACoffee == undefined &&
+      error.recipientId == undefined
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const addDonation = async (
+    donorId: string,
+    amount: number,
+    specialMessage: string,
+    socialURLOrBuyMeACoffee: string,
+    recipientId: string
+  ) => {
+    setStep(2);
+    const response = await fetch("http://localhost:5000/donation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        donorId,
+        amount,
+        specialMessage,
+        socialURLOrBuyMeACoffee,
+        recipientId,
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
+  };
+
+  useEffect(() => {
+    // setNewDonation();
+  }, []);
   return (
     <div className="w-full h-screen">
       <div className="w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center">
@@ -150,17 +196,19 @@ export default function ViewPageExplore(onClose: any, isEdit: boolean) {
           <div className="min-h-[20rem] gap-3 border rounded-md p-4">
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
               <div className="flex items-center gap-2">
+                {/* {donations?.map((donation: Donation) => (
+          <div>
+            <div>{donation.donorId}</div>
+            <div>{donation.amount}</div>
+            <div>{donation.recipientId}</div>
+            <div>{donation.socialURLOrBuyMeACoffee}</div>
+            <div>{donation.specialMessage}</div>
+          </div>
+        ))} */}
                 <img src="Avatar-Image.png" alt="Jake" />
                 <p className="font-bold text-2xl">Jake</p>
               </div>
-              {isEdit && (
-                <button
-                  onClick={() => setModalOpen(true)}
-                  className="w-[6.25rem] rounded-md bg-[#F4F4F5] p-2"
-                >
-                  Edit page
-                </button>
-              )}
+
               {modalOpen && <EditProfileDialogue onClose={setModalOpen} />}
             </div>
             <div className="mt-10 ml-4">
@@ -226,12 +274,32 @@ export default function ViewPageExplore(onClose: any, isEdit: boolean) {
               placeholder="Please write your message here"
             />
           </div>
-          <button
-            onClick={() => addDonation()}
-            className="w-full h-12 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
-          >
-            Support
-          </button>
+          <div className="flex">
+            {isClicked ? (
+              <button
+                disabled={handleDisabled()}
+                onClick={() =>
+                  addDonation(
+                    form.donorId,
+                    form.amount,
+                    form.socialURLOrBuyMeACoffee,
+                    form.specialMessage,
+                    form.recipientId
+                  )
+                }
+                className="w-full h-12 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
+              >
+                Support
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsClicked(true)}
+                className="w-full h-12 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
+              >
+                Support
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
