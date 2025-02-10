@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { CiCamera } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { FiCoffee } from "react-icons/fi";
+import { VscError } from "react-icons/vsc";
+import { number, z } from "zod";
 
 type Donation = {
   donorId: string;
@@ -27,11 +29,76 @@ export default function ViewPageExplore(
   const [isClicked, setIsClicked] = useState(false);
   const [newDonation, setNewDonation] = useState({
     donorId: "",
-    amount: 1,
+    amount: 0,
     specialMessage: "",
     socialURLOrBuyMeACoffee: "",
     recipientId: "",
   });
+
+  const [error, setError] = useState<{
+    socialURLOrBuyMeACoffee?: string;
+  }>({});
+
+  const handleDisabled = () => {
+    if (error.socialURLOrBuyMeACoffee == undefined) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  useEffect(() => {
+    if (isClicked) {
+      const validation = viewPageSchema.safeParse(newDonation);
+      if (!validation.success) {
+        const resultError = validation.error.format();
+        setError({
+          socialURLOrBuyMeACoffee:
+            resultError.socialURLOrBuyMeACoffee?._errors[0],
+        });
+      } else {
+        setError({});
+      }
+    }
+  }, [isClicked, newDonation]);
+
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    const Update = { ...newDonation, [name]: value };
+    setNewDonation(Update);
+    console.log(Update);
+  };
+  const viewPageSchema = z.object({
+    socialURLOrBuyMeACoffee: z
+      .string()
+      .includes(".com", { message: "Please enter a valid social link" }),
+  });
+  const addDonation = async (
+    donorId: string,
+    amount: number,
+    specialMessage: string,
+    socialURLOrBuyMeACoffee: string,
+    recipientId: string
+  ) => {
+    setStep(2);
+    const response = await fetch("http://localhost:5000/donation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        donorId,
+        amount,
+        specialMessage,
+        socialURLOrBuyMeACoffee,
+        recipientId,
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
+  };
 
   useEffect(() => {
     const savedImage = localStorage.getItem("coverImage");
@@ -82,62 +149,6 @@ export default function ViewPageExplore(
   useEffect(() => {
     setImageUrl(previewImg);
   }, [isSaved, previewImg]);
-
-  const [form, setForm] = useState({
-    donorId: "",
-    amount: 1,
-    specialMessage: "",
-    socialURLOrBuyMeACoffee: "",
-    recipientId: "",
-  });
-
-  const [error, setError] = useState<{
-    donorId?: string;
-    amount?: number;
-    specialMessage?: string;
-    socialURLOrBuyMeACoffee?: string;
-    recipientId?: string;
-  }>({});
-
-  const handleDisabled = () => {
-    if (
-      error.donorId == undefined &&
-      error.amount == undefined &&
-      error.specialMessage == undefined &&
-      error.socialURLOrBuyMeACoffee == undefined &&
-      error.recipientId == undefined
-    ) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  const addDonation = async (
-    donorId: string,
-    amount: number,
-    specialMessage: string,
-    socialURLOrBuyMeACoffee: string,
-    recipientId: string
-  ) => {
-    setStep(2);
-    const response = await fetch("http://localhost:5000/donation", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        donorId,
-        amount,
-        specialMessage,
-        socialURLOrBuyMeACoffee,
-        recipientId,
-      }),
-    });
-    const data = await response.json();
-    console.log(data);
-  };
 
   useEffect(() => {
     // setNewDonation();
@@ -192,19 +203,13 @@ export default function ViewPageExplore(
         )}
       </div>
       <div className="w-full flex justify-center gap-6 -my-20 relative">
+        {/* {newDonation?.map((donation: Donation) => (
+          <div>{donation.donorId}</div>
+        ))} */}
         <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
           <div className="min-h-[20rem] gap-3 border rounded-md p-4">
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
               <div className="flex items-center gap-2">
-                {/* {donations?.map((donation: Donation) => (
-          <div>
-            <div>{donation.donorId}</div>
-            <div>{donation.amount}</div>
-            <div>{donation.recipientId}</div>
-            <div>{donation.socialURLOrBuyMeACoffee}</div>
-            <div>{donation.specialMessage}</div>
-          </div>
-        ))} */}
                 <img src="Avatar-Image.png" alt="Jake" />
                 <p className="font-bold text-2xl">Jake</p>
               </div>
@@ -262,10 +267,20 @@ export default function ViewPageExplore(
               Enter BuyMeCoffee or social account URL:
             </p>
             <input
-              className="w-full h-12 border rounded-md px-4 mt-4 outline-none"
+              className={`w-full h-12 border rounded-md px-4 mt-4 outline-none ${
+                error.socialURLOrBuyMeACoffee ? "border-red-500" : ""
+              }`}
               placeholder="bymecoffee@gmail.com"
               type="url"
+              name="mail"
+              onChange={onChange}
             />
+            {error.socialURLOrBuyMeACoffee && (
+              <div className="text-red-500 text-sm flex items-center gap-1 pt-2">
+                <VscError />
+                {error.socialURLOrBuyMeACoffee}
+              </div>
+            )}
           </div>
           <div className="mb-16">
             <p className="text-[#09090B]">Special message:</p>
@@ -280,11 +295,11 @@ export default function ViewPageExplore(
                 disabled={handleDisabled()}
                 onClick={() =>
                   addDonation(
-                    form.donorId,
-                    form.amount,
-                    form.socialURLOrBuyMeACoffee,
-                    form.specialMessage,
-                    form.recipientId
+                    newDonation.donorId,
+                    newDonation.amount,
+                    newDonation.socialURLOrBuyMeACoffee,
+                    newDonation.specialMessage,
+                    newDonation.recipientId
                   )
                 }
                 className="w-full h-12 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
