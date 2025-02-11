@@ -29,7 +29,7 @@ export default function ViewPage({
   const [isClicked, setIsClicked] = useState(false);
   const [donations, setDonations] = useState({
     donorId: "",
-    amount: 1,
+    amount: 0,
     specialMessage: "",
     socialURLOrBuyMeACoffee: "",
     recipientId: "",
@@ -113,36 +113,6 @@ export default function ViewPage({
       return true;
     }
   };
-
-  // const addDonation = async (
-  //   donorId: string,
-  //   amount: number,
-  //   specialMessage: string,
-  //   socialURLOrBuyMeACoffee: string,
-  //   recipientId: string
-  // ) => {
-  //   setStep(2);
-  //   const response = await fetch("http://localhost:5000/donation/", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-
-  //     body: JSON.stringify({
-  //       donorId,
-  //       amount,
-  //       specialMessage,
-  //       socialURLOrBuyMeACoffee,
-  //       recipientId,
-  //     }),
-  //   });
-  //   const data = await response.json();
-  //   console.log(data);
-  // };
-
-  // useEffect(() => {
-  //   // setNewDonation();
-  // }, []);
 
   return (
     <div className="w-full h-screen">

@@ -31,6 +31,55 @@ export default function ViewPageExplore(onClose: any, setStep: any) {
     recipientId: "",
   });
 
+  useEffect(() => {
+    const savedImage = localStorage.getItem("coverImage");
+    if (!savedImage) {
+      setImageUrl(savedImage);
+    }
+  }, []);
+
+  const handleSave = () => {
+    if (imageUrl) {
+      localStorage.setItem("coverImage", imageUrl);
+    }
+    setIsSaved(!isSaved);
+  };
+
+  const handleCancel = () => {
+    localStorage.removeItem("coverImage");
+    setIsSaved(false);
+    setPreviewImg(null);
+  };
+
+  const handleUploadChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "food-delivery");
+
+      setLoading(true);
+
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/do0qq0f0b/upload`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      const dataJson = await response.json();
+      setIsSaved(false);
+      setPreviewImg(dataJson.secure_url);
+    }
+  };
+
+  useEffect(() => {
+    setImageUrl(previewImg);
+  }, [isSaved, previewImg]);
   const [error, setError] = useState<{
     socialURLOrBuyMeACoffee?: string;
   }>({});
@@ -95,59 +144,6 @@ export default function ViewPageExplore(onClose: any, setStep: any) {
     console.log(data);
   };
 
-  useEffect(() => {
-    const savedImage = localStorage.getItem("coverImage");
-    if (!savedImage) {
-      setImageUrl(savedImage);
-    }
-  }, []);
-
-  const handleSave = () => {
-    if (imageUrl) {
-      localStorage.setItem("coverImage", imageUrl);
-    }
-    setIsSaved(!isSaved);
-  };
-
-  const handleCancel = () => {
-    localStorage.removeItem("coverImage");
-    setIsSaved(false);
-    setPreviewImg(null);
-  };
-
-  const handleUploadChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-
-      const data = new FormData();
-      data.append("file", file);
-      data.append("upload_preset", "food-delivery");
-
-      setLoading(true);
-
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/do0qq0f0b/upload`,
-        {
-          method: "POST",
-          body: data,
-        }
-      );
-
-      const dataJson = await response.json();
-      setIsSaved(false);
-      setPreviewImg(dataJson.secure_url);
-    }
-  };
-
-  useEffect(() => {
-    setImageUrl(previewImg);
-  }, [isSaved, previewImg]);
-
-  useEffect(() => {
-    // setNewDonation();
-  }, []);
   console.log(newDonation);
   return (
     <div className="w-full h-screen">
@@ -199,9 +195,6 @@ export default function ViewPageExplore(onClose: any, setStep: any) {
         )}
       </div>
       <div className="w-full flex justify-center gap-6 -my-20 relative">
-        {/* {newDonation?.map((donation: Donation) => (
-          <div>{donation.donorId}</div>
-        ))} */}
         <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
           <div className="min-h-[20rem] gap-3 border rounded-md p-4">
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
