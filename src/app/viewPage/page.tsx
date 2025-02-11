@@ -175,24 +175,19 @@ export default function ViewPage({
         )}
       </div>
       <div className="w-full flex justify-center gap-6 -my-20 relative">
-        {donations?.map((donation) => (
-          <div>{donation.donorId}</div>
-        ))}
-        <div className="w-[60rem] h-[50rem] bg-[#ffffff] rounded-md">
+        <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
           <div className="min-h-[20rem] gap-3 border rounded-md p-4">
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
               <div className="flex items-center gap-2">
                 <img src="Avatar-Image.png" alt="Jake" />
                 <p className="font-bold text-2xl">Jake</p>
               </div>
-              {isEdit && (
-                <button
-                  onClick={() => setModalOpen(true)}
-                  className="w-[6.25rem] rounded-md bg-[#F4F4F5] p-2"
-                >
-                  Edit page
-                </button>
-              )}
+              <button
+                onClick={() => setModalOpen(true)}
+                className="w-[6.25rem] rounded-md bg-[#F4F4F5] p-2"
+              >
+                Edit page
+              </button>
               {modalOpen && <EditProfileDialogue onClose={setModalOpen} />}
             </div>
             <div className="mt-10 ml-4">
@@ -219,11 +214,11 @@ export default function ViewPage({
             </div>
           </div>
         </div>
-        <div className="max-w-[55rem] h-[40rem] p-6 bg-[#ffffff] border rounded-md">
+        <div className="w-[40%] h-[40rem] p-6 bg-[#ffffff] border rounded-md">
           <div className="mb-4">
             <p className="text-xl font-bold mt-4">Buy Jake a Coffee</p>
             <p className="text-[#09090B] font-md mt-5">Select amount:</p>
-            <div className="flex gap-4 mt-4">
+            <div className="w-[100%] flex gap-4 mt-4 ">
               <button className="w-20 h-8 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
                 <FiCoffee /> $1
               </button>
@@ -242,7 +237,7 @@ export default function ViewPage({
             </div>
           </div>
           <div className="mb-7">
-            <p className="text-[#09090B] mt-4">
+            <p className="text-[#09090B] mt-6">
               Enter BuyMeCoffee or social account URL:
             </p>
             <input
@@ -251,19 +246,21 @@ export default function ViewPage({
               type="url"
             />
           </div>
-          <div className="mb-6">
+          <div className="mb-16">
             <p className="text-[#09090B]">Special message:</p>
             <textarea
               className="w-full h-32 border rounded-md px-4 py-2 mt-4 outline-none"
               placeholder="Please write your message here"
             />
           </div>
-          <button
-            onClick={() => addDonation()}
-            className="w-full h-12 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
-          >
-            Support
-          </button>
+          <div className="flex items-center">
+            <button
+              disabled={handleDisabled()}
+              className="w-full h-12 bg-[#71717A] text-white rounded-md font-md"
+            >
+              Support
+            </button>
+          </div>
         </div>
       </div>
     </div>

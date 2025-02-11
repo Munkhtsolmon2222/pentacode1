@@ -18,6 +18,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
 	subsets: ["latin"],
@@ -33,6 +34,7 @@ const formSchema = z.object({
 export function Login() {
 	const [type, setType] = useState("password");
 	const [error, setError] = useState("");
+	const { setUserId } = useAuth();
 
 	const router = useRouter();
 
@@ -66,6 +68,9 @@ export function Login() {
 			} else {
 				console.log("Login successful!");
 				setError("Login successful!");
+				setUserId(data.id);
+				localStorage.setItem("userId", data.id);
+				console.log(data.id);
 				router.push("/home");
 			}
 		} catch (error) {
