@@ -13,6 +13,12 @@ type Donation = {
   socialURLOrBuyMeACoffee?: string;
   recipientId: string;
 };
+type User = {
+  avatarImage: string;
+  name: string;
+  about: string;
+  socialMediaURL: string;
+};
 
 export default function ViewPage({
   onClose,
@@ -28,7 +34,26 @@ export default function ViewPage({
   const [modalOpen, setModalOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [donations, setDonations] = useState<Donation[]>([]);
+  const [userData, setUserData] = useState<User>();
+  const userId = localStorage.getItem("userId");
 
+  const fetchData = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/profile/currentuser/${userId}`
+      );
+      if (!res.ok) throw new Error("Failed to fetch user data");
+      const resJson = await res.json();
+      setUserData(resJson);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  console.log(userData);
   const addDonation = async () => {
     const response = await fetch("http://localhost:5000/donation/", {
       method: "POST",
@@ -179,8 +204,12 @@ export default function ViewPage({
           <div className="min-h-[20rem] gap-3 border rounded-md p-4">
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
               <div className="flex items-center gap-2">
-                <img src="Avatar-Image.png" alt="Jake" />
-                <p className="font-bold text-2xl">Jake</p>
+                <img
+                  className="w-6 h-6 rounded-full"
+                  src={userData?.avatarImage}
+                  alt="Jake"
+                />
+                <p className="font-bold text-2xl">{userData?.name}</p>
               </div>
               <button
                 onClick={() => setModalOpen(true)}
@@ -192,18 +221,17 @@ export default function ViewPage({
             </div>
             <div className="mt-10 ml-4">
               <p className="text-xl font-semibold">About Jake</p>
-              <p className="max-w-[39.5rem] mt-4">
-                I'm a typical person who enjoys exploring different things. I
-                also make music art as a hobby. Follow me along.
-              </p>
+              <p className="max-w-[39.5rem] mt-6">{userData?.about}</p>
             </div>
           </div>
           <div className="h-[10rem] gap-3 border rounded-md mt-4 p-4">
             <p className="font-md mt-4">Social media URL</p>
+
             <input
               className="w-full mt-4 p-2 border rounded-md outline-none"
               type="url"
               placeholder="https://buymecoffee.com/spacerulz44"
+              value={userData?.socialMediaURL}
             />
           </div>
           <div className="h-[20rem] gap-6 border rounded-md mt-4 p-4">
@@ -256,7 +284,7 @@ export default function ViewPage({
           <div className="flex items-center">
             <button
               disabled={handleDisabled()}
-              className="w-full h-12 bg-[#71717A] text-white rounded-md font-md"
+              className="w-full h-12 bg-gray-500 text-white rounded-md font-md"
             >
               Support
             </button>

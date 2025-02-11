@@ -1,6 +1,7 @@
 "use client";
 
 import EditProfileDialogue from "@/app/_components/profile/EditProfileDialogue";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CiCamera } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
@@ -30,6 +31,8 @@ export default function ViewPageExplore({
   const [isSaved, setIsSaved] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const [userData, setUserData] = useState();
+  const params = useParams();
   const [newDonation, setNewDonation] = useState({
     donorId: "",
     amount: 0,
@@ -42,6 +45,24 @@ export default function ViewPageExplore({
     socialURLOrBuyMeACoffee?: string;
   }>({});
 
+  const fetchData = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/profile/view/${params?.id}`
+      );
+      if (!res.ok) throw new Error("Failed to fetch user data");
+      const resJson = await res.json();
+      console.log(res);
+      setUserData(resJson);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  console.log(params.id);
+  useEffect(() => {
+    fetchData();
+  }, [params?.id]);
+  console.log(userData);
   const handleDisabled = () => {
     if (error.socialURLOrBuyMeACoffee == undefined) {
       return false;
@@ -206,22 +227,19 @@ export default function ViewPageExplore({
         )}
       </div>
       <div className="w-full flex justify-center gap-6 -my-20 relative">
-        {/* {newDonation?.map((donation: Donation) => (
-          <div>{donation.donorId}</div>
-        ))} */}
         <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
           <div className="min-h-[20rem] gap-3 border rounded-md p-4">
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
               <div className="flex items-center gap-2">
-                <img src="Avatar-Image.png" alt="Jake" />
-                <p className="font-bold text-2xl">Jake</p>
+                <img src={userData?.avatarImage} alt="Jake" />
+                <p className="font-bold text-2xl">{userData?.name}</p>
               </div>
 
               {modalOpen && <EditProfileDialogue onClose={setModalOpen} />}
             </div>
             <div className="mt-10 ml-4">
               <p className="text-xl font-semibold">About Jake</p>
-              <p className="max-w-[39.5rem] mt-4">
+              <p className="max-w-[39.5rem] mt-8">
                 I'm a typical person who enjoys exploring different things. I
                 also make music art as a hobby. Follow me along.
               </p>
