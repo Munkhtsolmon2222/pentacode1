@@ -1,4 +1,5 @@
 "use client";
+import ViewPageExplore from "@/app/viewPage/[id]/page";
 import ViewPage from "@/app/viewPage/page";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -9,7 +10,7 @@ export default function RecentSupportExplore() {
 	const router = useRouter();
 
 	return (
-		<div className="w-full">
+		<div className="w-[90%]">
 			{modalOpen ? (
 				<ViewPageExplore onClose={() => setModalOpen(false)} />
 			) : (

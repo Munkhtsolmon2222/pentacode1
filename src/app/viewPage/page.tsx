@@ -14,14 +14,6 @@ type Donation = {
 	recipientId: string;
 };
 
-type Donation = {
-	donorId: string;
-	amount: number;
-	specialMessage: string;
-	socialURLOrBuyMeACoffee: string;
-	recipientId: string;
-};
-
 export default function ViewPage({
 	onClose,
 	setStep,
