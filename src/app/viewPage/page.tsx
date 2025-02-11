@@ -14,29 +14,12 @@ type Donation = {
   recipientId: string;
 };
 
-<<<<<<< HEAD
-type Donation = {
-  donorId: string;
-  amount: number;
-  specialMessage: string;
-  socialURLOrBuyMeACoffee: string;
-  recipientId: string;
-};
-
-export default function ViewPage({
-  onClose,
-  setStep,
-}: {
-  onClose: any;
-  setStep: any;
-=======
 export default function ViewPage({
   onClose,
   isEdit,
 }: {
   onClose: any;
   isEdit: boolean;
->>>>>>> main
 }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [previewImg, setPreviewImg] = useState(null);
@@ -44,15 +27,6 @@ export default function ViewPage({
   const [isSaved, setIsSaved] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
-<<<<<<< HEAD
-  const [donations, setDonations] = useState({
-    donorId: "",
-    amount: 1,
-    specialMessage: "",
-    socialURLOrBuyMeACoffee: "",
-    recipientId: "",
-  });
-=======
   const [donations, setDonations] = useState<Donation[]>([]);
 
   const addDonation = async () => {
@@ -71,7 +45,6 @@ export default function ViewPage({
   useEffect(() => {
     setDonations([]);
   }, []);
->>>>>>> main
 
   useEffect(() => {
     const savedImage = localStorage.getItem("coverImage");

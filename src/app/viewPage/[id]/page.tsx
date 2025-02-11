@@ -15,8 +15,15 @@ type Donation = {
   socialURLOrBuyMeACoffee?: string;
   recipientId: string;
 };
+type ViewPageExploreProps = {
+  onClose: () => void;
+  setStep?: (step: number) => void;
+};
 
-export default function ViewPageExplore(onClose: any, setStep: any) {
+export default function ViewPageExplore({
+  onClose,
+  setStep,
+}: ViewPageExploreProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [previewImg, setPreviewImg] = useState(null);
   const [loading, setLoading] = useState(false);
