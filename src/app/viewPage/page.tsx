@@ -114,36 +114,6 @@ export default function ViewPage({
     }
   };
 
-  // const addDonation = async (
-  //   donorId: string,
-  //   amount: number,
-  //   specialMessage: string,
-  //   socialURLOrBuyMeACoffee: string,
-  //   recipientId: string
-  // ) => {
-  //   setStep(2);
-  //   const response = await fetch("http://localhost:5000/donation/", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-
-  //     body: JSON.stringify({
-  //       donorId,
-  //       amount,
-  //       specialMessage,
-  //       socialURLOrBuyMeACoffee,
-  //       recipientId,
-  //     }),
-  //   });
-  //   const data = await response.json();
-  //   console.log(data);
-  // };
-
-  // useEffect(() => {
-  //   // setNewDonation();
-  // }, []);
-
   return (
     <div className="w-full h-screen">
       <div className="w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center">
