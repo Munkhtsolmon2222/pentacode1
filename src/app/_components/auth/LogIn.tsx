@@ -70,7 +70,7 @@ export function Login() {
         setError("Login successful!");
         setUserId(data.id);
         localStorage.setItem("userId", data.id);
-        console.log(data.id);
+        console.log(data.data.accessToken);
         router.push("/home");
       }
     } catch (error) {
