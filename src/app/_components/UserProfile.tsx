@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { User } from "../constants/type";
-// import RecentSupport from "./supporters/RecentSupportersHome";
+import RecentSupport from "./supporters/RecentSupportersHome";
 export default function UserProfile() {
   const [userData, setUserData] = useState<User>();
   const userId = localStorage.getItem("userId");
