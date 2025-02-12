@@ -1,28 +1,24 @@
 "use client";
 
 import EditProfileDialogue from "@/app/_components/profile/EditProfileDialogue";
+import { User } from "@/app/constants/type";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CiCamera } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { FiCoffee } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
-import { number, z } from "zod";
+import { z } from "zod";
 
-type Donation = {
-  donorId: string;
-  amount: number;
-  specialMessage?: string;
-  socialURLOrBuyMeACoffee?: string;
-  recipientId: string;
-};
-
-export default function ViewPageExplore(onClose: any, setStep: any) {
+export default function ViewPageExplore() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [previewImg, setPreviewImg] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const [userData, setUserData] = useState<User>();
+  const params = useParams();
   const [newDonation, setNewDonation] = useState({
     donorId: "",
     amount: 0,
@@ -84,6 +80,24 @@ export default function ViewPageExplore(onClose: any, setStep: any) {
     socialURLOrBuyMeACoffee?: string;
   }>({});
 
+  const fetchData = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/profile/view/${params?.id}`
+      );
+      if (!res.ok) throw new Error("Failed to fetch user data");
+      const resJson = await res.json();
+      console.log(res);
+      setUserData(resJson);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  console.log(params.id);
+  useEffect(() => {
+    fetchData();
+  }, [params?.id]);
+  console.log(userData);
   const handleDisabled = () => {
     if (error.socialURLOrBuyMeACoffee == undefined) {
       return false;
@@ -146,7 +160,7 @@ export default function ViewPageExplore(onClose: any, setStep: any) {
 
   console.log(newDonation);
   return (
-    <div className="w-full h-screen">
+    <div className="w-full min-h-screen">
       <div className="w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center">
         {previewImg ? (
           <div
@@ -199,18 +213,15 @@ export default function ViewPageExplore(onClose: any, setStep: any) {
           <div className="min-h-[20rem] gap-3 border rounded-md p-4">
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
               <div className="flex items-center gap-2">
-                <img src="Avatar-Image.png" alt="Jake" />
-                <p className="font-bold text-2xl">Jake</p>
+                <img src={userData?.avatarImage} alt="Jake" />
+                <p className="font-bold text-2xl">{userData?.name}</p>
               </div>
 
               {modalOpen && <EditProfileDialogue onClose={setModalOpen} />}
             </div>
             <div className="mt-10 ml-4">
-              <p className="text-xl font-semibold">About Jake</p>
-              <p className="max-w-[39.5rem] mt-4">
-                I'm a typical person who enjoys exploring different things. I
-                also make music art as a hobby. Follow me along.
-              </p>
+              <p className="text-xl font-semibold">About {userData?.name}</p>
+              <p className="max-w-[39.5rem] mt-8">{userData?.about}</p>
             </div>
           </div>
           <div className="h-[10rem] gap-3 border rounded-md mt-4 p-4">
@@ -219,32 +230,37 @@ export default function ViewPageExplore(onClose: any, setStep: any) {
               className="w-full mt-4 p-2 border rounded-md outline-none"
               type="url"
               placeholder="https://buymecoffee.com/spacerulz44"
+              value={userData?.socialMediaURL}
             />
           </div>
           <div className="h-[20rem] gap-6 border rounded-md mt-4 p-4">
             <p className="font-md mt-4">Recent Supporters</p>
             <div className="w-full min-h-[10rem] border rounded-md mt-6 flex flex-col items-center justify-center">
               <FaHeart />
-              <p className="mt-2">Be the first one to support Jake</p>
+              <p className="mt-2">
+                Be the first one to support {userData?.name}
+              </p>
             </div>
           </div>
         </div>
-        <div className="w-[40%] h-[40rem] p-6 bg-[#ffffff] border rounded-md">
+        <div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
           <div className="mb-4">
-            <p className="text-xl font-bold mt-4">Buy Jake a Coffee</p>
+            <p className="text-xl font-bold mt-4">
+              Buy {userData?.name} a Coffee
+            </p>
             <p className="text-[#09090B] font-md mt-5">Select amount:</p>
-            <div className="w-[100%] flex gap-4 mt-4 ">
-              <button className="w-20 h-8 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+            <div className="w-[100%] flex gap-4 mt-4">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
                 <FiCoffee /> $1
               </button>
-              <button className="w-20 h-8 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
                 <FiCoffee /> $2
               </button>
-              <button className="w-20 h-8 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
                 <FiCoffee />
                 $5
               </button>
-              <button className="w-20 h-8 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
                 {" "}
                 <FiCoffee />
                 $10
@@ -256,7 +272,7 @@ export default function ViewPageExplore(onClose: any, setStep: any) {
               Enter BuyMeCoffee or social account URL:
             </p>
             <input
-              className={`w-full h-12 border rounded-md px-4 mt-4 outline-none ${
+              className={`w-full p-2 border rounded-md px-4 mt-4 outline-none ${
                 error.socialURLOrBuyMeACoffee ? "border-red-500" : ""
               }`}
               placeholder="bymecoffee@gmail.com"
@@ -271,10 +287,10 @@ export default function ViewPageExplore(onClose: any, setStep: any) {
               </div>
             )}
           </div>
-          <div className="mb-16">
+          <div className="mb-10">
             <p className="text-[#09090B]">Special message:</p>
             <textarea
-              className="w-full h-32 border rounded-md px-4 py-2 mt-4 outline-none"
+              className="w-full border rounded-md px-4 py-2 mt-4 outline-none"
               placeholder="Please write your message here"
             />
           </div>
@@ -291,14 +307,14 @@ export default function ViewPageExplore(onClose: any, setStep: any) {
                     newDonation.recipientId
                   )
                 }
-                className="w-full h-12 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
+                className="w-full p-2 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
               >
                 Support
               </button>
             ) : (
               <button
                 onClick={() => setIsClicked(true)}
-                className="w-full h-12 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
+                className="w-full p-2 bg-[#18181B] opacity-20 text-white rounded-md font-md hover:bg-[#18181B]"
               >
                 Support
               </button>

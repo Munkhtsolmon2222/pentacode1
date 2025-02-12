@@ -5,35 +5,38 @@ import { CiCamera } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { FiCoffee } from "react-icons/fi";
 import EditProfileDialogue from "../_components/profile/EditProfileDialogue";
+import { User } from "../constants/type";
 
-type Donation = {
-  donorId: string;
-  amount: number;
-  specialMessage: string;
-  socialURLOrBuyMeACoffee: string;
-  recipientId: string;
-};
-
-export default function ViewPage({
-  onClose,
-  setStep,
-}: {
-  onClose: any;
-  setStep: any;
-}) {
+export default function ViewPage({}: { onClose: any }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [previewImg, setPreviewImg] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
-  const [donations, setDonations] = useState({
-    donorId: "",
-    amount: 0,
-    specialMessage: "",
-    socialURLOrBuyMeACoffee: "",
-    recipientId: "",
-  });
+  const [userData, setUserData] = useState<User>();
+  const userId = localStorage.getItem("userId");
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/profile/currentuser/${userId}`
+      );
+      if (!res.ok) throw new Error("Failed to fetch user data");
+      const resJson = await res.json();
+      setUserData(resJson);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  console.log(userData);
+
+  // useEffect(() => {
+  //   setDonations([]);
+  // }, []);
 
   useEffect(() => {
     const savedImage = localStorage.getItem("coverImage");
@@ -92,28 +95,6 @@ export default function ViewPage({
     recipientId: "",
   });
 
-  const [error, setError] = useState<{
-    donorId?: string;
-    amount?: number;
-    specialMessage?: string;
-    socialURLOrBuyMeACoffee?: string;
-    recipientId?: string;
-  }>({});
-
-  const handleDisabled = () => {
-    if (
-      error.donorId == undefined &&
-      error.amount == undefined &&
-      error.specialMessage == undefined &&
-      error.socialURLOrBuyMeACoffee == undefined &&
-      error.recipientId == undefined
-    ) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
   return (
     <div className="w-full h-screen">
       <div className="w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center">
@@ -164,61 +145,68 @@ export default function ViewPage({
         )}
       </div>
       <div className="w-full flex justify-center gap-6 -my-20 relative">
-        <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
-          <div className="min-h-[20rem] gap-3 border rounded-md p-4">
+        <div className="w-[45%] bg-[#ffffff] rounded-md">
+          <div className="gap-3 border rounded-md p-4">
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
               <div className="flex items-center gap-2">
-                <img src="Avatar-Image.png" alt="Jake" />
-                <p className="font-bold text-2xl">Jake</p>
+                <img
+                  className="w-6 h-6 rounded-full"
+                  src={userData?.avatarImage}
+                  alt="Jake"
+                />
+                <p className="font-bold text-2xl">{userData?.name}</p>
               </div>
               <button
                 onClick={() => setModalOpen(true)}
-                className="w-[6.25rem] rounded-md bg-[#F4F4F5] p-2"
+                className="w-[18%] rounded-md bg-[#F4F4F5] p-2"
               >
                 Edit page
               </button>
               {modalOpen && <EditProfileDialogue onClose={setModalOpen} />}
             </div>
             <div className="mt-10 ml-4">
-              <p className="text-xl font-semibold">About Jake</p>
-              <p className="max-w-[39.5rem] mt-4">
-                I'm a typical person who enjoys exploring different things. I
-                also make music art as a hobby. Follow me along.
-              </p>
+              <p className="text-xl font-semibold">About {userData?.name}</p>
+              <p className="max-w-[80%] my-4">{userData?.about}</p>
             </div>
           </div>
-          <div className="h-[10rem] gap-3 border rounded-md mt-4 p-4">
+          <div className=" gap-3 border rounded-md mt-4 p-4">
             <p className="font-md mt-4">Social media URL</p>
+
             <input
               className="w-full mt-4 p-2 border rounded-md outline-none"
               type="url"
               placeholder="https://buymecoffee.com/spacerulz44"
+              value={userData?.socialMediaURL}
             />
           </div>
-          <div className="h-[20rem] gap-6 border rounded-md mt-4 p-4">
+          <div className=" gap-6 border rounded-md mt-4 p-4">
             <p className="font-md mt-4">Recent Supporters</p>
             <div className="w-full min-h-[10rem] border rounded-md mt-6 flex flex-col items-center justify-center">
               <FaHeart />
-              <p className="mt-2">Be the first one to support Jake</p>
+              <p className="mt-2">
+                Be the first one to support {userData?.name}
+              </p>
             </div>
           </div>
         </div>
-        <div className="w-[40%] h-[40rem] p-6 bg-[#ffffff] border rounded-md">
+        <div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
           <div className="mb-4">
-            <p className="text-xl font-bold mt-4">Buy Jake a Coffee</p>
+            <p className="text-xl font-bold mt-4">
+              Buy {userData?.name} a Coffee
+            </p>
             <p className="text-[#09090B] font-md mt-5">Select amount:</p>
             <div className="w-[100%] flex gap-4 mt-4 ">
-              <button className="w-20 h-8 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
                 <FiCoffee /> $1
               </button>
-              <button className="w-20 h-8 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
                 <FiCoffee /> $2
               </button>
-              <button className="w-20 h-8 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
                 <FiCoffee />
                 $5
               </button>
-              <button className="w-20 h-8 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
                 {" "}
                 <FiCoffee />
                 $10
@@ -230,23 +218,20 @@ export default function ViewPage({
               Enter BuyMeCoffee or social account URL:
             </p>
             <input
-              className="w-full h-12 border rounded-md px-4 mt-4 outline-none"
+              className="w-full border rounded-md p-2 mt-4 outline-none"
               placeholder="bymecoffee@gmail.com"
               type="url"
             />
           </div>
-          <div className="mb-16">
+          <div className="mb-10">
             <p className="text-[#09090B]">Special message:</p>
             <textarea
-              className="w-full h-32 border rounded-md px-4 py-2 mt-4 outline-none"
+              className="w-full border rounded-md px-4 py-2 mt-4 outline-none"
               placeholder="Please write your message here"
             />
           </div>
-          <div className="flex items-center">
-            <button
-              disabled={handleDisabled()}
-              className="w-full h-12 bg-[#71717A] text-white rounded-md font-md"
-            >
+          <div className="flex items-center mt-4">
+            <button className="w-full bg-gray-300 text-white rounded-md font-md p-2">
               Support
             </button>
           </div>
