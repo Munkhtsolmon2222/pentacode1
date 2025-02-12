@@ -5,7 +5,7 @@ import Header from "./Header";
 
 export default function HeaderWrapper() {
   const pathname = usePathname();
-  const hideHeader = ["/login", "/signup", "/forgotPassword"].includes(
+  const hideHeader = ["/login", "/signup", "/forgot-password"].includes(
     pathname
   );
 
