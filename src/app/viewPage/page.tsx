@@ -158,7 +158,7 @@ export default function ViewPage({}: { onClose: any }) {
               </div>
               <button
                 onClick={() => setModalOpen(true)}
-                className="w-[18%] rounded-md bg-[#F4F4F5] p-2"
+                className="w-[12%] rounded-md bg-[#F4F4F5] p-2"
               >
                 Edit page
               </button>

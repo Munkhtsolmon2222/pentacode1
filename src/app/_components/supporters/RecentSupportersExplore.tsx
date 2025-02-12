@@ -1,14 +1,7 @@
 "use client";
+import { Creator } from "@/app/constants/type";
 import Link from "next/link";
 import { FiExternalLink } from "react-icons/fi";
-
-interface Creator {
-  id: string;
-  avatarImage: string;
-  name: string;
-  about: string;
-  socialMediaURL: string;
-}
 
 export default function RecentSupportExplore({
   creator,
@@ -17,7 +10,7 @@ export default function RecentSupportExplore({
 }) {
   return (
     <div className="w-[90%]">
-      <div className="w-full mx-auto mt-16 p-5 max-h-56 border border-solid rounded-lg">
+      <div className="w-[90%] mx-auto mt-16 p-5 max-h-56 border border-solid rounded-lg">
         <div className="flex justify-between">
           <div className="flex gap-3 items-center">
             <img className="w-6 h-6 rounded-full" src={creator?.avatarImage} />

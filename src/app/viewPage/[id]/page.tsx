@@ -8,7 +8,7 @@ import { CiCamera } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { FiCoffee } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
-import { z } from "zod";
+import { string, z } from "zod";
 
 export default function ViewPageExplore() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -26,6 +26,7 @@ export default function ViewPageExplore() {
     socialURLOrBuyMeACoffee: "",
     recipientId: "",
   });
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const savedImage = localStorage.getItem("coverImage");
@@ -128,13 +129,26 @@ export default function ViewPageExplore() {
     setNewDonation(Update);
     console.log(Update);
   };
+
+  const onChangeAmount = (amount: number) => {
+    // Update the amount in newDonation state
+    setNewDonation((prev) => ({ ...prev, amount }));
+  };
+
+  const onChangeMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    // Update the specialMessage in newDonation state
+    const { value } = e.target;
+    setNewDonation((prev) => ({ ...prev, specialMessage: value }));
+  };
+
   const viewPageSchema = z.object({
     socialURLOrBuyMeACoffee: z
       .string()
       .includes(".com", { message: "Please enter a valid social link" }),
   });
+
   const addDonation = async (
-    donorId: string,
+    donorId: any,
     amount: number,
     specialMessage: string,
     socialURLOrBuyMeACoffee: string,
@@ -212,7 +226,7 @@ export default function ViewPageExplore() {
         <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
           <div className="min-h-[20rem] gap-3 border rounded-md p-4">
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
-              <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full flex items-center gap-2">
                 <img src={userData?.avatarImage} alt="Jake" />
                 <p className="font-bold text-2xl">{userData?.name}</p>
               </div>
@@ -250,20 +264,29 @@ export default function ViewPageExplore() {
             </p>
             <p className="text-[#09090B] font-md mt-5">Select amount:</p>
             <div className="w-[100%] flex gap-4 mt-4">
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button
+                onClick={() => onChangeAmount(1)}
+                className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
+              >
                 <FiCoffee /> $1
               </button>
-              <button className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button
+                onClick={() => onChangeAmount(2)}
+                className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
+              >
                 <FiCoffee /> $2
               </button>
-              <button className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
-                <FiCoffee />
-                $5
+              <button
+                onClick={() => onChangeAmount(5)}
+                className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
+              >
+                <FiCoffee /> $5
               </button>
-              <button className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
-                {" "}
-                <FiCoffee />
-                $10
+              <button
+                onClick={() => onChangeAmount(10)}
+                className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
+              >
+                <FiCoffee /> $10
               </button>
             </div>
           </div>
@@ -272,24 +295,20 @@ export default function ViewPageExplore() {
               Enter BuyMeCoffee or social account URL:
             </p>
             <input
-              className={`w-full p-2 border rounded-md px-4 mt-4 outline-none ${
-                error.socialURLOrBuyMeACoffee ? "border-red-500" : ""
-              }`}
+              className={`w-full p-2 border rounded-md px-4 mt-4 outline-none 
+              
+              `}
               placeholder="bymecoffee@gmail.com"
               type="url"
-              name="mail"
+              name="socialURLOrBuyMeACoffee"
               onChange={onChange}
             />
-            {error.socialURLOrBuyMeACoffee && (
-              <div className="text-red-500 text-sm flex items-center gap-1 pt-2">
-                <VscError />
-                {error.socialURLOrBuyMeACoffee}
-              </div>
-            )}
           </div>
           <div className="mb-10">
             <p className="text-[#09090B]">Special message:</p>
             <textarea
+              onChange={onChangeMessage}
+              value={newDonation.specialMessage || ""}
               className="w-full border rounded-md px-4 py-2 mt-4 outline-none"
               placeholder="Please write your message here"
             />
@@ -300,11 +319,11 @@ export default function ViewPageExplore() {
                 disabled={handleDisabled()}
                 onClick={() =>
                   addDonation(
-                    newDonation.donorId,
+                    userId,
                     newDonation.amount,
-                    newDonation.socialURLOrBuyMeACoffee,
                     newDonation.specialMessage,
-                    newDonation.recipientId
+                    newDonation.socialURLOrBuyMeACoffee,
+                    userData?.userId
                   )
                 }
                 className="w-full p-2 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
