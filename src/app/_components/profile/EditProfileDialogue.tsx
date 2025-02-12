@@ -19,12 +19,13 @@ export default function EditProfileDialogue({ onClose }: any) {
 			.string()
 			.startsWith("https://", { message: "Please enter a valid social link" }),
 	});
-
+	const [userData, setUserData] = useState<any>(null);
+	const userId = localStorage.getItem("userId");
 	const [form, setForm] = useState({
-		photo: "",
-		name: "",
-		about: "",
-		socialMedia: "",
+		photo: userData?.avatarImage,
+		name: userData?.name,
+		about: userData?.about,
+		socialMedia: userData?.socialMediaURL,
 	});
 
 	const [error, setError] = useState<{
@@ -36,9 +37,6 @@ export default function EditProfileDialogue({ onClose }: any) {
 
 	const [isClicked, setIsClicked] = useState(false);
 	const [imageUrl, setImageUrl] = useState<string>("");
-
-	const [userData, setUserData] = useState<User>();
-	const userId = localStorage.getItem("userId");
 
 	const fetchUserData = async () => {
 		try {
