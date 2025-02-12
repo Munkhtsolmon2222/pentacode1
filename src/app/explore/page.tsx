@@ -2,14 +2,8 @@
 import { useEffect, useState } from "react";
 import RecentSupportExplore from "../_components/supporters/RecentSupportersExplore";
 import { SearchIcon, UserIcon } from "lucide-react";
+import { Creator } from "../constants/type";
 
-type Creator = {
-  id: string;
-  name: string;
-  avatarImage: string;
-  about: string;
-  socialMediaURL: string;
-};
 export default function Explore() {
   const [creators, setCreators] = useState<Creator[]>([]);
 
@@ -34,7 +28,7 @@ export default function Explore() {
         <h4 className="text-2xl font-bold text-[#18181B] mt-10">
           Explore creators
         </h4>
-        <div className="w-[243px] mt-4 pl-2 flex items-center border rounded-lg">
+        <div className="w-[230px] mt-4 pl-2 flex items-center border rounded-lg">
           <SearchIcon className="text-[#71717A]" />
           <input
             type="text"

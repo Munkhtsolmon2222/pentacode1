@@ -26,7 +26,7 @@ export default function Header() {
   console.log(userData);
   return (
     <div>
-      <div className="py-4 flex justify-between w-[90%] mx-auto mb-4">
+      <div className="py-4 flex justify-between w-[90%] mx-20 mb-4">
         <div className="flex gap-2 items-center font-bold">
           <Link href="/">
             <div className="flex gap-2 items-center font-bold h-10">
