@@ -72,15 +72,13 @@ export function ForgotPassword() {
   const addUser = async (username: string, email: string, password: string) => {
     console.log("calling");
     try {
-      const user = await fetch("http://localhost:5000/auth/sign-up", {
+      const user = await fetch("http://localhost:5000/auth/forgot-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username,
           email,
-          password,
         }),
       });
       const response = await user.json();
@@ -119,7 +117,6 @@ export function ForgotPassword() {
                   handleUsernameCheck();
                 }}
               />
-
               {responses && (
                 <div className="block mx-auto w-[90%] text-red-500 text-[12px]">
                   {responses?.message}
