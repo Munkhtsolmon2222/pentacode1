@@ -143,6 +143,11 @@ export function Login() {
                     {error == "Password is incorrect." && (
                       <div className="block mx-auto w-[90%] text-red-500 text-[12px]">
                         {error}
+                        <Link href="/forgotPassword">
+                          <p className="text-black hover:underline">
+                            Forgot password?
+                          </p>
+                        </Link>
                       </div>
                     )}
                   </FormItem>
