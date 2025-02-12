@@ -2,6 +2,9 @@
 import { useState } from "react";
 import EditBankCard from "../_components/bank/EditBankCard";
 import EditProfile from "../_components/profile/EditProfile";
+import { SideBar } from "../_components/Sidebar";
+
+import SidebarWrapper from "../_components/SideBarWrapper";
 
 export default function AccountSettings() {
 	const userId = localStorage.getItem("userId");
@@ -61,7 +64,8 @@ export default function AccountSettings() {
 
 	return (
 		<div className="pb-28">
-			<h3 className="font-bold ">My account</h3>
+			<SideBar />
+			<h3 className="font-bold max-w-lg mx-auto py-10 text-2xl ">My account</h3>
 			<EditProfile />
 			<div className="max-w-lg mx-auto border border-[#E4E4E7] rounded-lg mt-8">
 				<p className="p-6 font-bold"> Set a new password</p>
