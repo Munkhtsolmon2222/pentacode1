@@ -12,6 +12,10 @@ type Creator = {
 };
 export default function Explore() {
   const [creators, setCreators] = useState<Creator[]>([]);
+  const [search, setSearch] = useState("");
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
 
   const fetchData = async () => {
     try {
@@ -28,6 +32,9 @@ export default function Explore() {
     fetchData();
   }, []);
   console.log(creators);
+  const filteredCreators = creators.filter((user) =>
+    user.name.toLowerCase().includes(search.toLowerCase())
+  );
   return (
     <div className="w-[80%] fixed right-0 top-0 ml-8 h-screen bg-gray-primary text-black p-4 overflow-y-auto custom-scrollbar">
       <div className="w-full gap-6 flex flex-col mt-10">
@@ -35,18 +42,19 @@ export default function Explore() {
           Explore creators
         </h4>
         <div className="w-[243px] mt-4 pl-2 flex items-center border rounded-lg">
-          <SearchIcon className="text-[#71717A]" />
+          <SearchIcon className="text-[#71717A] h-4 w-4" />
           <input
             type="text"
             placeholder="Search name"
-            className="outline-none pl-2 text-[#71717A] min-w-[243px] h-[36px]"
+            onChange={onChange}
+            className="outline-none pl-2 text-[#71717A] h-[36px]"
           />
         </div>
       </div>
-      {creators ? (
+      {filteredCreators.length > 0 ? (
         <div className="w-full gap-6">
-          {creators?.map((creator: Creator) => (
-            <RecentSupportExplore key={creator?.id} creator={creator} />
+          {filteredCreators.map((creator) => (
+            <RecentSupportExplore key={creator.id} creator={creator} />
           ))}
         </div>
       ) : (
@@ -55,7 +63,7 @@ export default function Explore() {
             <div className="flex items-center justify-center bg-[#F4F4F5] rounded-full w-[64px] h-[64px] ">
               <UserIcon />
             </div>
-            <p className=" text-lg">No creators have signed up yet</p>
+            <p className=" text-lg">No creators found</p>
           </div>
         </div>
       )}

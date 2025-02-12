@@ -24,20 +24,21 @@ export default function RecentSupportExplore({
             <h4 className="font-semibold">{creator.name}</h4>
           </div>
           <Link href={`/viewPage/${creator?.id}`}>
-            {" "}
             <button className="flex max-h-10 items-center gap-3 p-4 bg-[#f4f4f5] rounded-md">
               View profile <FiExternalLink />
             </button>
           </Link>
         </div>
         <div className="flex pt-5 gap-5">
-          <div>
+          <div className="lg:w-[420px] md:w-[300px]">
             <h4 className="font-bold pr-6">About {creator?.name}</h4>
             <p className="max-w-[420px] pt-4">{creator?.about}</p>
           </div>
-          <div className="right-0">
-            <h4 className="font-semibold">Social Media URL</h4>
-            <p className="pt-2">{creator?.socialMediaURL}</p>
+          <div className="max-w-[420px] items-start">
+            <div>
+              <h4 className="font-semibold ">Social Media URL</h4>
+              <p className="pt-2">{creator?.socialMediaURL}</p>
+            </div>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LuCoffee } from "react-icons/lu";
 import { User } from "../constants/type";
+import { IoIosArrowDown } from "react-icons/io";
 export default function Header() {
   const [userData, setUserData] = useState<User>();
   const userId = localStorage.getItem("userId");
@@ -35,9 +36,14 @@ export default function Header() {
             </div>
           </Link>
         </div>
-        <div className="w-6 h-6 rounded-full flex items-center gap-4">
-          <img src={userData?.avatarImage} />
-          <h4>{userData?.name}</h4>
+        <div className="flex justify-between items-center max-w-[168px]">
+          <div className="w-10 h-10 rounded-full flex items-center gap-2">
+            <img className="rounded-full" src={userData?.avatarImage} />
+            <h4>{userData?.name}</h4>
+          </div>
+          <h3>
+            <IoIosArrowDown className="w-5 h-5" />
+          </h3>
         </div>
       </div>
     </div>
