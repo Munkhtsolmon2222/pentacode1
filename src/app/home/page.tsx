@@ -10,7 +10,7 @@ export default function Home() {
 	const fetchData = async () => {
 		try {
 			const res = await fetch(
-				`http://localhost:5000/donation/recieved/${userId}`
+				`http://localhost:5000/donation/received/${userId}`
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");
 			const resJson = await res.json();
