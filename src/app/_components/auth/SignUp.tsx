@@ -89,8 +89,10 @@ export function SignUp() {
 			} else {
 				setResponses(response);
 			}
+
 			console.log(response);
 			if (response.message == "Successfully added") {
+				localStorage.setItem("userId", response.id);
 				router.push(`/profileSetup/${response.id}`);
 			}
 		} catch (error) {

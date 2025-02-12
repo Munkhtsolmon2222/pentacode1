@@ -9,7 +9,7 @@ export default function SidebarWrapper() {
     "/viewPage",
     "/login",
     "/signup",
-    "/forgotPassword",
+    "/accountSettings",
   ].includes(pathname);
 
   if (hideSidebar) return null;
