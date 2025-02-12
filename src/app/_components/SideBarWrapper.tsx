@@ -16,6 +16,8 @@ export default function SidebarWrapper() {
   console.log(userId);
 
   if (hideSidebar) return null;
+  if (hideSidebar) return null;
 
+  return <SideBar />;
   return <SideBar />;
 }
