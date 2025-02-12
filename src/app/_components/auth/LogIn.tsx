@@ -145,7 +145,7 @@ export function Login() {
                     {error == "Password is incorrect." && (
                       <div className="block mx-auto w-[90%] text-red-500 text-[12px]">
                         {error}
-                        <Link href="/forgotPassword">
+                        <Link href="/forgot-password">
                           <p className="text-black hover:underline">
                             Forgot password?
                           </p>

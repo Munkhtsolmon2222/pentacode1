@@ -2,7 +2,6 @@
 
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Input } from "@/components/ui/input";
-import { useFormik } from "formik";
 import { useState } from "react";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -11,111 +10,172 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
 });
 
-export type response = {
-  message: string;
-  id: string;
-};
-
 export function ForgotPassword() {
-  const [responses, setResponses] = useState();
+  const [responses, setResponses] = useState<string | null>(null);
   const [userOtp, setUserOtp] = useState("");
+  const [email, setEmail] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-    },
-    onSubmit: (values) => {
-      console.log(JSON.stringify(values, null, 2));
-    },
-  });
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    setResponses(null);
+    setOtpSent(false);
+  };
 
-  console.log(userOtp);
-
-  const verifyEmail = async (email: string) => {
-    console.log("calling");
+  const verifyEmail = async () => {
+    setResponses(null);
     try {
-      const user = await fetch("http://localhost:5000/auth/forgot-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-        }),
-      });
-      const response = await user.json();
-      console.log(response);
-      if (response.message == "User not found") {
-        // handleContinue();
-      } else {
-        setResponses(response.message);
-      }
-      console.log(response);
-      if (response.message == "OTP sent successfully") {
-        // router.push(`/profileSetup/${response.id}`);
-        setResponses(response.message);
+      const response = await fetch(
+        "http://localhost:5000/auth/forgot-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      const data = await response.json();
+      setResponses(data.message);
+
+      if (data.message === "OTP sent successfully") {
+        setOtpSent(true);
       }
     } catch (error) {
-      console.error("Error verifing email:", error);
+      console.error("Error verifying email:", error);
     }
   };
 
-  const checkOtp = async (userOtp: number) => {
-    const response = await fetch("http://localhost:5000/auth/verifyOtp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userOtp }),
-    });
+  const verifyOtp = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, otp: userOtp }),
+      });
 
-    const data = await response.json();
-    return data;
+      const data = await response.json();
+      if (data.message === "OTP verified successfully") {
+        setOtpVerified(true);
+        setResponses(null);
+      } else {
+        setResponses("Invalid or expired OTP");
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+    }
+  };
+
+  const changePassword = async () => {
+    if (password !== confirmPassword) {
+      setResponses("Passwords do not match");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/auth/reset-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      const data = await response.json();
+      setResponses(data.message);
+    } catch (error) {
+      console.error("Error resetting password:", error);
+    }
   };
 
   return (
     <div className={`${plusJakartaSans.variable} font-sans`}>
-      <div className="max-w-md mx-auto mt-[160px] text-black">
+      <div className="mx-auto mt-[160px] text-black w-[90%]">
         <div className="h-auto rounded-xl p-[20px] space-y-">
-          <form onSubmit={formik.handleSubmit}>
-            <b className="text-[24px]">Forgot your password</b>
-            <p className="text-[12px] text-gray-500">Enter you email address</p>
-            <label htmlFor="email">Email Address</label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              onChange={formik.handleChange}
-              value={formik.values.email}
-            />
+          <b className="text-[24px]">Forgot your password</b>
 
-            {responses && (
-              <div className="block mx-auto w-[90%] text-red-500 text-[12px]">
-                {responses}
-              </div>
-            )}
-            {responses == "OTP sent successfully" && (
+          {!otpVerified ? (
+            <>
+              <p className="text-[12px] text-gray-500">
+                Enter your email address
+              </p>
               <Input
-                id="OTP"
-                name="One time password"
-                type="number"
-                onChange={(e) => setUserOtp(e.target.value)}
-                value={userOtp}
+                id="email"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={handleEmailChange}
               />
-            )}
+              {responses && (
+                <div className="text-red-500 text-[12px]">{responses}</div>
+              )}
 
-            <button
-              className="block mx-auto w-full box-border p-2 rounded-xl mt-[20px] bg-primary text-white"
-              disabled={!formik.values.email}
-              onClick={() => {
-                if (formik.values.email) {
-                  verifyEmail(formik.values.email);
-                }
-              }}
-            >
-              Continue
-            </button>
-          </form>
+              {!otpSent && (
+                <button
+                  className="block mx-auto w-full p-2 rounded-xl mt-4 bg-primary text-white"
+                  onClick={verifyEmail}
+                  disabled={!email}
+                >
+                  Send OTP
+                </button>
+              )}
+
+              {otpSent && (
+                <>
+                  <p className="text-[12px] text-gray-500">
+                    Enter the OTP sent to your email
+                  </p>
+                  <Input
+                    id="otp"
+                    type="number"
+                    placeholder="Enter OTP"
+                    value={userOtp}
+                    onChange={(e) => setUserOtp(e.target.value)}
+                  />
+                  <button
+                    className="block mx-auto w-full p-2 rounded-xl mt-2 bg-green-500 text-white"
+                    onClick={verifyOtp}
+                  >
+                    Verify OTP
+                  </button>
+                </>
+              )}
+            </>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-[12px] text-gray-500">
+                Enter your new password
+              </p>
+              <Input
+                id="password"
+                type="password"
+                placeholder="New Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              {responses && (
+                <div className="text-red-500 text-[12px]">{responses}</div>
+              )}
+
+              <button
+                className="block mx-auto w-full p-2 rounded-xl mt-4 bg-green-500 text-white"
+                onClick={changePassword}
+                disabled={!password || !confirmPassword}
+              >
+                Change Password
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
