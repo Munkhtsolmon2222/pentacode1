@@ -1,11 +1,13 @@
 "use client";
 import { request } from "http";
 import Lottie from "lottie-react";
-import imgLoading from "./imgLoading.json";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import loading from "./loading.json";
+import "react-lazy-load-image-component/src/effects/blur.css";
 import { z } from "zod";
 
 export default function CreateProfile({ setStep }: any) {
@@ -35,7 +37,7 @@ export default function CreateProfile({ setStep }: any) {
     socialMedia?: string;
   }>({});
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsloading] = useState(false);
 
   const [isClicked, setIsClicked] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -69,7 +71,6 @@ export default function CreateProfile({ setStep }: any) {
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      setLoading(true);
       const data = new FormData();
       data.append("file", file);
       data.append("upload_preset", "food-delivery");
@@ -83,7 +84,6 @@ export default function CreateProfile({ setStep }: any) {
       );
 
       const dataJson = await response.json();
-      setLoading(false);
       setImageUrl(dataJson.secure_url);
       setForm((prev) => ({ ...prev, photo: dataJson.secure_url }));
     }
@@ -106,6 +106,8 @@ export default function CreateProfile({ setStep }: any) {
     photo: string,
     socialMedia: string
   ) => {
+    setIsloading(true);
+    console.log("yvuulj bn");
     setStep(2);
     const response = await fetch(
       `http://localhost:5000/profile/${params.userId}`,
@@ -122,110 +124,125 @@ export default function CreateProfile({ setStep }: any) {
         }),
       }
     );
+    setIsloading(false);
+    console.log("yvsaan");
   };
   return (
     <div className="p-4 max-w-lg mx-auto">
-      <p className="text-lg font-bold">Complete your profile page</p>
-      <h4 className="mt-4 font-medium">Add photo</h4>
-
-      <label
-        className={`mt-2 rounded-full w-40 h-40 border-dashed border-2 flex justify-center items-center ${
-          error.photo ? "border-red-500" : ""
-        }`}
-      >
-        <input type="file" hidden onChange={onFileChange} />
-
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            loading="lazy"
-            className="w-full h-full rounded-full object-cover"
-          />
-        ) : (
-          <FiCamera className="text-2xl text-gray-500" />
-        )}
-      </label>
-
-      {loading && <Lottie className="h-5 w-5" animationData={imgLoading} />}
-      {error.photo && (
-        <div className="text-red-500 text-sm flex items-center gap-1 pt-2">
-          <VscError />
-          {error.photo}
+      {isLoading && (
+        <Lottie
+          className="w-[500px] h-[500px] mx-auto my-auto "
+          animationData={loading}
+        />
+      )}
+      {!isLoading && (
+        <div>
+          <p className="text-lg font-bold">Complete your profile page</p>
+          <h4 className="mt-4 font-medium">Add photo</h4>
+          <label
+            className={`mt-2 rounded-full w-40 h-40 border-dashed border-2 flex justify-center items-center ${
+              error.photo ? "border-red-500" : ""
+            }`}
+          >
+            <input type="file" hidden onChange={onFileChange} />
+            <LazyLoadImage />
+            {imageUrl ? (
+              <LazyLoadImage
+                alt={imageUrl}
+                effect="blur"
+                wrapperProps={{
+                  style: { transitionDelay: "2s" },
+                }}
+                src={imageUrl}
+                className="rounded-full w-40 h-40"
+              />
+            ) : (
+              <FiCamera className="text-2xl text-gray-500" />
+            )}
+          </label>
+          {error.photo && (
+            <div className="text-red-500 text-sm flex items-center gap-1 pt-2">
+              <VscError />
+              {error.photo}
+            </div>
+          )}
+          <div className="mt-4">
+            <label className="block font-medium">Name</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Enter your name here"
+              className={`border rounded-md w-full p-2 mt-1 ${
+                error.name ? "border-red-500" : ""
+              }`}
+              value={form.name}
+              onChange={onChange}
+            />
+            {error.name && (
+              <div className="text-red-500 text-sm flex items-center gap-1 pt-2">
+                <VscError />
+                {error.name}
+              </div>
+            )}
+          </div>
+          <div className="mt-4">
+            <label className="font-medium">About</label>
+            <textarea
+              name="about"
+              placeholder="Write about yourself here"
+              className={`border rounded-md w-full p-2 mt-1 ${
+                error.about ? "border-red-500" : ""
+              }`}
+              value={form.about}
+              onChange={onChange}
+            />
+            {error.about && (
+              <div className="text-red-500 text-sm">{error.about}</div>
+            )}
+          </div>
+          <div className="mt-4">
+            <label className="block font-medium">Social media URL</label>
+            <input
+              type="text"
+              name="socialMedia"
+              placeholder="https://"
+              className={`border rounded-md w-full p-2 mt-1 ${
+                error.socialMedia ? "border-red-500" : ""
+              }`}
+              value={form.socialMedia}
+              onChange={onChange}
+            />
+            {error.socialMedia && (
+              <div className="text-red-500 text-sm">{error.socialMedia}</div>
+            )}
+          </div>
+          <div className="flex justify-end">
+            {isClicked ? (
+              <button
+                disabled={handleDisabled()}
+                onClick={() =>
+                  addProfile(
+                    form.name,
+                    form.about,
+                    form.photo,
+                    form.socialMedia
+                  )
+                }
+                className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
+              >
+                Continue
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsClicked(true)}
+                className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
+              >
+                Continue
+              </button>
+            )}
+          </div>
         </div>
       )}
-
-      <div className="mt-4">
-        <label className="block font-medium">Name</label>
-        <input
-          type="text"
-          name="name"
-          placeholder="Enter your name here"
-          className={`border rounded-md w-full p-2 mt-1 ${
-            error.name ? "border-red-500" : ""
-          }`}
-          value={form.name}
-          onChange={onChange}
-        />
-        {error.name && (
-          <div className="text-red-500 text-sm flex items-center gap-1 pt-2">
-            <VscError />
-            {error.name}
-          </div>
-        )}
-      </div>
-
-      <div className="mt-4">
-        <label className="font-medium">About</label>
-        <textarea
-          name="about"
-          placeholder="Write about yourself here"
-          className={`border rounded-md w-full p-2 mt-1 ${
-            error.about ? "border-red-500" : ""
-          }`}
-          value={form.about}
-          onChange={onChange}
-        />
-        {error.about && (
-          <div className="text-red-500 text-sm">{error.about}</div>
-        )}
-      </div>
-
-      <div className="mt-4">
-        <label className="block font-medium">Social media URL</label>
-        <input
-          type="text"
-          name="socialMedia"
-          placeholder="https://"
-          className={`border rounded-md w-full p-2 mt-1 ${
-            error.socialMedia ? "border-red-500" : ""
-          }`}
-          value={form.socialMedia}
-          onChange={onChange}
-        />
-        {error.socialMedia && (
-          <div className="text-red-500 text-sm">{error.socialMedia}</div>
-        )}
-      </div>
-      <div className="flex justify-end">
-        {isClicked ? (
-          <button
-            disabled={handleDisabled()}
-            onClick={() =>
-              addProfile(form.name, form.about, form.photo, form.socialMedia)
-            }
-            className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
-          >
-            Continue
-          </button>
-        ) : (
-          <button
-            onClick={() => setIsClicked(true)}
-            className="mt-6 lg:w-[246px] p-2 bg-black text-white rounded-md"
-          >
-            Continue
-          </button>
-        )}
-      </div>
     </div>
   );
 }
