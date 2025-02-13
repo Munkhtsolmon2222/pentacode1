@@ -69,7 +69,7 @@ export function Login() {
         console.log("Login successful!");
         setError("Login successful!");
         setUserId(data.id);
-        localStorage.setItem("userId", data.id);
+        localStorage.setItem("userId", data.data.id);
         console.log(data.data.accessToken);
         router.push("/home");
       }

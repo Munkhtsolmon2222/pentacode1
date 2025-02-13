@@ -27,7 +27,7 @@ export default function Header() {
   console.log(userData);
   return (
     <div>
-      <div className="py-4 flex justify-between w-[90%] mx-20 mb-4">
+      <div className="py-4 flex justify-between w-[90%] mx-auto mb-4 px-4">
         <div className="flex gap-2 items-center font-bold">
           <Link href="/">
             <div className="flex gap-2 items-center font-bold h-10">
@@ -36,15 +36,23 @@ export default function Header() {
             </div>
           </Link>
         </div>
-        <div className="flex justify-between items-center max-w-[168px]">
-          <div className="w-10 h-10 rounded-full flex items-center gap-2">
-            <img className="rounded-full" src={userData?.avatarImage} />
-            <h4>{userData?.name}</h4>
+
+        {/* <button>
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-full flex items-center overflow-hidden">
+              <img
+                className="rounded-full w-full h-full object-cover"
+                src={userData?.avatarImage}
+                alt={userData?.name || "User avatar"}
+              />
+            </div>
+            <h4 className="text-sm font-medium">{userData?.name}</h4>
+            <IoIosArrowDown className="cursor-pointer" />
           </div>
-          <h3>
-            <IoIosArrowDown className="w-5 h-5" />
-          </h3>
-        </div>
+        </button> */}
+        <button className="bg-[#F4F4F5] rounded-md max-w-20 text-sm p-3 cursor-pointer hover:bg-gray-300">
+          Log out
+        </button>
       </div>
     </div>
   );
