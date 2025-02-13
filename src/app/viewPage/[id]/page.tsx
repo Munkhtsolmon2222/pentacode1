@@ -2,6 +2,7 @@
 
 import EditProfileDialogue from "@/app/_components/profile/EditProfileDialogue";
 import { User } from "@/app/constants/type";
+import { CheckCircle2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CiCamera } from "react-icons/ci";
@@ -17,7 +18,9 @@ export default function ViewPageExplore() {
   const [isSaved, setIsSaved] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState();
   const [userData, setUserData] = useState<User>();
+  // const recipientId: string = userData?.userId ?? "";
   const params = useParams();
   const [newDonation, setNewDonation] = useState({
     donorId: "",
@@ -313,32 +316,62 @@ export default function ViewPageExplore() {
               placeholder="Please write your message here"
             />
           </div>
-          <div className="flex">
-            {isClicked ? (
-              <button
-                disabled={handleDisabled()}
-                onClick={() =>
-                  addDonation(
-                    userId,
-                    newDonation.amount,
-                    newDonation.specialMessage,
-                    newDonation.socialURLOrBuyMeACoffee,
-                    userData?.userId
-                  )
-                }
-                className="w-full p-2 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
-              >
-                Support
-              </button>
-            ) : (
-              <button
-                onClick={() => setIsClicked(true)}
-                className="w-full p-2 bg-[#18181B] opacity-20 text-white rounded-md font-md hover:bg-[#18181B]"
-              >
-                Support
-              </button>
-            )}
-          </div>
+
+          {buttonClicked ? (
+            <div className="flex">
+              {isClicked ? (
+                <button
+                  disabled={handleDisabled()}
+                  onClick={async () => {
+                    await addDonation(
+                      userId,
+                      newDonation.amount,
+                      newDonation.specialMessage,
+                      newDonation.socialURLOrBuyMeACoffee,
+                      userData?.userId ?? ""
+                    );
+                    setButtonClicked(false); // Reset the buttonClicked to false after donation is made
+                  }}
+                  className="w-full p-2 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
+                >
+                  Support
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsClicked(true)} // Mark isClicked true when Support is clicked
+                  className="w-full p-2 bg-[#18181B] opacity-20 text-white rounded-md font-md hover:bg-[#18181B]"
+                >
+                  Support
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="w-full flex flex-col items-center">
+              <div className="w-[64px] h-[64px] rounded-full bg-[#18BA51] flex justify-center items-center">
+                <CheckCircle2 />
+              </div>
+              <p>Donation Complete!</p>
+              <div>
+                <div className="w-6 h-6 rounded-full">
+                  <img src={userData?.avatarImage} alt="User" />
+                  <p>{userData?.name}</p>
+                </div>
+                <p>
+                  Thank you for supporting me! It means a lot to have your
+                  support. It’s a step toward creating a more inclusive and
+                  accepting community of artists.
+                </p>
+              </div>
+              <div className="flex justify-center items-center">
+                <button
+                  className="bg-[#18181B] p-4 text-white"
+                  onClick={() => window.location.reload()}
+                >
+                  Return to explore
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
