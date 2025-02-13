@@ -43,23 +43,23 @@ export default function EditProfile() {
 	const fetchUserData = async () => {
 		try {
 			const response = await fetch(
-				`http://localhost:5000/auth/profile/currentuser/${userId}`
+				`http://localhost:5000/profile/currentuser/${userId}`
 			);
 			console.log(response);
 			if (!response.ok) throw new Error("Failed to fetch user data");
 			const data = await response.json();
 			setForm({
-				photo: data.avatarImage || "",
-				name: data.name || "",
-				about: data.about || "",
-				socialMedia: data.socialMediaURL || "",
+				photo: data?.avatarImage || "",
+				name: data?.name || "",
+				about: data?.about || "",
+				socialMedia: data?.socialMediaURL || "",
 			});
-			setImageUrl(data.avatarImage || "");
+			setImageUrl(data?.avatarImage || "");
 		} catch (error) {
 			console.error("Error fetching user data:", error);
 		}
 	};
-
+console.log(userId)
 	useEffect(() => {
 		fetchUserData();
 	}, []);
