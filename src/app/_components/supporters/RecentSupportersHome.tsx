@@ -1,14 +1,14 @@
 "use client";
-import { Transaction, User } from "@/app/constants/type"; // Assuming these are types
+import { Transaction, User } from "@/app/constants/type";
 import { useEffect, useState } from "react";
 
 export default function RecentSupport({
   transaction,
 }: {
   transaction: Transaction;
-  user: User | null; // user is of type User, which can be null
+  user: User | null;
 }) {
-  const [userData, setUserData] = useState<User | null>(null); // Assuming a single user object
+  const [userData, setUserData] = useState<User | null>(null);
 
   const profileFetchData = async () => {
     try {

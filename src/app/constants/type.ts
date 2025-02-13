@@ -21,4 +21,6 @@ export type Transaction = {
   socialURLOrBuyMeACoffee: string;
   updatedAt: string;
   amount: number;
+  specialMessage: string;
+  donorId: any;
 };
