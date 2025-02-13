@@ -49,6 +49,7 @@ export default function EditBankCard() {
 
 	const onSubmit = (data: FormValues) => {
 		console.log("Submitted Data:", data);
+		editBankCard(data);
 	};
 
 	const handleCardNumberChange = (
@@ -61,33 +62,39 @@ export default function EditBankCard() {
 	};
 
 	const userId = localStorage.getItem("userId");
-
-	const fetchUserData = async () => {
+	console.log(userId);
+	const editBankCard = async (data: FormValues) => {
 		try {
-			const response = await fetch(`http://localhost:5000/bank-card/${userId}`);
-			if (!response.ok) throw new Error("Failed to fetch user data");
+			const response = await fetch(
+				`http://localhost:5000/bank-card/${userId}`,
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
+					method: "PUT",
+					body: JSON.stringify({
+						country: data.country,
+						firstName: data.firstName,
+						lastName: data.lastName,
+						cardNumber: data.cardNumber,
+						expiryDate: `${data.month}/${data.year}`,
+						cvc: data.cvc,
+					}),
+				}
+			);
 
-			const data = await response.json();
+			if (!response.ok) {
+				throw new Error("Failed to edit bank card");
+			}
 
-			setValue("country", data?.country || "");
-			setValue("firstName", data?.firstName || "");
-			setValue("lastName", data?.lastName || "");
-			setValue("cardNumber", data?.cardNumber || "");
-			setValue("month", data?.month || "");
-			setValue("year", data?.year || "");
-			setValue("cvc", data?.cvc || "");
+			const responseData = await response.json();
+			console.log("Bank card edited successfully:", responseData);
+			alert("Bank card updated successfully!");
 		} catch (error) {
-			console.error("Error fetching user data:", error);
+			console.error("Error editing bank card:", error);
+			alert("Error updating bank card. Please try again.");
 		}
 	};
-
-	useEffect(() => {
-		if (userId) {
-			fetchUserData();
-		} else {
-			console.error("User ID is missing");
-		}
-	}, []);
 
 	return (
 		<Card className="w-full max-w-lg mx-auto mt-8 p-6">
