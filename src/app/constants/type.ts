@@ -4,6 +4,7 @@ export type User = {
   about: string;
   socialMediaURL: string;
   id: any;
+  userId: string;
 };
 export type Creator = {
   id: string;
@@ -17,7 +18,9 @@ export type Transaction = {
   avatarImage: string;
   name: string;
   about: string;
-  socialMediaURL: string;
+  socialURLOrBuyMeACoffee: string;
   updatedAt: string;
   amount: number;
+  specialMessage: string;
+  donorId: any;
 };

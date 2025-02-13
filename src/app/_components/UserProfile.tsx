@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { User } from "../constants/type";
-// import RecentSupport from "./supporters/RecentSupportersHome";
+import RecentSupport from "./supporters/RecentSupportersHome";
 export default function UserProfile() {
   const [userData, setUserData] = useState<User>();
   const userId = localStorage.getItem("userId");
@@ -32,8 +32,9 @@ export default function UserProfile() {
     fetchData();
   }, []);
   console.log(userData);
+
   return (
-    <div className="w-[50%] fixed right-0 top-0 h-full bg-gray-primary text-black p-4">
+    <div className="w-full bg-gray-primary text-black p-4">
       <div className="max-w-[909px] mx-auto mt-16 p-5 border border-solid rounded-lg">
         <div className="flex justify-between">
           <div className="w-6 h-6 rounded-full flex gap-3 items-center">
