@@ -35,10 +35,10 @@ export default function UserProfile() {
 
   return (
     <div className="w-full bg-gray-primary text-black p-4">
-      <div className="max-w-[909px] mx-auto mt-16 p-5 border border-solid rounded-lg">
-        <div className="flex justify-between">
-          <div className="w-6 h-6 rounded-full flex gap-3 items-center">
-            <img src={userData?.avatarImage} />
+      <div className="max-w-[80%]  mx-auto mt-16 p-5 border border-solid rounded-lg">
+        <div className="flex justify-between items-center">
+          <div className="w-12 h-12 rounded-full flex gap-3 items-center">
+            <img src={userData?.avatarImage} className="rounded-full" />
             <div className="flex flex-col">
               <h4 className="font-semibold">{userData?.name}</h4>
               <a className="text-sm">{userData?.socialMediaURL}</a>
@@ -48,7 +48,7 @@ export default function UserProfile() {
             <LuCopy /> Share page link
           </button>
         </div>
-        <div className="max-w-[859px] mx-auto border border-solid bg-[#E4E4E7] mt-6"></div>
+        <div className="max-w-[80%] mx-auto border border-solid bg-[#E4E4E7] mt-6"></div>
         <div className="flex items-center gap-4 pt-7">
           <h4 className="font-bold text-2xl">Earning</h4>
           <Select>

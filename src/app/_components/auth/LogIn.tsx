@@ -69,8 +69,8 @@ export function Login() {
         console.log("Login successful!");
         setError("Login successful!");
         setUserId(data.id);
-        localStorage.setItem("userId", data.data.id);
-        console.log(data.data.accessToken);
+        localStorage.setItem("userId", data.data);
+        console.log(data.id);
         router.push("/home");
       }
     } catch (error) {
