@@ -18,6 +18,7 @@ export default function ViewPageExplore() {
   const [modalOpen, setModalOpen] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [userData, setUserData] = useState<User>();
+  // const recipientId: string = userData?.userId ?? "";
   const params = useParams();
   const [newDonation, setNewDonation] = useState({
     donorId: "",
@@ -323,7 +324,7 @@ export default function ViewPageExplore() {
                     newDonation.amount,
                     newDonation.specialMessage,
                     newDonation.socialURLOrBuyMeACoffee,
-                    userData?.userId
+                    userData?.userId ?? ""
                   )
                 }
                 className="w-full p-2 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
