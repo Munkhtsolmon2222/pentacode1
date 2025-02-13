@@ -5,22 +5,22 @@ import UserProfile from "../_components/UserProfile";
 
 export default function Home() {
 	const [transactions, setTransactions] = useState<any[]>([]);
-	const userId = localStorage.getItem("userId");
-	console.log(userId);
-	const fetchData = async () => {
-		try {
-			const res = await fetch(
-				`http://localhost:5000/donation/recieved/${userId}`
-			);
-			if (!res.ok) throw new Error("Failed to fetch user data");
-			const resJson = await res.json();
-			setTransactions(resJson);
-		} catch (error) {
-			console.error(error);
-		}
-	};
 
 	useEffect(() => {
+		const userId = localStorage.getItem("userId");
+		console.log(userId);
+		const fetchData = async () => {
+			try {
+				const res = await fetch(
+					`http://localhost:5000/donation/recieved/${userId}`
+				);
+				if (!res.ok) throw new Error("Failed to fetch user data");
+				const resJson = await res.json();
+				setTransactions(resJson);
+			} catch (error) {
+				console.error(error);
+			}
+		};
 		fetchData();
 	}, []);
 	console.log(transactions);
