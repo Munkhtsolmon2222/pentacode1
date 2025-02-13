@@ -17,9 +17,10 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
-
+import { useCookies } from "next-client-cookies";
+import { jwtDecode } from "jwt-decode";
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -32,6 +33,7 @@ const formSchema = z.object({
 });
 
 export function Login() {
+  const cookies = useCookies();
   const [type, setType] = useState("password");
   const [error, setError] = useState("");
   const { setUserId } = useAuth();
@@ -69,15 +71,20 @@ export function Login() {
       } else {
         console.log("Login successful!");
         setError("Login successful!");
-        setUserId(data.id);
-        localStorage.setItem("userId", data.id);
-        console.log(data.id);
+        // setUserId(data.);
+        localStorage.setItem("userId", data?.data?.accessToken);
+        // console.log(data.id);
         router.push("/home");
       }
     } catch (error) {
       console.error("Error verifying user:", error);
     }
   };
+
+  const accessToken = cookies.get("accessToken") || "";
+  console.log({ accessToken });
+  const decoded = jwtDecode(accessToken);
+  console.log(decoded.userId);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     verifyUser(values.email, values.password);
