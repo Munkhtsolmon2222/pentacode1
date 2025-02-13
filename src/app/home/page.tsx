@@ -57,8 +57,9 @@ export default function Home() {
         <div>
           <Select>
             <SelectTrigger className=" flex border rounded-lg p-2">
-              <ChevronDown />
+              {/* <ChevronDown /> */}
               <SelectValue className="text-lg " placeholder="Amount" />
+              {/* <span className=" hidden"></span> */}
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -73,7 +74,7 @@ export default function Home() {
       </div>
 
       {transactions.length > 0 ? (
-        <div className="w-full p-5 overflow-y-auto custom-scrollbar mx-auto mt-10 border border-solid rounded-lg">
+        <div className="w-full my-auto p-5 overflow-y-auto custom-scrollbar mx-auto mt-10 border border-solid rounded-lg">
           {transactions.map((transaction) => (
             <RecentSupport key={transaction.id} transaction={transaction} />
           ))}

@@ -18,7 +18,7 @@ export type Transaction = {
   avatarImage: string;
   name: string;
   about: string;
-  socialMediaURL: string;
+  socialURLOrBuyMeACoffee: string;
   updatedAt: string;
   amount: number;
 };
