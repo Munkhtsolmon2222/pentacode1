@@ -93,7 +93,7 @@ export function ForgotPassword() {
 
   return (
     <div className={`${plusJakartaSans.variable} font-sans`}>
-      <div className="mx-auto mt-[160px] text-black w-[90%]">
+      <div className="mx-auto mt-[160px] text-black w-[360px]">
         <div className="h-auto rounded-xl p-[20px] space-y-">
           <b className="text-[24px]">Forgot your password</b>
 
