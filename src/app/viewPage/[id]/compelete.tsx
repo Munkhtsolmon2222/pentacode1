@@ -10,7 +10,7 @@ export default function Complete() {
         <div className="w-[64px] h-[64px] rounded-full bg-[#18BA51] flex justify-center items-center">
           <CheckCircle2 className="text-white" />
         </div>
-        <p className="font-bold">Donation Complete!</p>
+        <p className="font-bold">Donation Complete ! </p>
       </div>
 
       <div className=" p-4  border">
