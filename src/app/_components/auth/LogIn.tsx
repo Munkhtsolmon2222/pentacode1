@@ -82,9 +82,19 @@ export function Login() {
   };
 
   const accessToken = cookies.get("accessToken") || "";
+  if (!accessToken) {
+    console.error("No access token found!");
+  } else {
+    try {
+      const decoded = jwtDecode(accessToken);
+      console.log(decoded);
+    } catch (error) {
+      console.error("Invalid token:", error);
+    }
+  }
   console.log({ accessToken });
   const decoded = jwtDecode(accessToken);
-  console.log(decoded.userId);
+  // console.log(decoded.userId);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     verifyUser(values.email, values.password);
