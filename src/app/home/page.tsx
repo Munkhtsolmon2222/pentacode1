@@ -16,16 +16,32 @@ import {
 
 export default function Home() {
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
-	let refreshToken;
-	let decoded;
-	const accessToken = getCookie("accessToken") || "";
-	if (!accessToken) {
-		refreshToken = getCookie("refreshToken") || "";
-		decoded = jwtDecode(refreshToken);
-	} else {
-		decoded = jwtDecode(accessToken);
+	const [userId, setUserId] = useState();
+	type DecodedToken = {
+		userId?: string;
+	};
+
+	async function getUserId() {
+		let refreshToken: string | undefined;
+		let decoded: DecodedToken | null = null;
+
+		const accessToken = (await getCookie("accessToken")) as string | undefined;
+
+		if (!accessToken) {
+			refreshToken = (await getCookie("refreshToken")) as string | undefined;
+
+			if (refreshToken) {
+				decoded = jwtDecode<DecodedToken>(refreshToken);
+			}
+		} else {
+			decoded = jwtDecode<DecodedToken>(accessToken);
+		}
+
+		const userId = decoded?.userId;
+		return userId;
 	}
-	const userId = decoded?.userId;
+
+	getUserId().then((userId) => {});
 
 	console.log("User ID:", userId);
 
