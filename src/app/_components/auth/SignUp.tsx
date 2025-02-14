@@ -6,10 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { set } from "zod";
 import { useRouter } from "next/navigation";
-import Lottie from "lottie-react";
-import loading from "./loading.json";
+
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -76,7 +74,6 @@ export function SignUp() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          
         },
         body: JSON.stringify({
           username,
