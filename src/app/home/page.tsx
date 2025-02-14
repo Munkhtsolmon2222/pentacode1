@@ -21,27 +21,29 @@ export default function Home() {
 		userId?: string;
 	};
 
-	async function getUserId() {
-		let refreshToken: string | undefined;
-		let decoded: DecodedToken | null = null;
+	// async function getUserId() {
+	// 	let refreshToken: string | undefined;
+	// 	let decoded: DecodedToken | null = null;
 
-		const accessToken = (await getCookie("accessToken")) as string | undefined;
+	// 	const accessToken = (await getCookie("accessToken")) as string | undefined;
 
-		if (!accessToken) {
-			refreshToken = (await getCookie("refreshToken")) as string | undefined;
+	// 	if (!accessToken) {
+	// 		refreshToken = (await getCookie("refreshToken")) as string | undefined;
 
-			if (refreshToken) {
-				decoded = jwtDecode<DecodedToken>(refreshToken);
-			}
-		} else {
-			decoded = jwtDecode<DecodedToken>(accessToken);
-		}
+	// 		if (refreshToken) {
+	// 			decoded = jwtDecode<DecodedToken>(refreshToken);
+	// 		}
+	// 	} else {
+	// 		decoded = jwtDecode<DecodedToken>(accessToken);
+	// 	}
 
-		const userId = decoded?.userId;
-		return userId;
-	}
+	// 	const userId = decoded?.userId;
+	// 	return userId;
+	// }
 
-	getUserId().then((userId) => {});
+	// getUserId().then((userId) => {
+	// 	setUserId(userId);
+	// });
 
 	console.log("User ID:", userId);
 
