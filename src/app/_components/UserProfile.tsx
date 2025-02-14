@@ -1,3 +1,4 @@
+"use client";
 import { LuCopy } from "react-icons/lu";
 import {
   Select,
@@ -7,21 +8,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEffect, useState } from "react";
+import { User } from "../constants/type";
+import RecentSupport from "./supporters/RecentSupportersHome";
 export default function UserProfile() {
+  const [userData, setUserData] = useState<User>();
+  const userId = localStorage.getItem("userId");
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/profile/currentuser/${userId}`
+      );
+      if (!res.ok) throw new Error("Failed to fetch user data");
+      const resJson = await res.json();
+      setUserData(resJson);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  console.log(userData);
+
   return (
-    <div className="w-[80%] fixed right-0 top-0 h-full bg-gray-primary text-black p-4">
+    <div className="w-full bg-gray-primary text-black p-4">
       <div className="max-w-[909px] mx-auto mt-16 p-5 border border-solid rounded-lg">
         <div className="flex justify-between">
-          <div className="flex gap-3 items-center">
-            <img src="Avatar-Image.png" />
-            <div>
-              <h4 className="font-semibold">Baaska</h4>
-              <a
-                className="text-sm"
-                href="https://www.youtube.com/watch?v=173a5Hc2a80"
-              >
-                https://www.youtube.com/watch?v=173a5Hc2a80
-              </a>
+          <div className="w-6 h-6 rounded-full flex gap-3 items-center">
+            <img src={userData?.avatarImage} />
+            <div className="flex flex-col">
+              <h4 className="font-semibold">{userData?.name}</h4>
+              <a className="text-sm">{userData?.socialMediaURL}</a>
             </div>
           </div>
           <button className="flex max-h-10 items-center text-white gap-3 p-4 bg-[#18181B] rounded-md">
@@ -37,9 +57,9 @@ export default function UserProfile() {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
+                <SelectItem value="apple">Last 30 days</SelectItem>
+                <SelectItem value="banana">last 90 days</SelectItem>
+                <SelectItem value="blueberry">All time</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

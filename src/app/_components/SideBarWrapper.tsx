@@ -5,14 +5,14 @@ import { SideBar } from "./Sidebar";
 
 export default function SidebarWrapper() {
   const pathname = usePathname();
-  const hideSidebar = [
-    "/viewPage",
-    "/login",
-    "/signup",
-    "/accountSettings",
-    "/forgot-password",
-  ].includes(pathname);
 
+  const hideSidebar =
+    pathname.startsWith("/viewPage") ||
+    ["/login", "/signup", "/forgot-password"].includes(pathname);
+
+ 
+
+  if (hideSidebar) return null;
   if (hideSidebar) return null;
 
   return <SideBar />;

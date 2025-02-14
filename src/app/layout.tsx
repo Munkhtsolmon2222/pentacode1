@@ -27,7 +27,7 @@ export default function RootLayout({
       <body className={plusJakartaSans.variable}>
         <HeaderWrapper />
         <SidebarWrapper />
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
