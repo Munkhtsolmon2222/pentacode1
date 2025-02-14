@@ -7,6 +7,8 @@ import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { getCookie } from "cookies-next";
+import { jwtDecode } from "jwt-decode";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -28,12 +30,14 @@ export function SignUp() {
   const [type, setType] = useState("password");
   const [responses, setResponses] = useState<response>();
   const router = useRouter();
-
   const [touched, setTouched] = useState({
     username: false,
     email: false,
     password: false,
   });
+
+  let refreshToken;
+  let decoded;
 
   function handleUsernameCheck() {
     setIsUsernameValid(username.length >= 3);
@@ -74,6 +78,7 @@ export function SignUp() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          credentials: "include",
         },
         body: JSON.stringify({
           username,
@@ -87,11 +92,18 @@ export function SignUp() {
       } else {
         setResponses(response);
       }
-
       console.log(response);
       if (response.message == "Successfully added") {
-        localStorage.setItem("userId", response.id);
-        router.push(`/profileSetup/${response.id}`);
+        const accessToken = getCookie("accessToken") || "";
+        if (!accessToken) {
+          refreshToken = getCookie("refreshToken") || "";
+          decoded = jwtDecode(refreshToken);
+        } else {
+          decoded = jwtDecode(accessToken);
+        }
+        const userId = decoded?.userId;
+        console.log({ accessToken });
+        router.push(`/profileSetup/${userId}`);
       }
     } catch (error) {
       console.error("Error adding user:", error);
