@@ -196,17 +196,17 @@ export default function ViewPage({}: { onClose: any }) {
             </p>
             <p className="text-[#09090B] font-md mt-5">Select amount:</p>
             <div className="w-[100%] flex gap-4 mt-4 ">
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border flex justify-center items-center gap-2">
                 <FiCoffee /> $1
               </button>
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border flex justify-center items-center gap-2">
                 <FiCoffee /> $2
               </button>
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border flex justify-center items-center gap-2">
                 <FiCoffee />
                 $5
               </button>
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border flex justify-center items-center gap-2">
                 {" "}
                 <FiCoffee />
                 $10
