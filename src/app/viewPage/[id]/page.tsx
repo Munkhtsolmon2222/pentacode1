@@ -12,6 +12,7 @@ import { VscError } from "react-icons/vsc";
 import { string, z } from "zod";
 import Complete from "./compelete";
 import { Button } from "@/components/ui/button";
+import RecentSupportProfile from "@/app/_components/supporters/RecentSupportersProfile";
 
 export default function ViewPageExplore() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -22,6 +23,8 @@ export default function ViewPageExplore() {
   const [isClicked, setIsClicked] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
   const [userData, setUserData] = useState<User>();
+  const [recipientDonation, setRecipientDonation] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const params = useParams();
   const [newDonation, setNewDonation] = useState({
     donorId: "",
@@ -42,6 +45,13 @@ export default function ViewPageExplore() {
   useEffect(() => {
     setImageUrl(previewImg);
   }, [isSaved, previewImg]);
+
+  const donationSchema = z.object({
+    socialMedia: z
+      .string()
+      .startsWith("https://", { message: "Please enter a valid social link" }),
+  });
+
   const [error, setError] = useState<{
     socialURLOrBuyMeACoffee?: string;
   }>({});
@@ -55,15 +65,20 @@ export default function ViewPageExplore() {
       const resJson = await res.json();
       console.log(res);
       setUserData(resJson);
+      setLoading(true);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
   console.log(params.id);
   useEffect(() => {
     fetchData();
   }, [params?.id]);
+
   console.log(userData);
+
   const handleDisabled = () => {
     if (error.socialURLOrBuyMeACoffee == undefined) {
       return false;
@@ -71,6 +86,7 @@ export default function ViewPageExplore() {
       return true;
     }
   };
+
   useEffect(() => {
     if (isClicked) {
       const validation = viewPageSchema.safeParse(newDonation);
@@ -149,8 +165,6 @@ export default function ViewPageExplore() {
     setIsClicked(false);
   };
 
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-
   console.log("User ID:", userId);
 
   const supporterFetchData = async () => {
@@ -161,7 +175,7 @@ export default function ViewPageExplore() {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/donation/received/${userId}`
+        `http://localhost:5000/donation/${userData?.userId}`
       );
       if (!res.ok) throw new Error("Failed to fetch user data");
 
@@ -169,18 +183,19 @@ export default function ViewPageExplore() {
       console.log("API Response:", resJson);
 
       setTransactions(
-        Array.isArray(resJson.donations) ? resJson.donations : []
+        Array.isArray(resJson.allDonations) ? resJson.allDonations : []
       );
     } catch (error) {
       console.error("Error fetching transactions:", error);
       setTransactions([]);
+      setRecipientDonation(true);
     }
   };
 
   useEffect(() => {
     supporterFetchData();
-  }, [userId]);
-
+  }, [userData]);
+  console.log(transactions);
   return (
     <div className="w-full min-h-screen">
       {buttonClicked ? (
@@ -214,163 +229,187 @@ export default function ViewPageExplore() {
         </div>
       ) : (
         <div>
-          <div className="w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center">
-            <div
-              style={{
-                backgroundImage: `url(${imageUrl || previewImg})`,
-              }}
-              className="w-full h-full bg-cover bg-no-repeat relative"
-            >
-              {userData?.backgroundImage ? (
-                <div className="flex absolute right-10 top-4">
-                  <label
-                    className={`w-[150px] h-[40px] bg-[#F4F4F5] text-[#18181B] rounded-md flex justify-center items-center gap-2 bg-cover bg-center`}
-                    style={{
-                      backgroundImage: `url(${userData.backgroundImage})`,
-                    }}
-                  ></label>
-                </div>
-              ) : (
+          {loading ? (
+            <div className="text-center">Loading...</div>
+          ) : (
+            <div>
+              <div className="w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center">
                 <div
-                  className="w-[100%] h-[100%] bg-[#18181B] text-[#FAFAFA] rounded-md flex justify-center items-center gap-2 bg-cover bg-center"
                   style={{
-                    backgroundImage: `url("https://miro.medium.com/v2/resize:fit:4800/format:webp/1*EPdXV6DAFtthI3w-d0XUcg.jpeg")`,
+                    backgroundImage: `url(${imageUrl || previewImg})`,
                   }}
-                ></div>
-              )}
-            </div>
-          </div>
-          <div className="w-full flex justify-center gap-6 -my-20 relative">
-            <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
-              <div className="min-h-[20rem] gap-3 border rounded-md p-4">
-                <div className="flex justify-between border-b-[1px] pb-6 mt-4">
-                  <div className="w-6 h-6 rounded-full flex items-center gap-2">
-                    <img src={userData?.avatarImage} alt="Jake" />
-                    <p className="font-bold text-2xl">{userData?.name}</p>
-                  </div>
-
-                  {modalOpen && <EditProfileDialogue onClose={setModalOpen} />}
-                </div>
-                <div className="mt-10 ml-4">
-                  <p className="text-xl font-semibold">
-                    About {userData?.name}
-                  </p>
-                  <p className="max-w-[39.5rem] mt-8">{userData?.about}</p>
-                </div>
-              </div>
-              <div className="h-[10rem] gap-3 border rounded-md mt-4 p-4">
-                <p className="font-md mt-4">Social media URL</p>
-                <input
-                  className="w-full mt-4 p-2 border rounded-md outline-none"
-                  type="url"
-                  placeholder="https://buymecoffee.com/spacerulz44"
-                  value={userData?.socialMediaURL}
-                />
-              </div>
-              <div className="max-h-[20rem] gap-6 border rounded-md mt-4 p-4 overflow-y-auto custom-scrollbar">
-                <h1 className="font-md font-bold p-2 mt-4">
-                  Recent Supporters
-                </h1>
-                <div className="w-full p-2 gap-2">
-                  {transactions?.map((transaction) => (
-                    <div className="w-full flex gap-2 p-2">
-                      <img
-                        className="w-6 h-6 rounded-full"
-                        src={transaction?.avatarImage}
-                      />
-                      <div className="w-full">
-                        <h4 className="font-semibold">{transaction?.name}</h4>
-                        <h4>bought ${transaction.amount} coffee</h4>
-                        <h4>{transaction?.specialMessage}</h4>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {/* <div className="w-full min-h-[10rem] border rounded-md mt-6 flex flex-col items-center justify-center">
-                  <FaHeart />
-                  <p className="mt-2">
-                    Be the first one to support {userData?.name}
-                  </p>
-                </div> */}
-              </div>
-            </div>
-            <div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
-              <div className="mb-4">
-                <p className="text-xl font-bold mt-4">
-                  Buy {userData?.name} a Coffee
-                </p>
-                <p className="text-[#09090B] font-md mt-5">Select amount:</p>
-                <div className="w-[100%] flex gap-4 mt-4">
-                  <Button
-                    onClick={() => onChangeAmount(1)}
-                    className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
-                  >
-                    <FiCoffee /> $1
-                  </Button>
-                  <Button
-                    onClick={() => onChangeAmount(2)}
-                    className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
-                  >
-                    <FiCoffee /> $2
-                  </Button>
-                  <Button
-                    onClick={() => onChangeAmount(5)}
-                    className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
-                  >
-                    <FiCoffee /> $5
-                  </Button>
-                  <Button
-                    onClick={() => onChangeAmount(10)}
-                    className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
-                  >
-                    <FiCoffee /> $10
-                  </Button>
-                </div>
-              </div>
-              <div className="mb-7">
-                <p className="text-[#09090B] mt-6">
-                  Enter BuyMeCoffee or social account URL:
-                </p>
-                <input
-                  className={`w-full p-2 border rounded-md px-4 mt-4 outline-none 
-              
-              `}
-                  placeholder="bymecoffee@gmail.com"
-                  type="url"
-                  name="socialURLOrBuyMeACoffee"
-                  onChange={onChange}
-                />
-              </div>
-              <div className="mb-10">
-                <p className="text-[#09090B] font-semibold">Special message:</p>
-                <textarea
-                  onChange={onChangeMessage}
-                  value={newDonation.specialMessage}
-                  className="w-full border rounded-md px-4 py-2 mt-4 outline-none"
-                  placeholder="Please write your message here"
-                />
-              </div>
-              <div className="flex">
-                <button
-                  disabled={handleDisabled()}
-                  onClick={async () => {
-                    await addDonation(
-                      userId,
-                      newDonation.amount,
-                      newDonation.specialMessage,
-                      newDonation.socialURLOrBuyMeACoffee,
-                      userData?.userId ?? ""
-                    );
-                    setButtonClicked(true);
-                    setIsClicked(true);
-                  }}
-                  className="w-full p-2 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
+                  className="w-full h-full bg-cover bg-no-repeat relative"
                 >
-                  Support
-                </button>
+                  {userData?.backgroundImage ? (
+                    <div className="flex absolute right-10 top-4">
+                      <label
+                        className={`w-[150px] h-[40px] bg-[#F4F4F5] text-[#18181B] rounded-md flex justify-center items-center gap-2 bg-cover bg-center`}
+                        style={{
+                          backgroundImage: `url(${userData.backgroundImage})`,
+                        }}
+                      ></label>
+                    </div>
+                  ) : (
+                    <div
+                      className="w-[100%] h-[100%] bg-[#18181B] text-[#FAFAFA] rounded-md flex justify-center items-center gap-2 bg-cover bg-center"
+                      style={{
+                        backgroundImage: `url("https://miro.medium.com/v2/resize:fit:4800/format:webp/1*EPdXV6DAFtthI3w-d0XUcg.jpeg")`,
+                      }}
+                    ></div>
+                  )}
+                </div>
+              </div>
+              <div className="w-full flex justify-center gap-6 -my-20 relative">
+                <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
+                  <div className="min-h-[20rem] gap-3 border rounded-md p-4">
+                    <div className="flex justify-between border-b-[1px] pb-6 mt-4">
+                      <div className="flex items-center gap-2">
+                        <img
+                          className="w-10 h-10 rounded-full"
+                          src={userData?.avatarImage}
+                          alt="Jake"
+                        />
+                        <p className="font-bold text-2xl">{userData?.name}</p>
+                      </div>
+
+                      {modalOpen && (
+                        <EditProfileDialogue onClose={setModalOpen} />
+                      )}
+                    </div>
+                    <div className="mt-10 ml-4">
+                      <p className="text-xl font-semibold">
+                        About {userData?.name}
+                      </p>
+                      <p className="max-w-[39.5rem] mt-8">{userData?.about}</p>
+                    </div>
+                  </div>
+                  <div className="gap-2 border rounded-md mt-4 p-4">
+                    <p className="font-md font-semibold p-2 mt-2">
+                      Social media URL
+                    </p>
+                    <input
+                      className="w-full mt-2 p-4 "
+                      type="url"
+                      value={userData?.socialMediaURL}
+                    />
+                  </div>
+                  <div className="max-h-[20rem] gap-6 border rounded-md mt-4 p-4 overflow-y-auto custom-scrollbar">
+                    <h1 className="font-md font-semibold p-2 mt-4">
+                      Recent Supporters
+                    </h1>
+
+                    {recipientDonation ? (
+                      <div className="w-full min-h-[10rem] border rounded-md mt-6 flex flex-col items-center justify-center">
+                        <FaHeart />
+                        <p className="mt-2">
+                          Be the first one to support {userData?.name}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="w-full p-2 gap-2">
+                        {transactions?.map((transaction) => (
+                          <RecentSupportProfile
+                            transaction={transaction}
+                            key={transaction.id}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
+                  <div className="mb-4">
+                    <p className="text-xl font-bold mt-4">
+                      Buy {userData?.name} a Coffee
+                    </p>
+                    <p className="text-[#09090B] font-md mt-5">
+                      Select amount:
+                    </p>
+                    <div className="w-[100%] flex gap-4 mt-4">
+                      <Button
+                        onClick={() => onChangeAmount(1)}
+                        className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
+                      >
+                        <FiCoffee /> $1
+                      </Button>
+                      <Button
+                        onClick={() => onChangeAmount(2)}
+                        className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
+                      >
+                        <FiCoffee /> $2
+                      </Button>
+                      <Button
+                        onClick={() => onChangeAmount(5)}
+                        className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
+                      >
+                        <FiCoffee /> $5
+                      </Button>
+                      <Button
+                        onClick={() => onChangeAmount(10)}
+                        className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
+                      >
+                        <FiCoffee /> $10
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="mb-7">
+                    <p className="text-[#09090B] mt-6">
+                      Enter BuyMeCoffee or social account URL:
+                    </p>
+                    <input
+                      //           className={`w-full p-2 border rounded-md px-4 mt-4 outline-none
+
+                      //  `}
+                      placeholder="bymecoffee@gmail.com"
+                      type="url"
+                      name="socialURLOrBuyMeACoffee"
+                      // value={newDonation}
+                      onChange={onChange}
+                      className={`border rounded-md w-full p-2 mt-1 ${
+                        error.socialURLOrBuyMeACoffee ? "border-red-500" : ""
+                      }`}
+                    />
+                    {error.socialURLOrBuyMeACoffee && (
+                      <div className="text-red-500 text-sm flex items-center gap-1 pt-2">
+                        <VscError />
+                        {error.socialURLOrBuyMeACoffee}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-10">
+                    <p className="text-[#09090B] font-semibold">
+                      Special message:
+                    </p>
+                    <textarea
+                      onChange={onChangeMessage}
+                      value={newDonation.specialMessage}
+                      className="w-full border rounded-md px-4 py-2 mt-4 outline-none"
+                      placeholder="Please write your message here"
+                    />
+                  </div>
+                  <div className="flex">
+                    <button
+                      disabled={handleDisabled()}
+                      onClick={async () => {
+                        await addDonation(
+                          userId,
+                          newDonation.amount,
+                          newDonation.specialMessage,
+                          newDonation.socialURLOrBuyMeACoffee,
+                          userData?.userId ?? ""
+                        );
+                        setButtonClicked(true);
+                        setIsClicked(true);
+                      }}
+                      className="w-full p-2 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
+                    >
+                      Support
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>

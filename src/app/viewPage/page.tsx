@@ -150,7 +150,7 @@ export default function ViewPage({}: { onClose: any }) {
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
               <div className="flex items-center gap-2">
                 <img
-                  className="w-6 h-6 rounded-full"
+                  className="w-10 h-10 rounded-full"
                   src={userData?.avatarImage}
                   alt="Jake"
                 />
