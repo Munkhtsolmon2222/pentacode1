@@ -19,7 +19,7 @@ import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
-import { useCookies } from "next-client-cookies";
+import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -81,20 +81,10 @@ export function Login() {
     }
   };
 
-  const accessToken = cookies.get("accessToken") || "";
-  if (!accessToken) {
-    console.error("No access token found!");
-  } else {
-    try {
-      const decoded = jwtDecode(accessToken);
-      console.log(decoded);
-    } catch (error) {
-      console.error("Invalid token:", error);
-    }
-  }
+  const accessToken = getCookie("accessToken") || "";
   console.log({ accessToken });
   const decoded = jwtDecode(accessToken);
-  // console.log(decoded.userId);
+  console.log(decoded.userId);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     verifyUser(values.email, values.password);

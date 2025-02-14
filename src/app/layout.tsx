@@ -25,11 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={plusJakartaSans.variable}>
-        <CookiesProvider>
-          <HeaderWrapper />
-          <SidebarWrapper />
-          {children}
-        </CookiesProvider>
+        <HeaderWrapper />
+        <SidebarWrapper />
+        {children}
       </body>
     </html>
   );
