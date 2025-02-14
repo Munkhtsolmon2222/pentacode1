@@ -31,7 +31,7 @@ export default function Explore() {
   );
   return (
     <div className="w-[80%] fixed right-0 top-0 ml-8 h-screen bg-gray-primary text-black p-4 overflow-y-auto custom-scrollbar">
-      <div className="w-full gap-6 flex flex-col mt-10">
+      <div className="w-[91%] mx-auto justify-start gap-6 flex flex-col mt-10">
         <h4 className="text-2xl font-bold text-[#18181B] mt-10">
           Explore creators
         </h4>

@@ -72,7 +72,7 @@ export default function Home() {
 
       {transactions.length > 0 ? (
         <div className="w-[78%] my-auto p-5 overflow-y-auto custom-scrollbar mx-auto mt-10 border border-solid rounded-lg">
-          {transactions.map((transaction) => (
+          {transactions.map((transaction: any) => (
             <RecentSupport key={transaction.id} transaction={transaction} />
           ))}
         </div>

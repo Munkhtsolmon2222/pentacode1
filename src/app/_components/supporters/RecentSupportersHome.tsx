@@ -6,7 +6,6 @@ export default function RecentSupport({
   transaction,
 }: {
   transaction: Transaction;
-  user: User | null;
 }) {
   const [userData, setUserData] = useState<User | null>(null);
 
