@@ -8,12 +8,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect, useState } from "react";
 import { User } from "../constants/type";
-import RecentSupport from "./supporters/RecentSupportersHome";
+import { useEffect, useState } from "react";
+
 export default function UserProfile() {
-  const [userData, setUserData] = useState<User>();
+  const [userData, setUserData] = useState<User | null>(null);
+  const [totalValue, setTotalValue] = useState<string | null>(null);
+
+  const [userValue, setUserValue] = useState({
+    totalEarnings30Days: 0,
+    totalEarnings90Days: 0,
+    totalEarningsAllTime: 0,
+  });
+
   const userId = localStorage.getItem("userId");
+
+  useEffect(() => {
+    fetchData();
+    fetchTotalEarnings();
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -28,14 +41,47 @@ export default function UserProfile() {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-  console.log(userData);
+  const fetchTotalEarnings = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/donation/total-earnings/${userId}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch earnings data");
+      const resJson = await response.json();
+      setUserValue({
+        totalEarnings30Days: resJson.totalEarnings30Days,
+        totalEarnings90Days: resJson.totalEarnings90Days,
+        totalEarningsAllTime: resJson.totalEarningsAllTime,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const userLink = `http://localhost:3000/user/${userId}`;
+  const handleShareLink = () => {
+    navigator.clipboard
+      .writeText(userLink)
+      .then(() => {
+        alert("Link copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  };
+  const renderEarnings = () => {
+    if (totalValue === "30day") {
+      return `$${userValue.totalEarnings30Days || "0"}`;
+    } else if (totalValue === "90days") {
+      return `$${userValue.totalEarnings90Days || "0"}`;
+    } else if (totalValue === "Alltime") {
+      return `$${userValue.totalEarningsAllTime || "0"}`;
+    }
+    return "$0";
+  };
 
   return (
     <div className="w-full bg-gray-primary text-black p-4">
-      <div className="max-w-[80%]  mx-auto mt-16 p-5 border border-solid rounded-lg">
+      <div className="max-w-[80%] mx-auto mt-16 p-5 border border-solid rounded-lg">
         <div className="flex justify-between items-center">
           <div className="w-12 h-12 rounded-full flex gap-3 items-center">
             <img src={userData?.avatarImage} className="rounded-full" />
@@ -44,27 +90,32 @@ export default function UserProfile() {
               <a className="text-sm">{userData?.socialMediaURL}</a>
             </div>
           </div>
-          <button className="flex max-h-10 items-center text-white gap-3 p-4 bg-[#18181B] rounded-md">
+          <button
+            onClick={handleShareLink}
+            className="flex max-h-10 items-center text-white gap-3 p-4 bg-[#18181B] rounded-md"
+          >
             <LuCopy /> Share page link
           </button>
         </div>
         <div className="max-w-[80%] mx-auto border border-solid bg-[#E4E4E7] mt-6"></div>
         <div className="flex items-center gap-4 pt-7">
           <h4 className="font-bold text-2xl">Earning</h4>
-          <Select>
+          <Select onValueChange={setTotalValue}>
             <SelectTrigger className="w-[180px]">
               <SelectValue className="text-lg" placeholder="Last 30 days" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="apple">Last 30 days</SelectItem>
-                <SelectItem value="banana">last 90 days</SelectItem>
-                <SelectItem value="blueberry">All time</SelectItem>
+                <SelectItem value="30day">Last 30 days</SelectItem>
+                <SelectItem value="90days">Last 90 days</SelectItem>
+                <SelectItem value="Alltime">All time</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
         </div>
-        <p className="font-bold text-4xl size-9 pt-6 pb-10 ">$450</p>
+        <p className="font-bold text-4xl size-9 pt-6 pb-10">
+          {renderEarnings()}
+        </p>
       </div>
     </div>
   );

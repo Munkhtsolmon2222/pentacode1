@@ -26,11 +26,16 @@ export default function RecentSupport({
     profileFetchData();
   }, [transaction]);
   console.log(userData);
+
   return (
     <div>
       <div className=" mx-auto mt-4 pl-9 pt-7 flex justify-between">
-        <div className="w-6 h-6 rounded-full flex gap-2 items-center">
-          <img src={userData?.avatarImage} alt="User Avatar" />
+        <div className="w-10 h-10 rounded-full flex gap-2 items-center">
+          <img
+            className="rounded-full h-10 w-10"
+            src={userData?.avatarImage}
+            alt="User Avatar"
+          />
           <div className="">
             <h1 className="text-[#71717A] text-xs">{userData?.name}</h1>
             <h3 className="text-[#71717A] text-xs">
@@ -38,8 +43,8 @@ export default function RecentSupport({
             </h3>
           </div>
         </div>
-        <div>
-          <h3>{transaction?.amount}</h3>
+        <div className="text-end">
+          <h3 className="font-bold">+ ${transaction?.amount}</h3>
           <h4 className="text-[#71717A] text-xs">{transaction?.updatedAt}</h4>
         </div>
       </div>
