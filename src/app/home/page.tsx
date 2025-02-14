@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { Transaction, User } from "../constants/type";
 import UserProfile from "../_components/UserProfile";
+import { getCookie } from "cookies-next";
+import { jwtDecode } from "jwt-decode";
 import RecentSupport from "../_components/supporters/RecentSupportersHome";
 import {
 	Select,
@@ -14,7 +16,32 @@ import {
 
 export default function Home() {
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
-	const userId = localStorage.getItem("userId");
+	const [userId, setUserId] = useState();
+	type DecodedToken = {
+		userId?: string;
+	};
+
+	async function getUserId() {
+		let refreshToken: string | undefined;
+		let decoded: DecodedToken | null = null;
+
+		const accessToken = (await getCookie("accessToken")) as string | undefined;
+
+		if (!accessToken) {
+			refreshToken = (await getCookie("refreshToken")) as string | undefined;
+
+			if (refreshToken) {
+				decoded = jwtDecode<DecodedToken>(refreshToken);
+			}
+		} else {
+			decoded = jwtDecode<DecodedToken>(accessToken);
+		}
+
+		const userId = decoded?.userId;
+		return userId;
+	}
+
+	getUserId().then((userId) => {});
 
 	console.log("User ID:", userId);
 

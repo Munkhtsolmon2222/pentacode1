@@ -1,3 +1,5 @@
+"use client";
+
 import { Login } from "@/app/_components/auth/LogIn";
 import { Plus_Jakarta_Sans } from "next/font/google";
 
@@ -9,9 +11,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export default function Page() {
   return (
-    <div
-      className={`${plusJakartaSans.variable} font-sans flex w-full h-screen`}
-    >
+    <div className={`${plusJakartaSans} font-sans flex w-full h-screen`}>
       <div className="w-[50%] h-screen bg-amber-400">
         <div className="flex justify-start items-start p-6 mx-6">
           <img

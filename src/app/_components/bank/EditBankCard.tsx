@@ -1,254 +1,206 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { useEffect } from "react";
-
-const formSchema = z.object({
-	country: z.string().min(1, "Please select a country."),
-	firstName: z.string().min(1, "First name is required."),
-	lastName: z.string().min(1, "Last name is required."),
-	cardNumber: z
-		.string()
-		.regex(
-			/^\d{4}-\d{4}-\d{4}-\d{4}$/,
-			"Enter a valid 16-digit card number (XXXX-XXXX-XXXX-XXXX)."
-		),
-	month: z.string().min(1, "Please select an expiration month."),
-	year: z.string().min(1, "Please select an expiration year."),
-	cvc: z
-		.string()
-		.length(3, "CVC must be 3 digits.")
-		.regex(/^\d{3}$/, "CVC must be numeric."),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { z } from "zod";
 
 export default function EditBankCard() {
-	const {
-		register,
-		handleSubmit,
-		setValue,
-		watch,
-		formState: { errors },
-	} = useForm<FormValues>({
-		resolver: zodResolver(formSchema),
+	const params = useParams();
+	const cardId = params.cardId; // Assuming `cardId` is passed in the route
+	const [form, setForm] = useState({
+		cardNumber: "",
+		cardHolderName: "",
+		expiryDate: "",
+		cvv: "",
+	});
+	const [error, setError] = useState<{
+		cardNumber?: string;
+		cardHolderName?: string;
+		expiryDate?: string;
+		cvv?: string;
+	}>({});
+	const [isLoading, setIsLoading] = useState(false);
+	const [feedbackMessage, setFeedbackMessage] = useState<{
+		type: "success" | "error" | null;
+		message: string;
+	}>({ type: null, message: "" });
+
+	const cardSchema = z.object({
+		cardNumber: z
+			.string()
+			.length(16, { message: "Card number must be 16 digits" }),
+		cardHolderName: z
+			.string()
+			.min(2, { message: "Cardholder name must be at least 2 characters" }),
+		expiryDate: z.string().regex(/^\d{2}\/\d{2}$/, {
+			message: "Expiry date must be in MM/YY format",
+		}),
+		cvv: z.string().length(3, { message: "CVV must be 3 digits" }),
 	});
 
-	const onSubmit = (data: FormValues) => {
-		console.log("Submitted Data:", data);
-		editBankCard(data);
-	};
-
-	const handleCardNumberChange = (
-		event: React.ChangeEvent<HTMLInputElement>
-	) => {
-		let value = event.target.value.replace(/\D/g, "");
-		value = value.slice(0, 16);
-		const formattedValue = value.replace(/(\d{4})/g, "$1-").replace(/-$/, "");
-		setValue("cardNumber", formattedValue);
-	};
-
-	const userId = localStorage.getItem("userId");
-	console.log(userId);
-	const editBankCard = async (data: FormValues) => {
+	const fetchCardData = async () => {
+		setIsLoading(true);
 		try {
-			const response = await fetch(
-				`http://localhost:5000/bank-card/${userId}`,
-				{
-					headers: {
-						"Content-Type": "application/json",
-					},
-					method: "PUT",
-					body: JSON.stringify({
-						country: data.country,
-						firstName: data.firstName,
-						lastName: data.lastName,
-						cardNumber: data.cardNumber,
-						expiryDate: `${data.month}/${data.year}`,
-						cvc: data.cvc,
-					}),
-				}
-			);
-
-			if (!response.ok) {
-				throw new Error("Failed to edit bank card");
-			}
-
-			const responseData = await response.json();
-			console.log("Bank card edited successfully:", responseData);
-			alert("Bank card updated successfully!");
+			const response = await fetch(`http://localhost:5000/cards/${cardId}`);
+			if (!response.ok) throw new Error("Failed to fetch card data");
+			const data = await response.json();
+			setForm({
+				cardNumber: data?.cardNumber || "",
+				cardHolderName: data?.cardHolderName || "",
+				expiryDate: data?.expiryDate || "",
+				cvv: data?.cvv || "",
+			});
 		} catch (error) {
-			console.error("Error editing bank card:", error);
-			alert("Error updating bank card. Please try again.");
+			console.error("Error fetching card data:", error);
+			setFeedbackMessage({
+				type: "error",
+				message: "Failed to fetch card data.",
+			});
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		fetchCardData();
+	}, [cardId]);
+
+	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		setForm((prev) => ({ ...prev, [name]: value }));
+	};
+
+	const editCard = async () => {
+		setIsLoading(true);
+		const validation = cardSchema.safeParse(form);
+
+		if (!validation.success) {
+			const resultError = validation.error.format();
+			setError({
+				cardNumber: resultError.cardNumber?._errors?.[0],
+				cardHolderName: resultError.cardHolderName?._errors?.[0],
+				expiryDate: resultError.expiryDate?._errors?.[0],
+				cvv: resultError.cvv?._errors?.[0],
+			});
+			setIsLoading(false);
+			return;
+		}
+
+		try {
+			const response = await fetch(`http://localhost:5000/cards/${cardId}`, {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(form),
+			});
+
+			if (!response.ok) throw new Error("Failed to update card");
+
+			setFeedbackMessage({
+				type: "success",
+				message: "Card updated successfully!",
+			});
+		} catch (error) {
+			console.error("Error updating card:", error);
+			setFeedbackMessage({
+				type: "error",
+				message: "Failed to update card.",
+			});
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	return (
-		<Card className="w-full max-w-lg mx-auto mt-8 p-6">
-			<CardContent>
-				<h2 className="text-xl font-bold">Payment details</h2>
-				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-					<div>
-						<Label>Select country</Label>
-						<Select
-							onValueChange={(val: any) => setValue("country", val)}
-							value={watch("country")}
-						>
-							<SelectTrigger>
-								<SelectValue placeholder="Select" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="USA">USA</SelectItem>
-								<SelectItem value="Canada">Canada</SelectItem>
-								<SelectItem value="UK">UK</SelectItem>
-								<SelectItem value="Mongolia">Mongolia</SelectItem>
-							</SelectContent>
-						</Select>
-						{errors.country && (
-							<p className="text-red-500 text-sm">{errors.country.message}</p>
-						)}
-					</div>
-					<div className="flex space-x-2">
-						<div className="flex-1">
-							<Label>First name</Label>
-							<Input
-								{...register("firstName")}
-								placeholder="Enter your name here"
-							/>
-							{errors.firstName && (
-								<p className="text-red-500 text-sm">
-									{errors.firstName.message}
-								</p>
-							)}
-						</div>
-						<div className="flex-1">
-							<Label>Last name</Label>
-							<Input
-								{...register("lastName")}
-								placeholder="Enter your name here"
-							/>
-							{errors.lastName && (
-								<p className="text-red-500 text-sm">
-									{errors.lastName.message}
-								</p>
-							)}
-						</div>
-					</div>
-					<div>
-						<Label>Enter card number</Label>
-						<Input
-							{...register("cardNumber")}
-							placeholder="XXXX-XXXX-XXXX-XXXX"
-							maxLength={19}
-							value={watch("cardNumber") || ""}
-							onChange={handleCardNumberChange}
-						/>
-						{errors.cardNumber && (
-							<p className="text-red-500 text-sm">
-								{errors.cardNumber.message}
-							</p>
-						)}
-					</div>
-					<div className="flex space-x-2">
-						<div className="flex-1">
-							<Label>Expires</Label>
-							<Select
-								onValueChange={(val: any) => setValue("month", val)}
-								value={watch("month")}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder="Month" />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem key="Jan" value="January">
-										January
-									</SelectItem>
-									<SelectItem key="Feb" value="February">
-										February
-									</SelectItem>
-									<SelectItem key="Mar" value="March">
-										March
-									</SelectItem>
-									<SelectItem key="Apr" value="April">
-										April
-									</SelectItem>
-									<SelectItem key="May" value="May">
-										May
-									</SelectItem>
-									<SelectItem key="Jun" value="June">
-										June
-									</SelectItem>
-									<SelectItem key="Jul" value="July">
-										July
-									</SelectItem>
-									<SelectItem key="Aug" value="August">
-										August
-									</SelectItem>
-									<SelectItem key="Sep" value="September">
-										September
-									</SelectItem>
-									<SelectItem key="Oct" value="October">
-										October
-									</SelectItem>
-									<SelectItem key="Nov" value="November">
-										November
-									</SelectItem>
-									<SelectItem key="Dec" value="December">
-										December
-									</SelectItem>
-								</SelectContent>
-							</Select>
-							{errors.month && (
-								<p className="text-red-500 text-sm">{errors.month.message}</p>
-							)}
-						</div>
-						<div className="flex-1">
-							<Label>Year</Label>
-							<Select
-								onValueChange={(val: any) => setValue("year", val)}
-								value={watch("year")}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder="Year" />
-								</SelectTrigger>
-								<SelectContent>
-									{[...Array(10)].map((_, i) => (
-										<SelectItem key={i} value={(2025 + i).toString()}>
-											{2025 + i}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-							{errors.year && (
-								<p className="text-red-500 text-sm">{errors.year.message}</p>
-							)}
-						</div>
-						<div className="flex-1">
-							<Label>CVC</Label>
-							<Input {...register("cvc")} placeholder="CVC" maxLength={3} />
-							{errors.cvc && (
-								<p className="text-red-500 text-sm">{errors.cvc.message}</p>
-							)}
-						</div>
-					</div>
-					<Button type="submit" className="w-full">
-						Save changes
-					</Button>
-				</form>
-			</CardContent>
-		</Card>
+		<div className="p-4 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
+			<p className="text-lg font-bold">Edit Bank Card</p>
+
+			{feedbackMessage.type && (
+				<div
+					className={`mt-4 p-2 rounded-md text-sm ${
+						feedbackMessage.type === "success"
+							? "bg-green-100 text-green-700"
+							: "bg-red-100 text-red-700"
+					}`}
+				>
+					{feedbackMessage.message}
+				</div>
+			)}
+
+			<div className="mt-4">
+				<label className="block font-medium">Card Number</label>
+				<input
+					type="text"
+					name="cardNumber"
+					placeholder="Enter your card number"
+					className={`border rounded-md w-full p-2 mt-1 ${
+						error.cardNumber ? "border-red-500" : ""
+					}`}
+					value={form.cardNumber}
+					onChange={onChange}
+				/>
+				{error.cardNumber && (
+					<div className="text-red-500 text-sm">{error.cardNumber}</div>
+				)}
+			</div>
+
+			<div className="mt-4">
+				<label className="block font-medium">Cardholder Name</label>
+				<input
+					type="text"
+					name="cardHolderName"
+					placeholder="Enter cardholder name"
+					className={`border rounded-md w-full p-2 mt-1 ${
+						error.cardHolderName ? "border-red-500" : ""
+					}`}
+					value={form.cardHolderName}
+					onChange={onChange}
+				/>
+				{error.cardHolderName && (
+					<div className="text-red-500 text-sm">{error.cardHolderName}</div>
+				)}
+			</div>
+
+			<div className="mt-4">
+				<label className="block font-medium">Expiry Date</label>
+				<input
+					type="text"
+					name="expiryDate"
+					placeholder="MM/YY"
+					className={`border rounded-md w-full p-2 mt-1 ${
+						error.expiryDate ? "border-red-500" : ""
+					}`}
+					value={form.expiryDate}
+					onChange={onChange}
+				/>
+				{error.expiryDate && (
+					<div className="text-red-500 text-sm">{error.expiryDate}</div>
+				)}
+			</div>
+
+			<div className="mt-4">
+				<label className="block font-medium">CVV</label>
+				<input
+					type="text"
+					name="cvv"
+					placeholder="Enter CVV"
+					className={`border rounded-md w-full p-2 mt-1 ${
+						error.cvv ? "border-red-500" : ""
+					}`}
+					value={form.cvv}
+					onChange={onChange}
+				/>
+				{error.cvv && <div className="text-red-500 text-sm">{error.cvv}</div>}
+			</div>
+
+			<button
+				onClick={editCard}
+				className={`mt-6 w-full p-2 bg-black text-white rounded-md ${
+					isLoading ? "opacity-50 cursor-not-allowed" : ""
+				}`}
+				disabled={isLoading}
+			>
+				{isLoading ? "Saving..." : "Save changes"}
+			</button>
+		</div>
 	);
 }
