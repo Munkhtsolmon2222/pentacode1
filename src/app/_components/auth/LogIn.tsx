@@ -26,6 +26,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 	weight: ["400", "500", "700"],
 	variable: "--font-plus-jakarta",
 });
+let refreshToken;
+let decoded;
 
 const formSchema = z.object({
 	email: z.string().email(),
@@ -70,24 +72,22 @@ export function Login() {
 			} else {
 				console.log("Login successful!");
 				setError("Login successful!");
-				// setUserId(data.);
-				localStorage.setItem("userId", data?.data?.accessToken);
-				// console.log(data.id);
+				const accessToken = getCookie("accessToken") || "";
+				if (!accessToken) {
+					refreshToken = getCookie("refreshToken") || "";
+					decoded = jwtDecode(refreshToken);
+				} else {
+					decoded = jwtDecode(accessToken);
+				}
+				const userId = decoded?.userId;
+				console.log({ accessToken });
+
 				router.push("/home");
 			}
 		} catch (error) {
 			console.error("Error verifying user:", error);
 		}
 	};
-
-	const accessToken = getCookie("accessToken") || "";
-	let refreshToken;
-	console.log({ accessToken });
-	const decoded = jwtDecode(accessToken);
-	if (!accessToken) {
-		refreshToken = getCookie("refreshToken") || "";
-	}
-	console.log(decoded.userId);
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		verifyUser(values.email, values.password);
