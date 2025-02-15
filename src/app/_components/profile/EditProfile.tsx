@@ -18,9 +18,7 @@ export default function EditProfile() {
 			.string()
 			.startsWith("https://", { message: "Please enter a valid social link" }),
 	});
-
 	const userId = localStorage.getItem("userId");
-
 	const [form, setForm] = useState({
 		photo: "",
 		name: "",
@@ -39,13 +37,11 @@ export default function EditProfile() {
 		type: "success" | "error" | null;
 		message: string;
 	}>({ type: null, message: "" });
-
 	const fetchUserData = async () => {
 		try {
 			const response = await fetch(
 				`http://localhost:5000/auth/profile/currentuser/${userId}`
 			);
-			console.log(response);
 			if (!response.ok) throw new Error("Failed to fetch user data");
 			const data = await response.json();
 			setForm({
@@ -59,25 +55,21 @@ export default function EditProfile() {
 			console.error("Error fetching user data:", error);
 		}
 	};
-
 	useEffect(() => {
 		fetchUserData();
 	}, []);
-
 	const onChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 	) => {
 		const { name, value } = e.target;
 		setForm((prev) => ({ ...prev, [name]: value }));
 	};
-
 	const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files && e.target.files.length > 0) {
 			const file = e.target.files[0];
 			const data = new FormData();
 			data.append("file", file);
 			data.append("upload_preset", "food-delivery");
-
 			try {
 				const response = await fetch(
 					`https://api.cloudinary.com/v1_1/do0qq0f0b/upload`,
@@ -91,11 +83,9 @@ export default function EditProfile() {
 			}
 		}
 	};
-
 	const editProfile = async () => {
 		setIsLoading(true);
 		const validation = profileSchema.safeParse(form);
-
 		if (!validation.success) {
 			const resultError = validation.error.format();
 			setError({
@@ -107,7 +97,6 @@ export default function EditProfile() {
 			setIsLoading(false);
 			return;
 		}
-
 		try {
 			const response = await fetch(`http://localhost:5000/profile/${userId}`, {
 				method: "PUT",
@@ -119,11 +108,9 @@ export default function EditProfile() {
 					socialMediaURL: form.socialMedia,
 				}),
 			});
-
 			if (!response.ok) {
 				throw new Error("Failed to update profile");
 			}
-
 			setFeedbackMessage({
 				type: "success",
 				message: "Profile updated successfully!",
@@ -138,11 +125,9 @@ export default function EditProfile() {
 			setIsLoading(false);
 		}
 	};
-
 	return (
 		<div className="p-4 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
 			<p className="text-lg font-bold">Edit Profile</p>
-
 			{feedbackMessage.type && (
 				<div
 					className={`mt-4 p-2 rounded-md text-sm ${
@@ -154,7 +139,6 @@ export default function EditProfile() {
 					{feedbackMessage.message}
 				</div>
 			)}
-
 			<h4 className="mt-4 font-medium">Add photo</h4>
 			<label
 				className={`mt-2 rounded-full w-40 h-40 border-dashed border-2 flex justify-center items-center ${
@@ -178,7 +162,6 @@ export default function EditProfile() {
 					{error.photo}
 				</div>
 			)}
-
 			<div className="mt-4">
 				<label className="block font-medium">Name</label>
 				<input
@@ -198,7 +181,6 @@ export default function EditProfile() {
 					</div>
 				)}
 			</div>
-
 			<div className="mt-4">
 				<label className="font-medium">About</label>
 				<textarea
@@ -214,7 +196,6 @@ export default function EditProfile() {
 					<div className="text-red-500 text-sm">{error.about}</div>
 				)}
 			</div>
-
 			<div className="mt-4">
 				<label className="block font-medium">Social media URL</label>
 				<input
@@ -231,7 +212,6 @@ export default function EditProfile() {
 					<div className="text-red-500 text-sm">{error.socialMedia}</div>
 				)}
 			</div>
-
 			<button
 				onClick={editProfile}
 				className={`mt-6 w-full p-2 bg-black text-white rounded-md ${

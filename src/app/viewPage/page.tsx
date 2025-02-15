@@ -6,6 +6,8 @@ import { FaHeart } from "react-icons/fa";
 import { FiCoffee } from "react-icons/fi";
 import EditProfileDialogue from "../_components/profile/EditProfileDialogue";
 import { User } from "../constants/type";
+import { getCookie } from "cookies-next";
+import { jwtDecode } from "jwt-decode";
 
 export default function ViewPage({}: { onClose: any }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -14,7 +16,17 @@ export default function ViewPage({}: { onClose: any }) {
   const [isSaved, setIsSaved] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [userData, setUserData] = useState<User>();
-  const userId = localStorage.getItem("userId");
+  let refreshToken: string;
+  let decoded: { userId: string };
+  const accessToken = (getCookie("accessToken") as string) || "";
+  if (!accessToken) {
+    refreshToken = (getCookie("refreshToken") as string) || "";
+    console.log("Refresh token from cookie:", getCookie("refreshToken"));
+    decoded = jwtDecode(refreshToken);
+  } else {
+    decoded = jwtDecode(accessToken);
+  }
+  const userId = decoded?.userId;
 
   const fetchData = async () => {
     try {
@@ -150,7 +162,7 @@ export default function ViewPage({}: { onClose: any }) {
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
               <div className="flex items-center gap-2">
                 <img
-                  className="w-10 h-10 rounded-full"
+                  className="w-6 h-6 rounded-full"
                   src={userData?.avatarImage}
                   alt="Jake"
                 />

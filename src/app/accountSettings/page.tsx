@@ -39,7 +39,7 @@ export default function AccountSettings() {
 			const response = await fetch(
 				`http://localhost:5000/auth/update-password/${userId}`,
 				{
-					method: "POST",
+					method: "PUT",
 					headers: {
 						"Content-Type": "application/json",
 					},
@@ -67,6 +67,7 @@ export default function AccountSettings() {
 			<SideBar />
 			<h3 className="font-bold max-w-lg mx-auto py-10 text-2xl ">My account</h3>
 			<EditProfile />
+			<EditBankCard />
 			<div className="max-w-lg mx-auto border border-[#E4E4E7] rounded-lg mt-8">
 				<p className="p-6 font-bold"> Set a new password</p>
 				<div className="px-6">
