@@ -3,6 +3,7 @@
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -11,6 +12,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export function ForgotPassword() {
+  const router = useRouter();
   const [responses, setResponses] = useState<string | null>(null);
   const [userOtp, setUserOtp] = useState("");
   const [email, setEmail] = useState("");
@@ -18,7 +20,7 @@ export function ForgotPassword() {
   const [otpVerified, setOtpVerified] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const [passwordChanged, setPasswordChanged] = useState(false);
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     setResponses(null);
@@ -86,6 +88,10 @@ export function ForgotPassword() {
 
       const data = await response.json();
       setResponses(data.message);
+
+      if (data.message === "Password changed successfully") {
+        setPasswordChanged(true);
+      }
     } catch (error) {
       console.error("Error resetting password:", error);
     }
@@ -144,6 +150,12 @@ export function ForgotPassword() {
                 </>
               )}
             </>
+          ) : passwordChanged ? (
+            <div className="text-center space-y-4">
+              <p className="text-green-500 text-[14px] font-medium">
+                Password changed successfully!
+              </p>
+            </div>
           ) : (
             <div className="space-y-4">
               <p className="text-[12px] text-gray-500">
@@ -164,16 +176,25 @@ export function ForgotPassword() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
               {responses && (
-                <div className="text-red-500 text-[12px]">{responses}</div>
+                <div className="text-red-500 text-[12px]">
+                  {responses}
+                  <button
+                    className="block mx-auto w-full p-2 rounded-xl bg-blue-500 text-white"
+                    onClick={() => router.push("/login")}
+                  >
+                    Go to Login
+                  </button>
+                </div>
               )}
-
-              <button
-                className="block mx-auto w-full p-2 rounded-xl mt-4 bg-green-500 text-white"
-                onClick={changePassword}
-                disabled={!password || !confirmPassword}
-              >
-                Change Password
-              </button>
+              {!responses && (
+                <button
+                  className="block mx-auto w-full p-2 rounded-xl mt-4 bg-green-500 text-white"
+                  onClick={changePassword}
+                  disabled={!password || !confirmPassword}
+                >
+                  Change Password
+                </button>
+              )}
             </div>
           )}
         </div>
