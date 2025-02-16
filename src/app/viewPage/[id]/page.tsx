@@ -57,6 +57,7 @@ export default function ViewPageExplore() {
   }>({});
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const res = await fetch(
         `http://localhost:5000/profile/view/${params?.id}`
@@ -65,7 +66,6 @@ export default function ViewPageExplore() {
       const resJson = await res.json();
       console.log(res);
       setUserData(resJson);
-      setLoading(true);
     } catch (error) {
       console.error(error);
     } finally {
@@ -172,7 +172,7 @@ export default function ViewPageExplore() {
       console.warn("No userId found, skipping fetch.");
       return;
     }
-
+    setLoading(true);
     try {
       const res = await fetch(
         `http://localhost:5000/donation/${userData?.userId}`
@@ -189,6 +189,8 @@ export default function ViewPageExplore() {
       console.error("Error fetching transactions:", error);
       setTransactions([]);
       setRecipientDonation(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -208,7 +210,7 @@ export default function ViewPageExplore() {
           </div>
 
           <div className="max-w-[510px] p-4 border rounded-md">
-            <div className="w-6 h-6 flex rounded-full m-2">
+            <div className="w-10 h-10 flex rounded-full m-2">
               <img src={userData?.avatarImage} alt="User" />
               <p>{userData?.name}</p>
             </div>
@@ -229,9 +231,8 @@ export default function ViewPageExplore() {
         </div>
       ) : (
         <div>
-          {loading ? (
-            <div className="text-center">Loading...</div>
-          ) : (
+          {loading && <div className="text-center">Loading...</div>}
+          {!loading && userData && (
             <div>
               <div className="w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center">
                 <div

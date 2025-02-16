@@ -21,9 +21,10 @@ export default function Complete() {
       console.error(error);
     }
   };
+  console.log(params.id);
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [params?.id]);
 
   return (
     <div className="w-full flex flex-col items-center">
