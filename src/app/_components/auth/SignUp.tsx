@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 import { getUserId } from "@/utils/userId";
+import Lottie from "lottie-react";
+import loading from "./loading.json";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
 	subsets: ["latin"],
@@ -29,6 +31,7 @@ export function SignUp() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [type, setType] = useState("password");
+  const [isLoading, setIsLoading] = useState(false);
 	const [responses, setResponses] = useState<response>();
 	const router = useRouter();
 	const [userId, setUserId] = useState<string>();
@@ -73,6 +76,7 @@ export function SignUp() {
 	const addUser = async (username: string, email: string, password: string) => {
 		console.log("calling");
 		try {
+			setIsLoading(true);
 			const user = await fetch("http://localhost:5000/auth/sign-up", {
 				method: "POST",
 				credentials: "include",
@@ -87,12 +91,14 @@ export function SignUp() {
 			});
 			const response = await user.json();
 			console.log(response.message);
+
 			if (response.message == "Internal server error") {
 				handleContinue();
 			} else {
 				setResponses(response);
 			}
 			console.log(response);
+			setIsLoading(false);
 			if (response.message == "Successfully added") {
 				console.log("access");
 				getUserId().then((userId) => {
@@ -108,50 +114,59 @@ export function SignUp() {
 	};
 	return (
 		<div className={`${plusJakartaSans.variable} font-sans`}>
-			<div className="flex justify-end items-center p-6 mx-6">
-				<Link href="/login">
-					<Button variant="secondary">Log in</Button>
-				</Link>
-			</div>
-			<div className="max-w-md mx-auto mt-[160px] text-black space-y-4">
-				<div className="h-auto rounded-xl p-[20px]">
-					{!showEmailPassword && (
-						<>
-							<b className="text-[24px]">Create Your Account</b>
-							<p className="text-[12px] text-gray-500">
-								Choose a username for your page
-							</p>
-							<label className="text-sm font-bold mt-4">Username</label>
-							<Input
-								className="block mx-auto w-full p-4 h-10 border-2 border-black-500 rounded-lg"
-								id="username"
-								required
-								type="text"
-								placeholder="Enter a username"
-								value={username}
-								onChange={(e) => setUsername(e.target.value)}
-								onBlur={() => {
-									setTouched((prev) => ({ ...prev, username: true }));
-									handleUsernameCheck();
-								}}
-							/>
-							{touched.username && !isUsernameValid && (
-								<>
-									<p className="block mx-auto w-[90%] text-red-500 text-[12px]">
-										Username must be at least 3 characters.
-									</p>
-								</>
-							)}
-							{responses && (
-								<div className="block mx-auto w-[90%] text-red-500 text-[12px]">
-									{responses?.message}
-									<Link href="/login">
-										<div className="text-black hover:underline">
-											Do you want to Log in?
-										</div>
-									</Link>
-								</div>
-							)}
+			  {isLoading && (
+        <Lottie
+          className="w-[500px] h-[500px] mx-auto my-auto "
+          animationData={loading}
+        />
+      )}
+      {!isLoading && (
+        <div className="flex justify-end items-center p-6 mx-6">
+          <Link href="/login">
+            <Button variant="secondary">Log in</Button>
+          </Link>
+        </div>
+      )}
+      {!isLoading && (
+        <div className="max-w-md mx-auto mt-[160px] text-black space-y-4">
+          <div className="h-auto rounded-xl p-[20px]">
+            {!showEmailPassword && (
+              <>
+                <b className="text-[24px]">Create Your Account</b>
+                <p className="text-[12px] text-gray-500">
+                  Choose a username for your page
+                </p>
+                <label className="text-sm font-bold mt-4">Username</label>
+                <Input
+                  className="block mx-auto w-full p-4 h-10 border-2 border-black-500 rounded-lg"
+                  id="username"
+                  required
+                  type="text"
+                  placeholder="Enter a username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  onBlur={() => {
+                    setTouched((prev) => ({ ...prev, username: true }));
+                    handleUsernameCheck();
+                  }}
+                />
+                {touched.username && !isUsernameValid && (
+                  <>
+                    <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
+                      Username must be at least 3 characters.
+                    </p>
+                  </>
+                )}
+                {responses && (
+                  <div className="block mx-auto w-[90%] text-red-500 text-[12px]">
+                    {responses?.message}
+                    <Link href="/login">
+                      <div className="text-black hover:underline">
+                        Do you want to Log in?
+                      </div>
+                    </Link>
+                  </div>
+                )}
 
 							<div className="flex p-[24px]">
 								<button

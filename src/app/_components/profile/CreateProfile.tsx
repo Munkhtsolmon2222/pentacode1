@@ -1,5 +1,4 @@
 "use client";
-import { request } from "http";
 import Lottie from "lottie-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
