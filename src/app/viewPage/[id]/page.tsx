@@ -13,373 +13,464 @@ import { string, z } from "zod";
 import Complete from "./compelete";
 import { Button } from "@/components/ui/button";
 import { getUserId } from "@/utils/userId";
+import RecentSupportProfile from "@/app/_components/supporters/RecentSupportersProfile";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function ViewPageExplore() {
-	const [imageUrl, setImageUrl] = useState<string | null>(null);
-	const [previewImg, setPreviewImg] = useState(null);
-	const [loading, setLoading] = useState(false);
-	const [isSaved, setIsSaved] = useState(false);
-	const [modalOpen, setModalOpen] = useState(false);
-	const [isClicked, setIsClicked] = useState(false);
-	const [buttonClicked, setButtonClicked] = useState(false);
-	const [userData, setUserData] = useState<User>();
-	const params = useParams();
-	const [newDonation, setNewDonation] = useState({
-		donorId: "",
-		amount: 0,
-		specialMessage: "",
-		socialURLOrBuyMeACoffee: "",
-		recipientId: "",
-	});
-	const [userId, setUserId] = useState<string>();
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [previewImg, setPreviewImg] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
+  const [userData, setUserData] = useState<User>();
+  const [recipientDonation, setRecipientDonation] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [scan, setScan] = useState(false);
+  const params = useParams();
+  const [newDonation, setNewDonation] = useState({
+    donorId: "",
+    amount: 0,
+    specialMessage: "",
+    socialURLOrBuyMeACoffee: "",
+    recipientId: "",
+  });
+  const [userId, setUserId] = useState<string>();
 
-	useEffect(() => {
-		getUserId().then((userId) => {
-			setUserId(userId);
-		});
-		const savedImage = localStorage.getItem("coverImage");
-		if (!savedImage) {
-			setImageUrl(savedImage);
-		}
-	}, []);
+  useEffect(() => {
+    getUserId().then((userId) => {
+      setUserId(userId);
+    });
+    const savedImage = localStorage.getItem("coverImage");
+    if (!savedImage) {
+      setImageUrl(savedImage);
+    }
+  }, []);
 
-	useEffect(() => {
-		setImageUrl(previewImg);
-	}, [isSaved, previewImg]);
-	const [error, setError] = useState<{
-		socialURLOrBuyMeACoffee?: string;
-	}>({});
+  useEffect(() => {
+    setImageUrl(previewImg);
+  }, [isSaved, previewImg]);
 
-	const fetchData = async () => {
-		try {
-			const res = await fetch(
-				`http://localhost:5000/profile/view/${params?.id}`,
-				{
-					credentials: "include",
-				}
-			);
-			if (!res.ok) throw new Error("Failed to fetch user data");
-			const resJson = await res.json();
-			console.log(res);
-			setUserData(resJson);
-		} catch (error) {
-			console.error(error);
-		}
-	};
-	console.log(params.id);
-	useEffect(() => {
-		fetchData();
-	}, [params?.id]);
-	console.log(userData);
-	const handleDisabled = () => {
-		if (error.socialURLOrBuyMeACoffee == undefined) {
-			return false;
-		} else {
-			return true;
-		}
-	};
-	useEffect(() => {
-		if (isClicked) {
-			const validation = viewPageSchema.safeParse(newDonation);
-			if (!validation.success) {
-				const resultError = validation.error.format();
-				setError({
-					socialURLOrBuyMeACoffee:
-						resultError.socialURLOrBuyMeACoffee?._errors[0],
-				});
-			} else {
-				setError({});
-			}
-		}
-	}, [isClicked, newDonation]);
+  const donationSchema = z.object({
+    socialMedia: z
+      .string()
+      .startsWith("https://", { message: "Please enter a valid social link" }),
+  });
 
-	const onChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-	) => {
-		const { name, value } = e.target;
-		const Update = { ...newDonation, [name]: value };
-		setNewDonation(Update);
-		console.log(Update);
-	};
+  const [error, setError] = useState<{
+    socialURLOrBuyMeACoffee?: string;
+  }>({});
 
-	const onChangeAmount = (amount: number) => {
-		setNewDonation((prev) => ({ ...prev, amount }));
-	};
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `http://localhost:5000/profile/view/${params?.id}`,
+        {
+          credentials: "include",
+        }
+      );
+      if (!res.ok) throw new Error("Failed to fetch user data");
+      const resJson = await res.json();
+      console.log(res);
+      setUserData(resJson);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  console.log(params.id);
+  useEffect(() => {
+    fetchData();
+  }, [params?.id]);
 
-	const onChangeMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		const { value } = e.target;
-		setNewDonation((prev) => ({ ...prev, specialMessage: value }));
-	};
+  console.log(userData);
 
-	const viewPageSchema = z.object({
-		socialURLOrBuyMeACoffee: z
-			.string()
-			.includes(".com", { message: "Please enter a valid social link" }),
-	});
+  const handleDisabled = () => {
+    return !!error.socialURLOrBuyMeACoffee;
+  };
 
-	const addDonation = async (
-		donorId: any,
-		amount: number,
-		specialMessage: string,
-		socialURLOrBuyMeACoffee: string,
-		recipientId: string
-	) => {
-		const response = await fetch("http://localhost:5000/donation", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
+  useEffect(() => {
+    if (isClicked) {
+      const validation = viewPageSchema.safeParse({
+        socialURLOrBuyMeACoffee: newDonation.socialURLOrBuyMeACoffee,
+      });
+      if (!validation.success) {
+        const resultError = validation.error.format();
+        setError({
+          socialURLOrBuyMeACoffee:
+            resultError.socialURLOrBuyMeACoffee?._errors[0],
+        });
+      } else {
+        setError({});
+      }
+    }
+  }, [isClicked, newDonation.socialURLOrBuyMeACoffee]);
 
-			body: JSON.stringify({
-				donorId,
-				amount,
-				specialMessage,
-				socialURLOrBuyMeACoffee,
-				recipientId,
-			}),
-		});
-		const data = await response.json();
-		console.log(data);
-	};
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    const Update = { ...newDonation, [name]: value };
+    setNewDonation(Update);
+    console.log(Update);
+  };
 
-	console.log(newDonation);
+  const onChangeAmount = (amount: number) => {
+    setNewDonation((prev) => ({ ...prev, amount }));
+  };
 
-	const handleDonation = async () => {
-		await addDonation(
-			userId,
-			newDonation.amount,
-			newDonation.specialMessage,
-			newDonation.socialURLOrBuyMeACoffee,
-			userData?.userId ?? ""
-		);
-		setButtonClicked(true);
-		setIsClicked(false);
-	};
+  const onChangeMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { value } = e.target;
+    setNewDonation((prev) => ({ ...prev, specialMessage: value }));
+  };
 
-	const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const viewPageSchema = z.object({
+    socialURLOrBuyMeACoffee: z
+      .string()
+      .includes(".com", { message: "Please enter a valid social link" }),
+  });
 
-	console.log("User ID:", userId);
+  const addDonation = async (
+    donorId: any,
+    amount: number,
+    specialMessage: string,
+    socialURLOrBuyMeACoffee: string,
+    recipientId: string
+  ) => {
+    setButtonClicked(false);
+    const response = await fetch("http://localhost:5000/donation", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-	const supporterFetchData = async () => {
-		if (!userId) {
-			console.warn("No userId found, skipping fetch.");
-			return;
-		}
+      body: JSON.stringify({
+        donorId,
+        amount,
+        specialMessage,
+        socialURLOrBuyMeACoffee,
+        recipientId,
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
+  };
 
-		try {
-			const res = await fetch(
-				`http://localhost:5000/donation/received/${userId}`
-			);
-			if (!res.ok) throw new Error("Failed to fetch user data");
+  console.log(newDonation);
 
-			const resJson = await res.json();
-			console.log("API Response:", resJson);
+  const handleDonation = async () => {
+    await addDonation(
+      userId,
+      newDonation.amount,
+      newDonation.specialMessage,
+      newDonation.socialURLOrBuyMeACoffee,
+      userData?.userId ?? ""
+    );
+    setButtonClicked(true);
+    setIsClicked(false);
+  };
 
-			setTransactions(
-				Array.isArray(resJson.donations) ? resJson.donations : []
-			);
-		} catch (error) {
-			console.error("Error fetching transactions:", error);
-			setTransactions([]);
-		}
-	};
+  console.log("User ID:", userId);
 
-	useEffect(() => {
-		supporterFetchData();
-	}, [userId]);
+  const supporterFetchData = async () => {
+    if (!userId) {
+      console.warn("No userId found, skipping fetch.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `http://localhost:5000/donation/${userData?.userId}`,
+        {
+          credentials: "include",
+        }
+      );
+      if (!res.ok) throw new Error("Failed to fetch user data");
 
-	return (
-		<div className="w-full min-h-screen">
-			{buttonClicked ? (
-				<div className="w-full flex flex-col justify-center items-center gap-4 mt-8">
-					<div className=" flex flex-col items-center p-2">
-						<div className="w-[64px] h-[64px] rounded-full bg-[#18BA51] flex justify-center items-center">
-							<CheckCircle2 className="text-white" />
-						</div>
-						<p className="font-bold mt-4 px-1 py-2">Donation Complete ! </p>
-					</div>
+      const resJson = await res.json();
+      console.log("API Response:", resJson);
 
-					<div className="max-w-[510px] p-4 border rounded-md">
-						<div className="w-6 h-6 flex rounded-full m-2">
-							<img src={userData?.avatarImage} alt="User" />
-							<p>{userData?.name}</p>
-						</div>
-						<p className="m-2">
-							Thank you for supporting me! It means a lot to have your support.
-							It’s a step toward creating a more inclusive and accepting
-							community of artists.
-						</p>
-					</div>
-					<div className="flex justify-center items-center p-4">
-						<button
-							className="bg-[#18181B] p-4 text-white border rounded-lg"
-							onClick={() => window.location.reload()}
-						>
-							Return to explore
-						</button>
-					</div>
-				</div>
-			) : (
-				<div>
-					<div className="w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center">
-						<div
-							style={{
-								backgroundImage: `url(${imageUrl || previewImg})`,
-							}}
-							className="w-full h-full bg-cover bg-no-repeat relative"
-						>
-							{userData?.backgroundImage ? (
-								<div className="flex absolute right-10 top-4">
-									<label
-										className={`w-[150px] h-[40px] bg-[#F4F4F5] text-[#18181B] rounded-md flex justify-center items-center gap-2 bg-cover bg-center`}
-										style={{
-											backgroundImage: `url(${userData.backgroundImage})`,
-										}}
-									></label>
-								</div>
-							) : (
-								<div
-									className="w-[100%] h-[100%] bg-[#18181B] text-[#FAFAFA] rounded-md flex justify-center items-center gap-2 bg-cover bg-center"
-									style={{
-										backgroundImage: `url("https://miro.medium.com/v2/resize:fit:4800/format:webp/1*EPdXV6DAFtthI3w-d0XUcg.jpeg")`,
-									}}
-								></div>
-							)}
-						</div>
-					</div>
-					<div className="w-full flex justify-center gap-6 -my-20 relative">
-						<div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
-							<div className="min-h-[20rem] gap-3 border rounded-md p-4">
-								<div className="flex justify-between border-b-[1px] pb-6 mt-4">
-									<div className="w-6 h-6 rounded-full flex items-center gap-2">
-										<img src={userData?.avatarImage} alt="Jake" />
-										<p className="font-bold text-2xl">{userData?.name}</p>
-									</div>
+      setTransactions(
+        Array.isArray(resJson.allDonations) ? resJson.allDonations : []
+      );
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      setTransactions([]);
+      setRecipientDonation(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-									{modalOpen && <EditProfileDialogue onClose={setModalOpen} />}
-								</div>
-								<div className="mt-10 ml-4">
-									<p className="text-xl font-semibold">
-										About {userData?.name}
-									</p>
-									<p className="max-w-[39.5rem] mt-8">{userData?.about}</p>
-								</div>
-							</div>
-							<div className="h-[10rem] gap-3 border rounded-md mt-4 p-4">
-								<p className="font-md mt-4">Social media URL</p>
-								<input
-									className="w-full mt-4 p-2 border rounded-md outline-none"
-									type="url"
-									placeholder="https://buymecoffee.com/spacerulz44"
-									value={userData?.socialMediaURL}
-								/>
-							</div>
-							<div className="max-h-[20rem] gap-6 border rounded-md mt-4 p-4 overflow-y-auto custom-scrollbar">
-								<h1 className="font-md font-bold p-2 mt-4">
-									Recent Supporters
-								</h1>
-								<div className="w-full p-2 gap-2">
-									{transactions?.map((transaction) => (
-										<div className="w-full flex gap-2 p-2">
-											<img
-												className="w-6 h-6 rounded-full"
-												src={transaction?.avatarImage}
-											/>
-											<div className="w-full">
-												<h4 className="font-semibold">{transaction?.name}</h4>
-												<h4>bought ${transaction.amount} coffee</h4>
-												<h4>{transaction?.specialMessage}</h4>
-											</div>
-										</div>
-									))}
-								</div>
-								{/* <div className="w-full min-h-[10rem] border rounded-md mt-6 flex flex-col items-center justify-center">
-                  <FaHeart />
-                  <p className="mt-2">
-                    Be the first one to support {userData?.name}
-                  </p>
-                </div> */}
-							</div>
-						</div>
-						<div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
-							<div className="mb-4">
-								<p className="text-xl font-bold mt-4">
-									Buy {userData?.name} a Coffee
-								</p>
-								<p className="text-[#09090B] font-md mt-5">Select amount:</p>
-								<div className="w-[100%] flex gap-4 mt-4">
-									<Button
-										onClick={() => onChangeAmount(1)}
-										className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
-									>
-										<FiCoffee /> $1
-									</Button>
-									<Button
-										onClick={() => onChangeAmount(2)}
-										className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
-									>
-										<FiCoffee /> $2
-									</Button>
-									<Button
-										onClick={() => onChangeAmount(5)}
-										className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
-									>
-										<FiCoffee /> $5
-									</Button>
-									<Button
-										onClick={() => onChangeAmount(10)}
-										className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2"
-									>
-										<FiCoffee /> $10
-									</Button>
-								</div>
-							</div>
-							<div className="mb-7">
-								<p className="text-[#09090B] mt-6">
-									Enter BuyMeCoffee or social account URL:
-								</p>
-								<input
-									className={`w-full p-2 border rounded-md px-4 mt-4 outline-none 
-              
-              `}
-									placeholder="bymecoffee@gmail.com"
-									type="url"
-									name="socialURLOrBuyMeACoffee"
-									onChange={onChange}
-								/>
-							</div>
-							<div className="mb-10">
-								<p className="text-[#09090B] font-semibold">Special message:</p>
-								<textarea
-									onChange={onChangeMessage}
-									value={newDonation.specialMessage}
-									className="w-full border rounded-md px-4 py-2 mt-4 outline-none"
-									placeholder="Please write your message here"
-								/>
-							</div>
-							<div className="flex">
-								<button
-									disabled={handleDisabled()}
-									onClick={async () => {
-										await addDonation(
-											userId,
-											newDonation.amount,
-											newDonation.specialMessage,
-											newDonation.socialURLOrBuyMeACoffee,
-											userData?.userId ?? ""
-										);
-										setButtonClicked(true);
-										setIsClicked(true);
-									}}
-									className="w-full p-2 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
-								>
-									Support
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			)}
-		</div>
-	);
+  useEffect(() => {
+    supporterFetchData();
+  }, [userData]);
+  console.log(transactions);
+  return (
+    <div className="w-full min-h-screen">
+      {buttonClicked ? (
+        <div className="w-full flex flex-col justify-center items-center gap-4 mt-8">
+          <div className=" flex flex-col items-center p-2">
+            <div className="w-[64px] h-[64px] rounded-full bg-[#18BA51] flex justify-center items-center">
+              <CheckCircle2 className="text-white" />
+            </div>
+            <p className="font-bold mt-4 px-1 py-2">Donation Complete ! </p>
+          </div>
+
+          <div className="max-w-[510px] p-4 border rounded-md">
+            <div className="flex gap-2 m-2">
+              <img
+                className="w-10 h-10 flex rounded-full "
+                src={userData?.avatarImage}
+                alt="User"
+              />
+              <p className="mt-2 text-[#09090B]">{userData?.name}:</p>
+            </div>
+            <p className="m-2">
+              Thank you for supporting me! It means a lot to have your support.
+              It’s a step toward creating a more inclusive and accepting
+              community of artists.
+            </p>
+          </div>
+          <div className="flex justify-center items-center p-4">
+            <button
+              className="bg-[#18181B] p-4 text-white border rounded-lg"
+              onClick={() => window.location.reload()}
+            >
+              Return to explore
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div>
+          {scan ? (
+            <div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Edit Profile</Button>
+                </DialogTrigger>
+                <DialogContent className="">
+                  <DialogHeader>
+                    <DialogTitle className="flex justify-center text-[#161616] text-3xl">
+                      Scan QR code
+                    </DialogTitle>
+                    <DialogDescription className="flex justify-center text-[#161616] text-lg">
+                      Scan the QR code to complete your donation
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex justify-center my-6">
+                    <img src="QR.png" alt="" />
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit">Save changes</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+          ) : (
+            <div>
+              {loading && <div className="text-center p-4 ">Loading...</div>}
+              {!loading && userData && (
+                <div>
+                  <div className="w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center">
+                    <div
+                      style={{
+                        backgroundImage: `url(${imageUrl || previewImg})`,
+                      }}
+                      className="w-full h-full bg-cover bg-no-repeat relative"
+                    >
+                      {userData?.backgroundImage ? (
+                        <div className="flex absolute right-10 top-4">
+                          <label
+                            className={`w-[150px] h-[40px] bg-[#F4F4F5] text-[#18181B] rounded-md flex justify-center items-center gap-2 bg-cover bg-center`}
+                            style={{
+                              backgroundImage: `url(${userData.backgroundImage})`,
+                            }}
+                          ></label>
+                        </div>
+                      ) : (
+                        <div
+                          className="w-[100%] h-[100%] bg-[#18181B] text-[#FAFAFA] rounded-md flex justify-center items-center gap-2 bg-cover bg-center"
+                          style={{
+                            backgroundImage: `url("https://miro.medium.com/v2/resize:fit:4800/format:webp/1*EPdXV6DAFtthI3w-d0XUcg.jpeg")`,
+                          }}
+                        ></div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="w-full flex justify-center gap-6 -my-20 relative">
+                    <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
+                      <div className="min-h-[20rem] gap-3 border rounded-md p-4">
+                        <div className="flex justify-between border-b-[1px] pb-6 mt-4">
+                          <div className="flex items-center gap-2 ml-4">
+                            <img
+                              className="w-10 h-10 rounded-full"
+                              src={userData?.avatarImage}
+                              alt="Jake"
+                            />
+                            <p className="font-bold text-2xl">
+                              {userData?.name}
+                            </p>
+                          </div>
+
+                          {modalOpen && (
+                            <EditProfileDialogue onClose={setModalOpen} />
+                          )}
+                        </div>
+                        <div className="mt-10 ml-4">
+                          <p className="text-xl text-[#18181B] font-semibold">
+                            About {userData?.name}
+                          </p>
+                          <p className="max-w-[39.5rem] mt-8 text-lg">
+                            {userData?.about}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="gap-2 border rounded-md mt-4 p-4">
+                        <p className="text-xl font-semibold p-2 mt-2 ml-2">
+                          Social media URL
+                        </p>
+                        <input
+                          className="w-full mt-2 p-4 text-lg"
+                          type="url"
+                          value={userData?.socialMediaURL}
+                        />
+                      </div>
+
+                      <div className="max-h-[20rem] gap-6 border rounded-md mt-4 p-4 overflow-y-auto custom-scrollbar">
+                        <h1 className="text-xl font-semibold p-2 mt-4 ml-2">
+                          Recent Supporters
+                        </h1>
+
+                        {recipientDonation ? (
+                          <div className="w-full min-h-[10rem] border rounded-md mt-6 flex flex-col items-center justify-center">
+                            <FaHeart />
+                            <p className="mt-2">
+                              Be the first one to support {userData?.name}
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="w-full p-2 gap-2">
+                            {transactions?.map((transaction) => (
+                              <RecentSupportProfile
+                                transaction={transaction}
+                                key={transaction.id}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
+                      <div className="mb-4">
+                        <p className="text-xl font-bold mt-2">
+                          Buy {userData?.name} a Coffee
+                        </p>
+                        <p className="text-[#09090B] text-lg mt-5">
+                          Select amount:
+                        </p>
+                        <div className="w-[100%] flex gap-4 mt-4">
+                          <Button
+                            // variant="secondary"
+                            onClick={() => onChangeAmount(1)}
+                            className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md hover:border-[#18181B] flex justify-center items-center gap-2"
+                          >
+                            <FiCoffee /> $1
+                          </Button>
+                          <Button
+                            onClick={() => onChangeAmount(2)}
+                            className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md hover:border-[#18181B] flex justify-center items-center gap-2"
+                          >
+                            <FiCoffee /> $2
+                          </Button>
+                          <Button
+                            onClick={() => onChangeAmount(5)}
+                            className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md hover:border-[#18181B] flex justify-center items-center gap-2"
+                          >
+                            <FiCoffee /> $5
+                          </Button>
+                          <Button
+                            onClick={() => onChangeAmount(10)}
+                            className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md hover:border-[#18181B] flex justify-center items-center gap-2"
+                          >
+                            <FiCoffee /> $10
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="mb-7">
+                        <p className="text-[#09090B] text-lg mt-10">
+                          Enter BuyMeCoffee or social account URL:
+                        </p>
+                        <input
+                          placeholder="bymecoffee@gmail.com"
+                          type="url"
+                          name="socialURLOrBuyMeACoffee"
+                          onChange={onChange}
+                          className={`border rounded-md w-full p-2 mt-1 text-lg${
+                            error.socialURLOrBuyMeACoffee
+                              ? "border-red-500"
+                              : ""
+                          }`}
+                        />
+                        {error.socialURLOrBuyMeACoffee && (
+                          <div className="text-red-500 text-lg flex items-center gap-1 pt-2">
+                            <VscError />
+                            {error.socialURLOrBuyMeACoffee}
+                          </div>
+                        )}
+                      </div>
+                      <div className="mb-10">
+                        <p className="text-[#09090B] text-lg">
+                          Special message:
+                        </p>
+                        <textarea
+                          onChange={onChangeMessage}
+                          value={newDonation.specialMessage}
+                          className="w-full border rounded-md px-4 py-2 mt-4 outline-none text-lg"
+                          placeholder="Please write your message here"
+                        />
+                      </div>
+
+                      <div className="flex">
+                        <button
+                          disabled={handleDisabled()}
+                          onClick={async () => {
+                            await addDonation(
+                              userId,
+                              newDonation.amount,
+                              newDonation.specialMessage,
+                              newDonation.socialURLOrBuyMeACoffee,
+                              userData?.userId ?? ""
+                            );
+                            setButtonClicked(true);
+                            setIsClicked(true);
+                            setScan(true);
+                          }}
+                          className="w-full p-2 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
+                        >
+                          Support
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
