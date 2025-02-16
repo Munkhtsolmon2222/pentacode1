@@ -4,12 +4,14 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
-export default function EditBankCard() {
+export default function EditBankCard({ userId }) {
 	const params = useParams();
 	const cardId = params.cardId;
 	const [form, setForm] = useState({
 		cardNumber: "",
-		cardHolderName: "",
+		lastName: "",
+		firstName: "",
+		country: "",
 		expiryDate: "",
 		cvv: "",
 	});
@@ -40,15 +42,26 @@ export default function EditBankCard() {
 
 	const fetchCardData = async () => {
 		setIsLoading(true);
+		if (!userId) {
+			console.warn("No userId found, skipping fetch.");
+			return;
+		}
 		try {
-			const response = await fetch(`http://localhost:5000/cards/${cardId}`);
+			const response = await fetch(
+				`http://localhost:5000/bank-card/${userId}`,
+				{
+					credentials: "include",
+				}
+			);
 			if (!response.ok) throw new Error("Failed to fetch card data");
 			const data = await response.json();
+			console.log(data);
 			setForm({
 				cardNumber: data?.cardNumber || "",
-				cardHolderName: data?.cardHolderName || "",
+				firstName: data?.firstName || "",
+				lastname: data?.lastName || "",
 				expiryDate: data?.expiryDate || "",
-				cvv: data?.cvv || "",
+				cvc: data?.cvv || "",
 			});
 		} catch (error) {
 			console.error("Error fetching card data:", error);
@@ -63,7 +76,7 @@ export default function EditBankCard() {
 
 	useEffect(() => {
 		fetchCardData();
-	}, [cardId]);
+	}, [userId]);
 
 	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -87,12 +100,15 @@ export default function EditBankCard() {
 		}
 
 		try {
-			const response = await fetch(`http://localhost:5000/cards/${cardId}`, {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				credentials: "include",
-				body: JSON.stringify(form),
-			});
+			const response = await fetch(
+				`http://localhost:5000/bank-card/${userId}`,
+				{
+					method: "PUT",
+					headers: { "Content-Type": "application/json" },
+					credentials: "include",
+					body: JSON.stringify(form),
+				}
+			);
 
 			if (!response.ok) throw new Error("Failed to update card");
 
@@ -110,7 +126,7 @@ export default function EditBankCard() {
 			setIsLoading(false);
 		}
 	};
-
+	console.log(form);
 	return (
 		<div className="p-4 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
 			<p className="text-lg font-bold">Edit Bank Card</p>

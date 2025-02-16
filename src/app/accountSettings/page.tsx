@@ -69,13 +69,12 @@ export default function AccountSettings() {
 			setIsLoading(false);
 		}
 	};
-
+	console.log(userId);
 	return (
 		<div className="pb-28">
 			<SideBar />
 			<h3 className="font-bold max-w-lg mx-auto py-10 text-2xl ">My account</h3>
-			<EditProfile />
-			<EditBankCard />
+			<EditProfile userId={userId} />
 			<div className="max-w-lg mx-auto border border-[#E4E4E7] rounded-lg mt-8">
 				<p className="p-6 font-bold"> Set a new password</p>
 				<div className="px-6">
@@ -110,7 +109,7 @@ export default function AccountSettings() {
 					</button>
 				</div>
 			</div>
-			<EditBankCard />
+			<EditBankCard userId={userId} />
 			<div className="p-4 mt-8 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
 				<p className="text-lg font-bold">Success page</p>
 				<div className="mt-4">
