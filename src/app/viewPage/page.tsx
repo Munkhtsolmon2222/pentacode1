@@ -20,6 +20,10 @@ export default function ViewPage({}: { onClose: any }) {
 	const [userId, setUserId] = useState<string>();
 
 	const fetchData = async () => {
+		if (!userId) {
+			console.warn("No userId found, skipping fetch.");
+			return;
+		}
 		try {
 			const res = await fetch(
 				`http://localhost:5000/profile/currentuser/${userId}`,
@@ -38,9 +42,9 @@ export default function ViewPage({}: { onClose: any }) {
 	useEffect(() => {
 		getUserId().then((userId) => {
 			setUserId(userId);
+			fetchData();
 		});
-		fetchData();
-	}, []);
+	}, [userId]);
 	console.log(userData);
 
 	// useEffect(() => {

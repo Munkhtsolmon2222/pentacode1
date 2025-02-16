@@ -97,11 +97,10 @@ export function SignUp() {
 				console.log("access");
 				getUserId().then((userId) => {
 					setUserId(userId);
+					router.push(`/profileSetup/${userId}`);
 				});
 
 				console.log(userId);
-
-				router.push(`/profileSetup/${userId}`);
 			}
 		} catch (error) {
 			console.error("Error adding user:", error);
