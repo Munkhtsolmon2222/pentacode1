@@ -12,6 +12,7 @@ import { VscError } from "react-icons/vsc";
 import { string, z } from "zod";
 import Complete from "./compelete";
 import { Button } from "@/components/ui/button";
+import { getUserId } from "@/utils/userId";
 import RecentSupportProfile from "@/app/_components/supporters/RecentSupportersProfile";
 
 export default function ViewPageExplore() {
@@ -33,9 +34,12 @@ export default function ViewPageExplore() {
     socialURLOrBuyMeACoffee: "",
     recipientId: "",
   });
-  const userId = localStorage.getItem("userId");
+  const [userId, setUserId] = useState<string>();
 
   useEffect(() => {
+    getUserId().then((userId) => {
+      setUserId(userId);
+    });
     const savedImage = localStorage.getItem("coverImage");
     if (!savedImage) {
       setImageUrl(savedImage);
@@ -60,7 +64,10 @@ export default function ViewPageExplore() {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/profile/view/${params?.id}`
+        `http://localhost:5000/profile/view/${params?.id}`,
+        {
+          credentials: "include",
+        }
       );
       if (!res.ok) throw new Error("Failed to fetch user data");
       const resJson = await res.json();

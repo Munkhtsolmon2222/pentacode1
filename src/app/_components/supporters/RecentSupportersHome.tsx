@@ -12,7 +12,10 @@ export default function RecentSupport({
 	const profileFetchData = async () => {
 		try {
 			const res = await fetch(
-				`http://localhost:5000/profile/viewHome/${transaction.donorId}`
+				`http://localhost:5000/profile/viewHome/${transaction.donorId}`,
+				{
+					credentials: "include",
+				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");
 			const resJson = await res.json();
@@ -25,7 +28,7 @@ export default function RecentSupport({
 	useEffect(() => {
 		profileFetchData();
 	}, [transaction]);
-	console.log(userData);
+	console.log(transaction);
 	return (
 		<div className="w-full mt-4 p-5">
 			<div className="w-6 h-6 rounded-full flex gap-2 items-center">

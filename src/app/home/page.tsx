@@ -13,35 +13,17 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { getUserId } from "@/utils/userId";
 
 export default function Home() {
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
-	const [userId, setUserId] = useState();
-	type DecodedToken = {
-		userId?: string;
-	};
+	const [userId, setUserId] = useState<string>();
 
-	async function getUserId() {
-		let refreshToken: string | undefined;
-		let decoded: DecodedToken | null = null;
-
-		const accessToken = (await getCookie("accessToken")) as string | undefined;
-
-		if (!accessToken) {
-			refreshToken = (await getCookie("refreshToken")) as string | undefined;
-
-			if (refreshToken) {
-				decoded = jwtDecode<DecodedToken>(refreshToken);
-			}
-		} else {
-			decoded = jwtDecode<DecodedToken>(accessToken);
-		}
-
-		const userId = decoded?.userId;
-		return userId;
-	}
-
-	getUserId().then((userId) => {});
+	useEffect(() => {
+		getUserId().then((userId) => {
+			setUserId(userId);
+		});
+	}, []);
 
 	console.log("User ID:", userId);
 
@@ -53,7 +35,10 @@ export default function Home() {
 
 		try {
 			const res = await fetch(
-				`http://localhost:5000/donation/received/${userId}`
+				`http://localhost:5000/donation/received/${userId}`,
+				{
+					credentials: "include",
+				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");
 
@@ -77,7 +62,7 @@ export default function Home() {
 
 	return (
 		<div className="w-[80%] ml-4 fixed right-0 top-0 h-screen flex flex-col bg-gray-primary text-black p-4 overflow-y-auto custom-scrollbar">
-			<UserProfile />
+			<UserProfile userId={userId} />
 			<div className="flex justify-between">
 				<div className="w-full mt-6 font-bold">Recent transactions</div>
 				<div>

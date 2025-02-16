@@ -8,6 +8,7 @@ import EditProfileDialogue from "../_components/profile/EditProfileDialogue";
 import { User } from "../constants/type";
 import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
+import { getUserId } from "@/utils/userId";
 
 export default function ViewPage({}: { onClose: any }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -16,12 +17,11 @@ export default function ViewPage({}: { onClose: any }) {
   const [isSaved, setIsSaved] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [userData, setUserData] = useState<User>();
-  let refreshToken: string;
-  let decoded: { userId: string };
-  const accessToken = (getCookie("accessToken") as string) || "";
+  let refreshToken;
+  let decoded;
+  const accessToken = getCookie("accessToken") || "";
   if (!accessToken) {
-    refreshToken = (getCookie("refreshToken") as string) || "";
-    console.log("Refresh token from cookie:", getCookie("refreshToken"));
+    refreshToken = getCookie("refreshToken") || "";
     decoded = jwtDecode(refreshToken);
   } else {
     decoded = jwtDecode(accessToken);
