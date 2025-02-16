@@ -1,13 +1,20 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditBankCard from "../_components/bank/EditBankCard";
 import EditProfile from "../_components/profile/EditProfile";
 import { SideBar } from "../_components/Sidebar";
 
 import SidebarWrapper from "../_components/SideBarWrapper";
+import { getUserId } from "@/utils/userId";
 
 export default function AccountSettings() {
-	const userId = localStorage.getItem("userId");
+	const [userId, setUserId] = useState<string>();
+
+	useEffect(() => {
+		getUserId().then((userId) => {
+			setUserId(userId);
+		});
+	}, []);
 
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
@@ -43,6 +50,7 @@ export default function AccountSettings() {
 					headers: {
 						"Content-Type": "application/json",
 					},
+					credentials: "include",
 					body: JSON.stringify({ password }),
 				}
 			);

@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export default function EditBankCard() {
 	const params = useParams();
-	const cardId = params.cardId; // Assuming `cardId` is passed in the route
+	const cardId = params.cardId;
 	const [form, setForm] = useState({
 		cardNumber: "",
 		cardHolderName: "",
@@ -90,6 +90,7 @@ export default function EditBankCard() {
 			const response = await fetch(`http://localhost:5000/cards/${cardId}`, {
 				method: "PUT",
 				headers: { "Content-Type": "application/json" },
+				credentials: "include",
 				body: JSON.stringify(form),
 			});
 

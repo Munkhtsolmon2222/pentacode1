@@ -4,15 +4,20 @@ import { useEffect, useState } from "react";
 
 export default function RecentSupport({
 	transaction,
+	transaction,
 }: {
 	transaction: Transaction;
 }) {
+	const [userData, setUserData] = useState<User | null>(null);
 	const [userData, setUserData] = useState<User | null>(null);
 
 	const profileFetchData = async () => {
 		try {
 			const res = await fetch(
-				`http://localhost:5000/profile/viewHome/${transaction.donorId}`
+				`http://localhost:5000/profile/viewHome/${transaction.donorId}`,
+				{
+					credentials: "include",
+				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");
 			const resJson = await res.json();

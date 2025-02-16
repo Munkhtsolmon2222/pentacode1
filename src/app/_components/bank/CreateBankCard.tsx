@@ -79,6 +79,7 @@ export default function CreateBankCard() {
 					headers: {
 						"Content-Type": "application/json",
 					},
+					credentials: "include",
 					method: "POST",
 					body: JSON.stringify({
 						country: data.country,

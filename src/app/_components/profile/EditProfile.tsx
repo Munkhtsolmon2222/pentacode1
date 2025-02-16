@@ -1,4 +1,5 @@
 "use client";
+import { getUserId } from "@/utils/userId";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCamera } from "react-icons/fi";
@@ -6,6 +7,7 @@ import { VscError } from "react-icons/vsc";
 import { z } from "zod";
 
 export default function EditProfile() {
+	const [userId, setUserId] = useState<string>();
 	const params = useParams();
 	const profileSchema = z.object({
 		photo: z.string().url({ message: "Please upload an image" }),
@@ -18,7 +20,12 @@ export default function EditProfile() {
 			.string()
 			.startsWith("https://", { message: "Please enter a valid social link" }),
 	});
-	const userId = localStorage.getItem("userId");
+
+	useEffect(() => {
+		getUserId().then((userId) => {
+			setUserId(userId);
+		});
+	}, []);
 	const [form, setForm] = useState({
 		photo: "",
 		name: "",
@@ -40,7 +47,10 @@ export default function EditProfile() {
 	const fetchUserData = async () => {
 		try {
 			const response = await fetch(
-				`http://localhost:5000/auth/profile/currentuser/${userId}`
+				`http://localhost:5000/auth/profile/currentuser/${userId}`,
+				{
+					credentials: "include",
+				}
 			);
 			if (!response.ok) throw new Error("Failed to fetch user data");
 			const data = await response.json();
@@ -101,6 +111,7 @@ export default function EditProfile() {
 			const response = await fetch(`http://localhost:5000/profile/${userId}`, {
 				method: "PUT",
 				headers: { "Content-Type": "application/json" },
+				credentials: "include",
 				body: JSON.stringify({
 					avatarImage: form.photo,
 					name: form.name,
