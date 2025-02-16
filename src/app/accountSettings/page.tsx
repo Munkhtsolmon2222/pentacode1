@@ -71,8 +71,7 @@ export default function AccountSettings() {
   };
   console.log(userId);
   return (
-    <div className="pb-28">
-      <SideBar />
+    <div className="w-[80%] ml-4 fixed right-0 top-0 h-screen overflow-auto">
       <h3 className="font-bold max-w-lg mx-auto py-10 text-2xl ">My account</h3>
       <EditProfile userId={userId} />
       <div className="max-w-lg mx-auto border border-[#E4E4E7] rounded-lg mt-8">
