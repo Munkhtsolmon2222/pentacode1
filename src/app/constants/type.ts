@@ -5,6 +5,7 @@ export type User = {
   socialMediaURL: string;
   id: any;
   userId: string;
+  backgroundImage: string;
 };
 export type Creator = {
   id: string;

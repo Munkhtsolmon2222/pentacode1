@@ -12,17 +12,14 @@ import { useEffect, useState } from "react";
 import { User } from "../constants/type";
 import RecentSupport from "./supporters/RecentSupportersHome";
 import { getUserId } from "@/utils/userId";
-export default function UserProfile() {
+export default function UserProfile({ userId }) {
 	const [userData, setUserData] = useState<User>();
-	const [userId, setUserId] = useState<string>();
-
-	useEffect(() => {
-		getUserId().then((userId) => {
-			setUserId(userId);
-		});
-	}, []);
 
 	const fetchData = async () => {
+		if (!userId) {
+			console.warn("No userId found, skipping fetch.");
+			return;
+		}
 		try {
 			const res = await fetch(
 				`http://localhost:5000/profile/currentuser/${userId}`,
@@ -40,7 +37,7 @@ export default function UserProfile() {
 
 	useEffect(() => {
 		fetchData();
-	}, []);
+	}, [userId]);
 	console.log(userData);
 
 	return (

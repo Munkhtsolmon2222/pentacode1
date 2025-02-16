@@ -20,6 +20,10 @@ export default function ViewPage({}: { onClose: any }) {
 	const [userId, setUserId] = useState<string>();
 
 	const fetchData = async () => {
+		if (!userId) {
+			console.warn("No userId found, skipping fetch.");
+			return;
+		}
 		try {
 			const res = await fetch(
 				`http://localhost:5000/profile/currentuser/${userId}`,
@@ -38,9 +42,9 @@ export default function ViewPage({}: { onClose: any }) {
 	useEffect(() => {
 		getUserId().then((userId) => {
 			setUserId(userId);
+			fetchData();
 		});
-		fetchData();
-	}, []);
+	}, [userId]);
 	console.log(userData);
 
 	// useEffect(() => {
@@ -205,17 +209,17 @@ export default function ViewPage({}: { onClose: any }) {
 						</p>
 						<p className="text-[#09090B] font-md mt-5">Select amount:</p>
 						<div className="w-[100%] flex gap-4 mt-4 ">
-							<button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+							<button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border flex justify-center items-center gap-2">
 								<FiCoffee /> $1
 							</button>
-							<button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+							<button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border flex justify-center items-center gap-2">
 								<FiCoffee /> $2
 							</button>
-							<button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+							<button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border flex justify-center items-center gap-2">
 								<FiCoffee />
 								$5
 							</button>
-							<button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border hover:border-[#18181B] flex justify-center items-center gap-2">
+							<button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border flex justify-center items-center gap-2">
 								{" "}
 								<FiCoffee />
 								$10

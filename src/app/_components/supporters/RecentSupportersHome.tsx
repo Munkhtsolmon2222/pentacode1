@@ -6,7 +6,6 @@ export default function RecentSupport({
 	transaction,
 }: {
 	transaction: Transaction;
-	user: User | null;
 }) {
 	const [userData, setUserData] = useState<User | null>(null);
 
@@ -29,7 +28,7 @@ export default function RecentSupport({
 	useEffect(() => {
 		profileFetchData();
 	}, [transaction]);
-	console.log(userData);
+	console.log(transaction);
 	return (
 		<div className="w-full mt-4 p-5">
 			<div className="w-6 h-6 rounded-full flex gap-2 items-center">

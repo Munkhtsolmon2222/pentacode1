@@ -1,4 +1,3 @@
-// utils/authUtils.ts
 import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 

@@ -62,7 +62,7 @@ export default function Home() {
 
 	return (
 		<div className="w-[80%] ml-4 fixed right-0 top-0 h-screen flex flex-col bg-gray-primary text-black p-4 overflow-y-auto custom-scrollbar">
-			<UserProfile />
+			<UserProfile userId={userId} />
 			<div className="flex justify-between">
 				<div className="w-full mt-6 font-bold">Recent transactions</div>
 				<div>
