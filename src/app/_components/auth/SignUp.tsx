@@ -10,7 +10,9 @@ import { useRouter } from "next/navigation";
 import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 import { getUserId } from "@/utils/userId";
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import loading from "./loading.json";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -93,9 +95,9 @@ export function SignUp() {
       } else {
         setResponses(response);
       }
-      
+
       setIsLoading(false);
-      
+
       if (response.message === "Successfully added") {
         getUserId().then((userId) => {
           setUserId(userId);
@@ -189,7 +191,9 @@ export function SignUp() {
                   placeholder="Enter your email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
+                  onBlur={() =>
+                    setTouched((prev) => ({ ...prev, email: true }))
+                  }
                 />
                 {touched.email && !handleCheckEmail() && (
                   <p className="block mx-auto w-[90%] text-red-500 text-[12px]">
@@ -198,7 +202,9 @@ export function SignUp() {
                 )}
 
                 <div className="relative">
-                  <label className="pl-[20px] text-sm font-bold">Password</label>
+                  <label className="pl-[20px] text-sm font-bold">
+                    Password
+                  </label>
                   <Input
                     className="block mx-auto w-full p-4 h-10 border-2 border-black-500 rounded-lg"
                     id="password"
