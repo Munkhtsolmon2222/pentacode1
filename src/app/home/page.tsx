@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Transaction, User } from "../constants/type";
 import UserProfile from "../_components/UserProfile";
+import { Checkbox } from "@/components/ui/checkbox";
 import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 import RecentSupport from "../_components/supporters/RecentSupportersHome";
@@ -24,6 +25,7 @@ export default function Home() {
 			setUserId(userId);
 		});
 	}, []);
+	const [selectedAmount, setSelectedAmount] = useState<string | null>(null);
 
 	console.log("User ID:", userId);
 
@@ -53,6 +55,11 @@ export default function Home() {
 			setTransactions([]);
 		}
 	};
+	const filteredTransactions = selectedAmount
+		? transactions.filter(
+				(transaction) => `$${transaction.amount}` === selectedAmount
+		  )
+		: transactions;
 
 	useEffect(() => {
 		fetchData();
@@ -63,10 +70,10 @@ export default function Home() {
 	return (
 		<div className="w-[80%] ml-4 fixed right-0 top-0 h-screen flex flex-col bg-gray-primary text-black p-4 overflow-y-auto custom-scrollbar">
 			<UserProfile userId={userId} />
-			<div className="flex justify-between">
+			<div className="flex w-[80%] mx-auto p-4 justify-between">
 				<div className="w-full mt-6 font-bold">Recent transactions</div>
 				<div>
-					<Select>
+					<Select onValueChange={setSelectedAmount}>
 						<SelectTrigger className=" flex border rounded-lg p-2">
 							<SelectValue className="text-lg" placeholder="Amount" />
 						</SelectTrigger>
@@ -83,14 +90,14 @@ export default function Home() {
 			</div>
 
 			{transactions.length > 0 ? (
-				<div className="w-full my-auto p-5 overflow-y-auto custom-scrollbar mx-auto mt-10 border border-solid rounded-lg">
-					{transactions.map((transaction) => (
+				<div className="w-[78%] my-auto p-5 overflow-y-auto custom-scrollbar mx-auto mt-10 border border-solid rounded-lg">
+					{filteredTransactions.map((transaction) => (
 						<RecentSupport key={transaction.id} transaction={transaction} />
 					))}
 				</div>
 			) : (
 				<p className="text-center text-gray-500">
-					Donation information is not available
+					{selectedAmount || "Donation information is not available"}
 				</p>
 			)}
 		</div>
