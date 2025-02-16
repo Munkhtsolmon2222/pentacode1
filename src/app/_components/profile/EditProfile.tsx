@@ -6,9 +6,7 @@ import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
 import { z } from "zod";
 
-export default function EditProfile() {
-	const [userId, setUserId] = useState<string>();
-	const params = useParams();
+export default function EditProfile({ userId }) {
 	const profileSchema = z.object({
 		photo: z.string().url({ message: "Please upload an image" }),
 		name: z
@@ -20,12 +18,6 @@ export default function EditProfile() {
 			.string()
 			.startsWith("https://", { message: "Please enter a valid social link" }),
 	});
-
-	useEffect(() => {
-		getUserId().then((userId) => {
-			setUserId(userId);
-		});
-	}, []);
 	const [form, setForm] = useState({
 		photo: "",
 		name: "",
@@ -45,9 +37,13 @@ export default function EditProfile() {
 		message: string;
 	}>({ type: null, message: "" });
 	const fetchUserData = async () => {
+		if (!userId) {
+			console.warn("No userId found, skipping fetch.");
+			return;
+		}
 		try {
 			const response = await fetch(
-				`http://localhost:5000/auth/profile/currentuser/${userId}`,
+				`http://localhost:5000/profile/currentuser/${userId}`,
 				{
 					credentials: "include",
 				}
@@ -67,7 +63,7 @@ export default function EditProfile() {
 	};
 	useEffect(() => {
 		fetchUserData();
-	}, []);
+	}, [userId]);
 	const onChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 	) => {

@@ -14,7 +14,6 @@ type EditProfileDialogueProps = {
 export default function EditProfileDialogue({
 	onClose,
 }: EditProfileDialogueProps) {
-	const params = useParams();
 	const profileSchema = z.object({
 		photo: z.string().url({ message: "Please upload an image" }),
 		name: z
@@ -30,11 +29,6 @@ export default function EditProfileDialogue({
 	const [userData, setUserData] = useState<any>(null);
 	const [userId, setUserId] = useState<string>();
 
-	useEffect(() => {
-		getUserId().then((userId) => {
-			setUserId(userId);
-		});
-	}, []);
 	const [form, setForm] = useState({
 		photo: "",
 		name: "",
@@ -73,7 +67,10 @@ export default function EditProfileDialogue({
 	};
 
 	useEffect(() => {
-		fetchUserData();
+		getUserId().then((userId) => {
+			setUserId(userId);
+			fetchUserData();
+		});
 	}, []);
 
 	useEffect(() => {
@@ -124,6 +121,7 @@ export default function EditProfileDialogue({
 				`https://api.cloudinary.com/v1_1/do0qq0f0b/upload`,
 				{
 					method: "POST",
+					credentials: "include",
 					body: data,
 				}
 			);
