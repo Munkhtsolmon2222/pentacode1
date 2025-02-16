@@ -1,5 +1,6 @@
 "use client";
 
+import { getUserId } from "@/utils/userId";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCamera } from "react-icons/fi";
@@ -27,7 +28,13 @@ export default function EditProfileDialogue({
 	});
 
 	const [userData, setUserData] = useState<any>(null);
-	const userId = localStorage.getItem("userId");
+	const [userId, setUserId] = useState<string>();
+
+	useEffect(() => {
+		getUserId().then((userId) => {
+			setUserId(userId);
+		});
+	}, []);
 	const [form, setForm] = useState({
 		photo: "",
 		name: "",
@@ -50,7 +57,10 @@ export default function EditProfileDialogue({
 		setLoading(true);
 		try {
 			const res = await fetch(
-				`http://localhost:5000/profile/currentuser/${userId}`
+				`http://localhost:5000/profile/currentuser/${userId}`,
+				{
+					credentials: "include",
+				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");
 			const resJson = await res.json();
@@ -141,6 +151,7 @@ export default function EditProfileDialogue({
 				headers: {
 					"Content-Type": "application/json",
 				},
+				credentials: "include",
 				method: "PUT",
 				body: JSON.stringify({
 					name,

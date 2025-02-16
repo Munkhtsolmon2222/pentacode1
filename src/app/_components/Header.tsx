@@ -5,29 +5,26 @@ import { LuCoffee } from "react-icons/lu";
 import { User } from "../constants/type";
 import { getCookie, deleteCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
+import { getUserId } from "@/utils/userId";
 
 export default function Header() {
 	const [userData, setUserData] = useState<User | null>(null);
+	const [userId, setUserId] = useState<string>();
 
-	// Get userId from tokens
-	let decoded: any;
-	const accessToken = getCookie("accessToken") || "";
-	const refreshToken = getCookie("refreshToken") || "";
+	useEffect(() => {
+		getUserId().then((userId) => {
+			setUserId(userId);
+		});
+	}, []);
 
-	if (accessToken) {
-		decoded = jwtDecode(accessToken);
-	} else if (refreshToken) {
-		decoded = jwtDecode(refreshToken);
-	}
-
-	const userId = decoded?.userId;
-
-	// Fetch user data
 	const fetchData = async () => {
 		try {
-			if (!userId) return; // Prevent API call if no userId
+			if (!userId) return;
 			const res = await fetch(
-				`http://localhost:5000/profile/currentuser/${userId}`
+				`http://localhost:5000/profile/currentuser/${userId}`,
+				{
+					credentials: "include",
+				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");
 			const resJson = await res.json();
@@ -41,14 +38,11 @@ export default function Header() {
 		fetchData();
 	}, []);
 
-	// Logout function
 	const logout = () => {
-		// Clear cookies and user data
 		deleteCookie("accessToken");
 		deleteCookie("refreshToken");
 		setUserData(null);
 
-		// Redirect to login or home page
 		window.location.href = "/login";
 	};
 

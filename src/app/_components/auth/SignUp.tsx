@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
+import { getUserId } from "@/utils/userId";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
 	subsets: ["latin"],
@@ -30,14 +31,12 @@ export function SignUp() {
 	const [type, setType] = useState("password");
 	const [responses, setResponses] = useState<response>();
 	const router = useRouter();
+	const [userId, setUserId] = useState<string>();
 	const [touched, setTouched] = useState({
 		username: false,
 		email: false,
 		password: false,
 	});
-
-	let refreshToken;
-	let decoded;
 
 	function handleUsernameCheck() {
 		setIsUsernameValid(username.length >= 3);
@@ -96,19 +95,12 @@ export function SignUp() {
 			console.log(response);
 			if (response.message == "Successfully added") {
 				console.log("access");
-				const accessToken = getCookie("accessToken") || "";
-				if (!accessToken) {
-					console.log("checking cookie");
-					refreshToken = getCookie("refreshToken") || "";
-					decoded = jwtDecode(refreshToken);
-				} else {
-					console.log("checking decoded");
-					decoded = jwtDecode(accessToken);
-				}
-				const userId = decoded?.userId;
-				console.log(accessToken);
+				getUserId().then((userId) => {
+					setUserId(userId);
+				});
+
 				console.log(userId);
-				console.log({ accessToken });
+
 				router.push(`/profileSetup/${userId}`);
 			}
 		} catch (error) {

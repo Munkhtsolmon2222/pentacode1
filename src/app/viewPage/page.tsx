@@ -8,6 +8,7 @@ import EditProfileDialogue from "../_components/profile/EditProfileDialogue";
 import { User } from "../constants/type";
 import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
+import { getUserId } from "@/utils/userId";
 
 export default function ViewPage({}: { onClose: any }) {
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -16,21 +17,15 @@ export default function ViewPage({}: { onClose: any }) {
 	const [isSaved, setIsSaved] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [userData, setUserData] = useState<User>();
-	let refreshToken;
-	let decoded;
-	const accessToken = getCookie("accessToken") || "";
-	if (!accessToken) {
-		refreshToken = getCookie("refreshToken") || "";
-		decoded = jwtDecode(refreshToken);
-	} else {
-		decoded = jwtDecode(accessToken);
-	}
-	const userId = decoded?.userId;
+	const [userId, setUserId] = useState<string>();
 
 	const fetchData = async () => {
 		try {
 			const res = await fetch(
-				`http://localhost:5000/profile/currentuser/${userId}`
+				`http://localhost:5000/profile/currentuser/${userId}`,
+				{
+					credentials: "include",
+				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");
 			const resJson = await res.json();
@@ -41,6 +36,9 @@ export default function ViewPage({}: { onClose: any }) {
 	};
 
 	useEffect(() => {
+		getUserId().then((userId) => {
+			setUserId(userId);
+		});
 		fetchData();
 	}, []);
 	console.log(userData);
