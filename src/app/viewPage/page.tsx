@@ -18,10 +18,10 @@ export default function ViewPage({}: { onClose: any }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [userData, setUserData] = useState<User>();
   let refreshToken;
-  let decoded;
-  const accessToken = getCookie("accessToken") || "";
+  let decoded: { userId: string };
+  const accessToken = (getCookie("accessToken") as string) || "";
   if (!accessToken) {
-    refreshToken = getCookie("refreshToken") || "";
+    refreshToken = (getCookie("refreshToken") as string) || "";
     decoded = jwtDecode(refreshToken);
   } else {
     decoded = jwtDecode(accessToken);
@@ -31,7 +31,10 @@ export default function ViewPage({}: { onClose: any }) {
   const fetchData = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/profile/currentuser/${userId}`
+        `http://localhost:5000/profile/currentuser/${userId}`,
+        {
+          credentials: "include",
+        }
       );
       if (!res.ok) throw new Error("Failed to fetch user data");
       const resJson = await res.json();
@@ -45,10 +48,6 @@ export default function ViewPage({}: { onClose: any }) {
     fetchData();
   }, []);
   console.log(userData);
-
-  // useEffect(() => {
-  //   setDonations([]);
-  // }, []);
 
   useEffect(() => {
     const savedImage = localStorage.getItem("coverImage");
@@ -99,13 +98,6 @@ export default function ViewPage({}: { onClose: any }) {
   useEffect(() => {
     setImageUrl(previewImg);
   }, [isSaved, previewImg]);
-  const [form, setForm] = useState({
-    donorId: "",
-    amount: 1,
-    specialMessage: "",
-    socialURLOrBuyMeACoffee: "",
-    recipientId: "",
-  });
 
   return (
     <div className="w-full h-screen">
@@ -160,7 +152,7 @@ export default function ViewPage({}: { onClose: any }) {
         <div className="w-[45%] bg-[#ffffff] rounded-md">
           <div className="gap-3 border rounded-md p-4">
             <div className="flex justify-between border-b-[1px] pb-6 mt-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 ml-4">
                 <img
                   className="w-6 h-6 rounded-full"
                   src={userData?.avatarImage}
@@ -178,24 +170,27 @@ export default function ViewPage({}: { onClose: any }) {
             </div>
             <div className="mt-10 ml-4">
               <p className="text-xl font-semibold">About {userData?.name}</p>
-              <p className="max-w-[80%] my-4">{userData?.about}</p>
+              <p className="max-w-[80%] my-4 text-lg">{userData?.about}</p>
             </div>
           </div>
-          <div className=" gap-3 border rounded-md mt-4 p-4">
-            <p className="font-md mt-4">Social media URL</p>
-
+          <div className=" gap-3 border rounded-md mt-4 p-4 ">
+            <p className="text-xl font-semibold p-2 mt-2 ml-2">
+              Social media URL
+            </p>
             <input
-              className="w-full mt-4 p-2 border rounded-md outline-none"
+              className="w-full my-4 p-2 rounded-md outline-none text-lg ml-2"
               type="url"
               placeholder="https://buymecoffee.com/spacerulz44"
               value={userData?.socialMediaURL}
             />
           </div>
           <div className=" gap-6 border rounded-md mt-4 p-4">
-            <p className="font-md mt-4">Recent Supporters</p>
+            <h1 className="text-xl font-semibold p-2 mt-4 ml-2">
+              Recent Supporters
+            </h1>
             <div className="w-full min-h-[10rem] border rounded-md mt-6 flex flex-col items-center justify-center">
               <FaHeart />
-              <p className="mt-2">
+              <p className="mt-2 text-lg ">
                 Be the first one to support {userData?.name}
               </p>
             </div>
@@ -203,22 +198,22 @@ export default function ViewPage({}: { onClose: any }) {
         </div>
         <div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
           <div className="mb-4">
-            <p className="text-xl font-bold mt-4">
+            <p className="text-xl font-bold mt-2">
               Buy {userData?.name} a Coffee
             </p>
-            <p className="text-[#09090B] font-md mt-5">Select amount:</p>
+            <p className="text-[#09090B] text-lg mt-5">Select amount:</p>
             <div className="w-[100%] flex gap-4 mt-4 ">
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border flex justify-center items-center gap-2">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md flex justify-center items-center gap-2">
                 <FiCoffee /> $1
               </button>
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border flex justify-center items-center gap-2">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md flex justify-center items-center gap-2">
                 <FiCoffee /> $2
               </button>
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border flex justify-center items-center gap-2">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md flex justify-center items-center gap-2">
                 <FiCoffee />
                 $5
               </button>
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md border flex justify-center items-center gap-2">
+              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md flex justify-center items-center gap-2">
                 {" "}
                 <FiCoffee />
                 $10
@@ -226,19 +221,19 @@ export default function ViewPage({}: { onClose: any }) {
             </div>
           </div>
           <div className="mb-7">
-            <p className="text-[#09090B] mt-6">
+            <p className="text-[#09090B] text-lg mt-6">
               Enter BuyMeCoffee or social account URL:
             </p>
             <input
-              className="w-full border rounded-md p-2 mt-4 outline-none"
+              className="w-full border rounded-md p-2 mt-4 outline-none text-lg "
               placeholder="bymecoffee@gmail.com"
               type="url"
             />
           </div>
           <div className="mb-10">
-            <p className="text-[#09090B]">Special message:</p>
+            <p className="text-[#09090B] text-lg ">Special message:</p>
             <textarea
-              className="w-full border rounded-md px-4 py-2 mt-4 outline-none"
+              className="w-full border rounded-md px-4 py-2 mt-4 outline-none text-lg "
               placeholder="Please write your message here"
             />
           </div>
