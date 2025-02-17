@@ -6,12 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -21,125 +21,127 @@ import { useRouter } from "next/navigation";
 import { getUserId } from "@/utils/userId";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-plus-jakarta",
+	subsets: ["latin"],
+	weight: ["400", "500", "700"],
+	variable: "--font-plus-jakarta",
 });
 
 const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
+	email: z.string().email(),
+	password: z.string().min(8),
 });
 
 export function Login() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+	const [showPassword, setShowPassword] = useState(false);
+	const [error, setError] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+	const router = useRouter();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: { email: "", password: "" },
-  });
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: { email: "", password: "" },
+	});
 
-  const verifyUser = async (email: string, password: string) => {
-    setIsLoading(true);
-    setError("");
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-in`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-          credentials: "include",
-        }
-      );
-      const data = await response.json();
+	const verifyUser = async (email: string, password: string) => {
+		setIsLoading(true);
+		setError("");
+		try {
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/auth/sign-in`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Origin: "http://localhost:3000",
+					},
+					body: JSON.stringify({ email, password }),
+					credentials: "include",
+				}
+			);
+			const data = await response.json();
 
-      if (data.message === "Email not found") setError("Email does not exist.");
-      else if (data.message === "Incorrect password")
-        setError("Incorrect password.");
-      else {
-        await getUserId();
-        router.push("/home");
-      }
-    } catch {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+			if (data.message === "Email not found") setError("Email does not exist.");
+			else if (data.message === "Incorrect password")
+				setError("Incorrect password.");
+			else {
+				await getUserId();
+				router.push("/home");
+			}
+		} catch {
+			setError("An error occurred. Please try again.");
+		} finally {
+			setIsLoading(false);
+		}
+	};
+	const onSubmit = (values: z.infer<typeof formSchema>) =>
+		verifyUser(values.email, values.password);
 
-  const onSubmit = (values: z.infer<typeof formSchema>) =>
-    verifyUser(values.email, values.password);
+	return (
+		<div
+			className={`${plusJakartaSans.variable} font-sans min-h-screen flex flex-col items-center justify-center`}
+		>
+			<div className="w-full max-w-md space-y-6 p-6 bg-white shadow-lg rounded-lg">
+				<h2 className="text-2xl font-bold text-center">Welcome Back</h2>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="font-bold">Email</FormLabel>
+									<FormControl>
+										<Input placeholder="Enter email here" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
-  return (
-    <div
-      className={`${plusJakartaSans.variable} font-sans min-h-screen flex flex-col items-center justify-center`}
-    >
-      <div className="w-full max-w-md space-y-6 p-6 bg-white shadow-lg rounded-lg">
-        <h2 className="text-2xl font-bold text-center">Welcome Back</h2>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter email here" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+						<FormField
+							control={form.control}
+							name="password"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="font-bold">Password</FormLabel>
+									<FormControl>
+										<div className="relative">
+											<Input
+												type={showPassword ? "text" : "password"}
+												placeholder="Enter password here"
+												{...field}
+											/>
+											<button
+												type="button"
+												onClick={() => setShowPassword(!showPassword)}
+												className="absolute right-3 top-2 text-gray-500 hover:text-gray-700"
+											>
+												{showPassword ? <Eye /> : <EyeClosed />}
+											</button>
+										</div>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold">Password</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Enter password here"
-                        {...field}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-2 text-gray-500 hover:text-gray-700"
-                      >
-                        {showPassword ? <Eye /> : <EyeClosed />}
-                      </button>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+						{error && (
+							<p className="text-red-500 text-sm text-center">{error}</p>
+						)}
 
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
+						<Button className="w-full" type="submit" disabled={isLoading}>
+							{isLoading ? "Loading..." : "Continue"}
+						</Button>
+					</form>
+				</Form>
 
-            <Button className="w-full" type="submit" disabled={isLoading}>
-              {isLoading ? "Loading..." : "Continue"}
-            </Button>
-          </form>
-        </Form>
-
-        <p className="text-center text-sm">
-          Don't have an account?{" "}
-          <Link href="/signup" className="text-blue-600 hover:underline">
-            Sign up
-          </Link>
-        </p>
-      </div>
-    </div>
-  );
+				<p className="text-center text-sm">
+					Don't have an account?{" "}
+					<Link href="/signup" className="text-blue-600 hover:underline">
+						Sign up
+					</Link>
+				</p>
+			</div>
+		</div>
+	);
 }

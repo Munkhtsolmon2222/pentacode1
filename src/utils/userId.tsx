@@ -10,7 +10,7 @@ export async function getUserId(): Promise<string | undefined> {
 	let decoded: DecodedToken | null = null;
 
 	const accessToken = (await getCookie("accessToken")) as string | undefined;
-
+	console.log(accessToken);
 	if (!accessToken) {
 		refreshToken = (await getCookie("refreshToken")) as string | undefined;
 
