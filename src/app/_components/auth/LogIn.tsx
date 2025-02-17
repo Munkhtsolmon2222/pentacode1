@@ -36,9 +36,9 @@ const formSchema = z.object({
 });
 
 export function Login() {
-	const [type, setType] = useState("password");
-	const [error, setError] = useState("");
-	const [userId, setUserId] = useState<string>();
+  const [type, setType] = useState("password");
+  const [error, setError] = useState("");
+  const [userId, setUserId] = useState<string>();
 
   const router = useRouter();
 
@@ -50,40 +50,40 @@ export function Login() {
     },
   });
 
-	const verifyUser = async (email: string, password: string) => {
-		try {
-			const response = await fetch("http://localhost:5000/auth/sign-in", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ email, password }),
-				credentials: "include",
-			});
+  const verifyUser = async (email: string, password: string) => {
+    try {
+      const response = await fetch("http://localhost:5000/auth/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      });
 
       const data = await response.json();
       console.log("Response:", data);
 
-			if (data.message === "Email not found") {
-				console.log("Error: Email does not exist.");
-				setError("Email does not exist.");
-			} else if (data.message === "Incorrect password") {
-				console.log("Error: Password is incorrect.");
-				setError("Password is incorrect.");
-			} else {
-				console.log("Login successful!");
-				setError("Login successful!");
+      if (data.message === "Email not found") {
+        console.log("Error: Email does not exist.");
+        setError("Email does not exist.");
+      } else if (data.message === "Incorrect password") {
+        console.log("Error: Password is incorrect.");
+        setError("Password is incorrect.");
+      } else {
+        console.log("Login successful!");
+        setError("Login successful!");
 
-				getUserId().then((userId) => {
-					setUserId(userId);
-				});
+        getUserId().then((userId) => {
+          setUserId(userId);
+        });
 
-				router.push("/home");
-			}
-		} catch (error) {
-			console.error("Error verifying user:", error);
-		}
-	};
+        router.push("/home");
+      }
+    } catch (error) {
+      console.error("Error verifying user:", error);
+    }
+  };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     verifyUser(values.email, values.password);
