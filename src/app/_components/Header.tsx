@@ -31,7 +31,7 @@ export default function Header() {
     try {
       if (!userId) return;
       const res = await fetch(
-        `http://localhost:5000/profile/currentuser/${userId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/profile/currentuser/${userId}`,
         {
           credentials: "include",
         }

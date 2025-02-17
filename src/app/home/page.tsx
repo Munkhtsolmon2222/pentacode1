@@ -37,7 +37,7 @@ export default function Home() {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/donation/received/${userId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/donation/received/${userId}`,
         {
           credentials: "include",
         }

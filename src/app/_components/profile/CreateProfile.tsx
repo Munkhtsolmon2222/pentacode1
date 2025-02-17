@@ -109,7 +109,7 @@ export default function CreateProfile({ setStep }: any) {
     console.log("yvuulj bn");
     setStep(2);
     const response = await fetch(
-      `http://localhost:5000/profile/${params.userId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/profile/${params.userId}`,
       {
         headers: {
           "Content-Type": "application/json",

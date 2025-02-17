@@ -76,18 +76,21 @@ export function SignUp() {
   const addUser = async (username: string, email: string, password: string) => {
     try {
       setIsLoading(true);
-      const user = await fetch("http://localhost:5000/auth/sign-up", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-        }),
-      });
+      const user = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-up`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            email,
+            password,
+          }),
+        }
+      );
       const response = await user.json();
 
       if (response.message === "Internal server error") {

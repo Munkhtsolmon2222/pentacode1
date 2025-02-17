@@ -46,12 +46,15 @@ export function Login() {
     setIsLoading(true);
     setError("");
     try {
-      const response = await fetch("http://localhost:5000/auth/sign-in", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-in`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+          credentials: "include",
+        }
+      );
       const data = await response.json();
 
       if (data.message === "Email not found") setError("Email does not exist.");

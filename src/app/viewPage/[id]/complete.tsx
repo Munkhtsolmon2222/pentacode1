@@ -11,7 +11,7 @@ export default function Complete() {
   const fetchData = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/profile/view/${params.id}`
+        `${process.env.NEXT_PUBLIC_API_URL}/profile/view/${params.id}`
       );
       if (!res.ok) throw new Error("Failed to fetch user data");
       const resJson = await res.json();

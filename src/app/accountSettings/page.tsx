@@ -44,7 +44,7 @@ export default function AccountSettings() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:5000/auth/update-password/${userId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/update-password/${userId}`,
         {
           method: "PUT",
           headers: {
