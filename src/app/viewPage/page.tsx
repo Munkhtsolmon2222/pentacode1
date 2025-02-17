@@ -23,6 +23,7 @@ export default function ViewPage({}: { onClose: any }) {
   if (!accessToken) {
     refreshToken = (getCookie("refreshToken") as string) || "";
     decoded = jwtDecode(refreshToken);
+    console.log(refreshToken);
   } else {
     decoded = jwtDecode(accessToken);
   }

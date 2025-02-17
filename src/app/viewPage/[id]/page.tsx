@@ -382,31 +382,17 @@ export default function ViewPageExplore() {
                           Select amount:
                         </p>
                         <div className="w-[100%] flex gap-4 mt-4">
-                          <Button
-                            // variant="secondary"
-                            onClick={() => onChangeAmount(1)}
-                            className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md hover:border-[#18181B] flex justify-center items-center gap-2"
-                          >
-                            <FiCoffee /> $1
-                          </Button>
-                          <Button
-                            onClick={() => onChangeAmount(2)}
-                            className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md hover:border-[#18181B] flex justify-center items-center gap-2"
-                          >
-                            <FiCoffee /> $2
-                          </Button>
-                          <Button
-                            onClick={() => onChangeAmount(5)}
-                            className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md hover:border-[#18181B] flex justify-center items-center gap-2"
-                          >
-                            <FiCoffee /> $5
-                          </Button>
-                          <Button
-                            onClick={() => onChangeAmount(10)}
-                            className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md hover:border-[#18181B] flex justify-center items-center gap-2"
-                          >
-                            <FiCoffee /> $10
-                          </Button>
+                          {[1, 2, 5, 10].map((amount) => (
+                            <Button
+                              variant={outline}
+                              key={amount}
+                              onClick={() => onChangeAmount(amount)}
+                              className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md 
+                 hover:border-[#18181B] flex justify-center items-center gap-2"
+                            >
+                              <FiCoffee /> ${amount}
+                            </Button>
+                          ))}
                         </div>
                       </div>
                       <div className="mb-7">
