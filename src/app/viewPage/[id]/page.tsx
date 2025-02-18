@@ -74,7 +74,7 @@ export default function ViewPageExplore() {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/profile/view/${params?.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/profile/view/${params?.id}`,
         {
           credentials: "include",
         }
@@ -154,21 +154,24 @@ export default function ViewPageExplore() {
     recipientId: string
   ) => {
     setButtonClicked(false);
-    const response = await fetch("http://localhost:5000/donation", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/donation`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-      body: JSON.stringify({
-        donorId,
-        amount,
-        specialMessage,
-        socialURLOrBuyMeACoffee,
-        recipientId,
-      }),
-    });
+        body: JSON.stringify({
+          donorId,
+          amount,
+          specialMessage,
+          socialURLOrBuyMeACoffee,
+          recipientId,
+        }),
+      }
+    );
     const data = await response.json();
     console.log(data);
   };
@@ -197,7 +200,7 @@ export default function ViewPageExplore() {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/donation/${userData?.userId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/donation/${userData?.userId}`,
         {
           credentials: "include",
         }

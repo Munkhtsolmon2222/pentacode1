@@ -73,7 +73,7 @@ export default function CreateBankCard() {
   const addBankCard = async (data: FormValues) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/bank-card/${params.userId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/bank-card/${params.userId}`,
         {
           headers: {
             "Content-Type": "application/json",

@@ -12,7 +12,7 @@ export default function RecentSupportProfile({
   const profileFetchData = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/profile/viewHome/${transaction.donorId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/profile/viewHome/${transaction.donorId}`,
         {
           credentials: "include",
         }

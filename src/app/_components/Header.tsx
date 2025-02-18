@@ -31,7 +31,7 @@ export default function Header() {
     try {
       if (!userId) return;
       const res = await fetch(
-        `http://localhost:5000/profile/currentuser/${userId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/profile/currentuser/${userId}`,
         {
           credentials: "include",
         }
@@ -60,7 +60,7 @@ export default function Header() {
   console.log(userData);
   return (
     <div className="bg-white p-4 absolute top-0 w-full z-10">
-      <div className="flex justify-between w-[90%] mx-20 mb-4">
+      <div className="flex justify-between w-[90%] mx-20">
         <div className="flex gap-2 items-center font-bold">
           <Link href="/">
             <div className="flex gap-2 items-center font-bold h-10">

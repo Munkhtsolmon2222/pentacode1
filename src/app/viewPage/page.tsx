@@ -10,7 +10,7 @@ import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 import { getUserId } from "@/utils/userId";
 
-export default function ViewPage({}: { onClose: any }) {
+export default function ViewPage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [previewImg, setPreviewImg] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ export default function ViewPage({}: { onClose: any }) {
   const fetchData = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/profile/currentuser/${userId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/profile/currentuser/${userId}`,
         {
           credentials: "include",
         }
