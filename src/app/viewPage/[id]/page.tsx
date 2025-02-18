@@ -2,7 +2,7 @@
 
 import EditProfileDialogue from "@/app/_components/profile/EditProfileDialogue";
 import { Creator, Transaction, User } from "@/app/constants/type";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, ChevronDown } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CiCamera } from "react-icons/ci";
@@ -61,9 +61,9 @@ export default function ViewPageExplore() {
   }, [isSaved, previewImg]);
 
   const donationSchema = z.object({
-    socialMedia: z
+    socialURLOrBuyMeACoffee: z
       .string()
-      .startsWith("https://", { message: "Please enter a valid social link" }),
+      .endsWith(".com", { message: "Please enter a valid social link" }),
   });
 
   const [error, setError] = useState<{
@@ -107,11 +107,12 @@ export default function ViewPageExplore() {
 
   useEffect(() => {
     if (isClicked) {
-      const validation = viewPageSchema.safeParse({
+      const validation = donationSchema.safeParse({
         socialURLOrBuyMeACoffee: newDonation.socialURLOrBuyMeACoffee,
       });
       if (!validation.success) {
         const resultError = validation.error.format();
+        console.log(error);
         setError({
           socialURLOrBuyMeACoffee:
             resultError.socialURLOrBuyMeACoffee?._errors[0],
@@ -139,12 +140,6 @@ export default function ViewPageExplore() {
     const { value } = e.target;
     setNewDonation((prev) => ({ ...prev, specialMessage: value }));
   };
-
-  const viewPageSchema = z.object({
-    socialURLOrBuyMeACoffee: z
-      .string()
-      .includes(".com", { message: "Please enter a valid social link" }),
-  });
 
   const addDonation = async (
     donorId: any,
@@ -321,7 +316,7 @@ export default function ViewPageExplore() {
                         <div className="flex justify-between border-b-[1px] pb-6 mt-4">
                           <div className="flex items-center gap-2 ml-4">
                             <img
-                              className="w-10 h-10 rounded-full"
+                              className="w-12 h-12 rounded-full"
                               src={userData?.avatarImage}
                               alt="Jake"
                             />
@@ -338,7 +333,7 @@ export default function ViewPageExplore() {
                           <p className="text-xl text-[#18181B] font-semibold">
                             About {userData?.name}
                           </p>
-                          <p className="max-w-[39.5rem] mt-8 text-lg">
+                          <p className="w-full mt-8 text-lg">
                             {userData?.about}
                           </p>
                         </div>
@@ -348,14 +343,14 @@ export default function ViewPageExplore() {
                           Social media URL
                         </p>
                         <input
-                          className="w-full mt-2 p-4 text-lg"
+                          className="w-full mt-1 p-4 text-lg"
                           type="url"
                           value={userData?.socialMediaURL}
                         />
                       </div>
 
-                      <div className="max-h-[20rem] gap-6 border rounded-md mt-4 p-4 overflow-y-auto custom-scrollbar">
-                        <h1 className="text-xl font-semibold p-2 mt-4 ml-2">
+                      <div className="max-h-[20rem] gap-6 border rounded-md mt-4 overflow-y-auto custom-scrollbar">
+                        <h1 className="text-xl font-semibold p-6 ml-2 sticky top-0 bg-white">
                           Recent Supporters
                         </h1>
 
@@ -376,23 +371,30 @@ export default function ViewPageExplore() {
                             ))}
                           </div>
                         )}
+                        <Button
+                          className="w-full text-[#18181B] p-6"
+                          variant={"outline"}
+                        >
+                          See more
+                          <ChevronDown />
+                        </Button>
                       </div>
                     </div>
                     <div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
                       <div className="mb-4">
-                        <p className="text-xl font-bold mt-2">
+                        <p className="text-3xl font-bold mt-2">
                           Buy {userData?.name} a Coffee
                         </p>
                         <p className="text-[#09090B] text-lg mt-5">
                           Select amount:
                         </p>
-                        <div className="w-[100%] flex gap-4 mt-4">
+                        <div className="w-[100%] text-bold flex gap-4 mt-2">
                           {[1, 2, 5, 10].map((amount) => (
                             <Button
-                              variant={"outline"}
+                              variant={"secondary"}
                               key={amount}
                               onClick={() => onChangeAmount(amount)}
-                              className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md 
+                              className="w-20 bg-[#F4F4F5] rounded-md text-[#09090B] font-md 
                  hover:border-[#18181B] flex justify-center items-center gap-2"
                             >
                               <FiCoffee /> ${amount}
@@ -400,7 +402,7 @@ export default function ViewPageExplore() {
                           ))}
                         </div>
                       </div>
-                      <div className="mb-7">
+                      <div className="mb-6">
                         <p className="text-[#09090B] text-lg mt-10">
                           Enter BuyMeCoffee or social account URL:
                         </p>
@@ -409,7 +411,7 @@ export default function ViewPageExplore() {
                           type="url"
                           name="socialURLOrBuyMeACoffee"
                           onChange={onChange}
-                          className={`border rounded-md w-full p-2 mt-1 text-lg${
+                          className={`border rounded-md w-full p-2 mt-1 text-md outline-none${
                             error.socialURLOrBuyMeACoffee
                               ? "border-red-500"
                               : ""
@@ -429,30 +431,12 @@ export default function ViewPageExplore() {
                         <textarea
                           onChange={onChangeMessage}
                           value={newDonation.specialMessage}
-                          className="w-full border rounded-md px-4 py-2 mt-4 outline-none text-lg"
+                          className="w-full border rounded-md px-4 py-2 mt-2 outline-none text-lg"
                           placeholder="Please write your message here"
                         />
                       </div>
 
                       <div className="flex">
-                        {/* <button
-                          disabled={handleDisabled()}
-                          onClick={async () => {
-                            await addDonation(
-                              userId,
-                              newDonation.amount,
-                              newDonation.specialMessage,
-                              newDonation.socialURLOrBuyMeACoffee,
-                              userData?.userId ?? ""
-                            );
-                            setButtonClicked(true);
-                            setIsClicked(true);
-                            setScan(true);
-                          }}
-                          className="w-full p-2 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
-                        >
-                          Support
-                        </button> */}
                         <button
                           disabled={!!handleDisabled()}
                           onClick={async () => {
@@ -470,8 +454,8 @@ export default function ViewPageExplore() {
                           className={`w-full p-2 rounded-md font-md 
                           ${
                             handleDisabled()
-                              ? "bg-gray-400 cursor-not-allowed"
-                              : "bg-[#18181B] text-white hover:bg-[#18181B]"
+                              ? "bg-[#18181B] opacity-20 text-[#FAFAFA] cursor-not-allowed"
+                              : "bg-[#18181B] text-[#FAFAFA] hover:bg-[#18181B]"
                           }`}
                         >
                           Support
