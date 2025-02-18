@@ -57,7 +57,6 @@ export function Login() {
 						Origin: "https://penta-code-frontend.vercel.app",
 					},
 					body: JSON.stringify({ email, password }),
-					credentials: "include",
 				}
 			);
 			const data = await response.json();
