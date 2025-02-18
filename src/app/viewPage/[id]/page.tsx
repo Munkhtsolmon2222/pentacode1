@@ -97,7 +97,12 @@ export default function ViewPageExplore() {
   console.log(userData);
 
   const handleDisabled = () => {
-    return !!error.socialURLOrBuyMeACoffee;
+    return (
+      !newDonation.amount ||
+      !newDonation.specialMessage.trim() ||
+      !newDonation.socialURLOrBuyMeACoffee ||
+      !!error.socialURLOrBuyMeACoffee
+    );
   };
 
   useEffect(() => {
@@ -384,7 +389,7 @@ export default function ViewPageExplore() {
                         <div className="w-[100%] flex gap-4 mt-4">
                           {[1, 2, 5, 10].map((amount) => (
                             <Button
-                              variant={outline}
+                              variant={"outline"}
                               key={amount}
                               onClick={() => onChangeAmount(amount)}
                               className="w-20 bg-[#F4F4F5] rounded-md text-[#18181B] font-md 
@@ -430,7 +435,7 @@ export default function ViewPageExplore() {
                       </div>
 
                       <div className="flex">
-                        <button
+                        {/* <button
                           disabled={handleDisabled()}
                           onClick={async () => {
                             await addDonation(
@@ -445,6 +450,29 @@ export default function ViewPageExplore() {
                             setScan(true);
                           }}
                           className="w-full p-2 bg-[#18181B] text-white rounded-md font-md hover:bg-[#18181B]"
+                        >
+                          Support
+                        </button> */}
+                        <button
+                          disabled={handleDisabled()}
+                          onClick={async () => {
+                            await addDonation(
+                              userId,
+                              newDonation.amount,
+                              newDonation.specialMessage,
+                              newDonation.socialURLOrBuyMeACoffee,
+                              userData?.userId ?? ""
+                            );
+                            setButtonClicked(true);
+                            setIsClicked(true);
+                            setScan(true);
+                          }}
+                          className={`w-full p-2 rounded-md font-md 
+  ${
+    handleDisabled()
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-[#18181B] text-white hover:bg-[#18181B]"
+  }`}
                         >
                           Support
                         </button>
