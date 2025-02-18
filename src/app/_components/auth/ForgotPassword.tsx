@@ -5,6 +5,12 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { accessToken } from "@/utils/accessToken";
+import {
+	InputOTP,
+	InputOTPGroup,
+	InputOTPSeparator,
+	InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
 	subsets: ["latin"],
@@ -107,11 +113,11 @@ export function ForgotPassword() {
 	return (
 		<div className={`${plusJakartaSans.variable} font-sans`}>
 			<div className="mx-auto mt-[160px] text-black w-[360px]">
-				<div className="h-auto rounded-xl p-[20px] space-y-">
+				<div className="w-full max-w-md p-6 shadow-lg rounded-lg h-auto space-y-6">
 					<b className="text-[24px]">Forgot your password</b>
 
 					{!otpVerified ? (
-						<>
+						<div className="w-full max-w-md">
 							<p className="text-[12px] text-gray-500">
 								Enter your email address
 							</p>
@@ -137,26 +143,39 @@ export function ForgotPassword() {
 							)}
 
 							{otpSent && (
-								<>
+								<div>
 									<p className="text-[12px] text-gray-500">
 										Enter the OTP sent to your email
 									</p>
-									<Input
-										id="otp"
-										type="number"
-										placeholder="Enter OTP"
-										value={userOtp}
-										onChange={(e) => setUserOtp(e.target.value)}
-									/>
+									<div className="space-y-2 mx-auto pl-4">
+										<InputOTP
+											maxLength={6}
+											value={userOtp}
+											onChange={(value) => setUserOtp(value)}
+										>
+											<InputOTPGroup>
+												<InputOTPSlot index={0} />
+												<InputOTPSlot index={1} />
+												<InputOTPSlot index={2} />
+											</InputOTPGroup>
+											<div className="p-4">-</div>
+											<InputOTPGroup>
+												<InputOTPSlot index={3} />
+												<InputOTPSlot index={4} />
+												<InputOTPSlot index={5} />
+											</InputOTPGroup>
+										</InputOTP>
+									</div>
+
 									<button
 										className="block mx-auto w-full p-2 rounded-xl mt-2 bg-green-500 text-white"
 										onClick={verifyOtp}
 									>
 										Verify OTP
 									</button>
-								</>
+								</div>
 							)}
-						</>
+						</div>
 					) : passwordChanged ? (
 						<div className="text-center space-y-4">
 							<p className="text-green-500 text-[14px] font-medium">
@@ -186,7 +205,7 @@ export function ForgotPassword() {
 								<div className="text-red-500 text-[12px]">
 									{responses}
 									<button
-										className="block mx-auto w-full p-2 rounded-xl bg-blue-500 text-white"
+										className="block mx-auto w-full p-2 rounded-xl bg-blue-500 text-white text-[12px]"
 										onClick={() => router.push("/login")}
 									>
 										Go to Login

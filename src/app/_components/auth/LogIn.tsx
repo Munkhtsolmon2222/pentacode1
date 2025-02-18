@@ -95,70 +95,77 @@ export function Login() {
 		verifyUser(values.email, values.password);
 
 	return (
-		<div
-			className={`${plusJakartaSans.variable} font-sans min-h-screen flex flex-col items-center justify-center`}
-		>
-			<div className="w-full max-w-md space-y-6 p-6 bg-white shadow-lg rounded-lg">
-				<h2 className="text-2xl font-bold text-center">Welcome Back</h2>
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-						<FormField
-							control={form.control}
-							name="email"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className="font-bold">Email</FormLabel>
-									<FormControl>
-										<Input placeholder="Enter email here" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
+		<div className={`${plusJakartaSans.variable} font-sans`}>
+			<div className="flex justify-end items-center p-6 mx-6">
+				<Link href="/signup">
+					<Button variant="secondary">Sign up</Button>
+				</Link>
+			</div>
+			<div className="flex flex-col items-center justify-center">
+				<div className="mt-[160px] w-full max-w-md space-y-6 p-6 bg-white shadow-lg rounded-lg">
+					<h2 className="text-2xl font-bold text-center">Welcome Back</h2>
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+							<FormField
+								control={form.control}
+								name="email"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="font-bold">Email</FormLabel>
+										<FormControl>
+											<Input placeholder="Enter email here" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="password"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="font-bold">Password</FormLabel>
+										<FormControl>
+											<div className="relative">
+												<Input
+													type={showPassword ? "text" : "password"}
+													placeholder="Enter password here"
+													{...field}
+												/>
+												<button
+													type="button"
+													onClick={() => setShowPassword(!showPassword)}
+													className="absolute right-3 top-2 text-gray-500 hover:text-gray-700"
+												>
+													{showPassword ? <Eye /> : <EyeClosed />}
+												</button>
+											</div>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							{error && (
+								<p className="text-red-500 text-sm text-center">{error}</p>
 							)}
-						/>
 
-						<FormField
-							control={form.control}
-							name="password"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className="font-bold">Password</FormLabel>
-									<FormControl>
-										<div className="relative">
-											<Input
-												type={showPassword ? "text" : "password"}
-												placeholder="Enter password here"
-												{...field}
-											/>
-											<button
-												type="button"
-												onClick={() => setShowPassword(!showPassword)}
-												className="absolute right-3 top-2 text-gray-500 hover:text-gray-700"
-											>
-												{showPassword ? <Eye /> : <EyeClosed />}
-											</button>
-										</div>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+							<Button className="w-full" type="submit" disabled={isLoading}>
+								{isLoading ? "Loading..." : "Continue"}
+							</Button>
+						</form>
+					</Form>
 
-						{error && (
-							<p className="text-red-500 text-sm text-center">{error}</p>
-						)}
-
-						<Button className="w-full" type="submit" disabled={isLoading}>
-							{isLoading ? "Loading..." : "Continue"}
-						</Button>
-					</form>
-				</Form>
-
-				<p className="text-center text-sm">
-					Don't have an account?{" "}
-					<Link href="/signup" className="text-blue-600 hover:underline">
-						Sign up
-					</Link>
-				</p>
+					<p className="text-center text-sm">
+						<Link
+							href="/forgot-password"
+							className="text-blue-600 hover:underline"
+						>
+							Forgot password
+						</Link>
+					</p>
+				</div>
 			</div>
 		</div>
 	);
