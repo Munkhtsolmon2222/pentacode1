@@ -8,7 +8,6 @@ import EditProfileDialogue from "../_components/profile/EditProfileDialogue";
 import { User } from "../constants/type";
 import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
-import { getUserId } from "@/utils/userId";
 
 export default function ViewPage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -17,17 +16,11 @@ export default function ViewPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [userData, setUserData] = useState<User>();
-  let refreshToken;
-  let decoded: { userId: string };
-  const accessToken = (getCookie("accessToken") as string) || "";
-  if (!accessToken) {
-    refreshToken = (getCookie("refreshToken") as string) || "";
-    decoded = jwtDecode(refreshToken);
-    console.log(refreshToken);
-  } else {
-    decoded = jwtDecode(accessToken);
-  }
-  const userId = decoded?.userId;
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    const storedUserId: string | null = localStorage.getItem("userId");
+    setUserId(storedUserId);
+  }, []);
 
   const fetchData = async () => {
     try {

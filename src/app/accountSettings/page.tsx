@@ -5,124 +5,119 @@ import EditProfile from "../_components/profile/EditProfile";
 import { SideBar } from "../_components/Sidebar";
 
 import SidebarWrapper from "../_components/SideBarWrapper";
-import { getUserId } from "@/utils/userId";
 
 export default function AccountSettings() {
-  const [userId, setUserId] = useState<string>();
+	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const [error, setError] = useState("");
+	const [success, setSuccess] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+	const [userId, setUserId] = useState<string | null>(null);
+	useEffect(() => {
+		const storedUserId: string | null = localStorage.getItem("userId");
+		setUserId(storedUserId);
+	}, []);
+	const updatePassword = async () => {
+		setError("");
+		setSuccess("");
 
-  useEffect(() => {
-    getUserId().then((userId) => {
-      setUserId(userId);
-    });
-  }, []);
+		if (!password || !confirmPassword) {
+			setError("Please fill in both password fields.");
+			return;
+		}
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+		if (password !== confirmPassword) {
+			setError("Passwords do not match.");
+			return;
+		}
 
-  const updatePassword = async () => {
-    setError("");
-    setSuccess("");
+		if (password.length < 8) {
+			setError("Password must be at least 8 characters long.");
+			return;
+		}
 
-    if (!password || !confirmPassword) {
-      setError("Please fill in both password fields.");
-      return;
-    }
+		setIsLoading(true);
+		try {
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/auth/update-password/${userId}`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					credentials: "include",
+					body: JSON.stringify({ password }),
+				}
+			);
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
+			if (!response.ok) {
+				throw new Error("Failed to update password.");
+			}
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters long.");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/update-password/${userId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ password }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update password.");
-      }
-
-      setSuccess("Password updated successfully!");
-      setPassword("");
-      setConfirmPassword("");
-    } catch (error) {
-      setError("Failed to update password. Please try again later.");
-      console.error("Error updating password:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  console.log(userId);
-  return (
-    <div className="w-[80%] ml-4 fixed right-0 top-0 h-screen overflow-auto">
-      <h3 className="font-bold max-w-lg mx-auto py-10 text-2xl ">My account</h3>
-      <EditProfile userId={userId} />
-      <div className="max-w-lg mx-auto border border-[#E4E4E7] rounded-lg mt-8">
-        <p className="p-6 font-bold"> Set a new password</p>
-        <div className="px-6">
-          <p className="">New Password</p>
-          <input
-            type="password"
-            placeholder="New password"
-            className="py-[10px] pl-3 mt-2 border rounded-md w-full"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <p className="pt-3">Confirm Password</p>
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            className="py-[10px] pl-3 mt-2 border rounded-md w-full"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-          {success && <p className="text-green-500 text-sm mt-2">{success}</p>}
-        </div>
-        <div className="p-6">
-          <button
-            className={`w-full p-2 bg-black text-white rounded-md ${
-              isLoading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={updatePassword}
-            disabled={isLoading}
-          >
-            {isLoading ? "Saving..." : "Save changes"}
-          </button>
-        </div>
-      </div>
-      <EditBankCard userId={userId} />
-      <div className="p-4 mt-8 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
-        <p className="text-lg font-bold">Success page</p>
-        <div className="mt-4">
-          <label className="font-medium">Confirmation message</label>
-          <textarea
-            name="about"
-            placeholder="Thank you for supporting me! It means a lot to have your support. It’s a step toward creating a more inclusive and accepting community of artists."
-            className={`border rounded-md w-full p-2 mt-1`}
-          />
-        </div>
-        <button className="mt-6 w-full p-2 bg-black text-white rounded-md">
-          Save changes
-        </button>
-      </div>
-    </div>
-  );
+			setSuccess("Password updated successfully!");
+			setPassword("");
+			setConfirmPassword("");
+		} catch (error) {
+			setError("Failed to update password. Please try again later.");
+			console.error("Error updating password:", error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+	console.log(userId);
+	return (
+		<div className="w-[80%] ml-4 fixed right-0 top-0 h-screen overflow-auto">
+			<h3 className="font-bold max-w-lg mx-auto py-10 text-2xl ">My account</h3>
+			<EditProfile userId={userId} />
+			<div className="max-w-lg mx-auto border border-[#E4E4E7] rounded-lg mt-8">
+				<p className="p-6 font-bold"> Set a new password</p>
+				<div className="px-6">
+					<p className="">New Password</p>
+					<input
+						type="password"
+						placeholder="New password"
+						className="py-[10px] pl-3 mt-2 border rounded-md w-full"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+					/>
+					<p className="pt-3">Confirm Password</p>
+					<input
+						type="password"
+						placeholder="Confirm Password"
+						className="py-[10px] pl-3 mt-2 border rounded-md w-full"
+						value={confirmPassword}
+						onChange={(e) => setConfirmPassword(e.target.value)}
+					/>
+					{error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+					{success && <p className="text-green-500 text-sm mt-2">{success}</p>}
+				</div>
+				<div className="p-6">
+					<button
+						className={`w-full p-2 bg-black text-white rounded-md ${
+							isLoading ? "opacity-50 cursor-not-allowed" : ""
+						}`}
+						onClick={updatePassword}
+						disabled={isLoading}
+					>
+						{isLoading ? "Saving..." : "Save changes"}
+					</button>
+				</div>
+			</div>
+			<EditBankCard userId={userId} />
+			<div className="p-4 mt-8 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
+				<p className="text-lg font-bold">Success page</p>
+				<div className="mt-4">
+					<label className="font-medium">Confirmation message</label>
+					<textarea
+						name="about"
+						placeholder="Thank you for supporting me! It means a lot to have your support. It’s a step toward creating a more inclusive and accepting community of artists."
+						className={`border rounded-md w-full p-2 mt-1`}
+					/>
+				</div>
+				<button className="mt-6 w-full p-2 bg-black text-white rounded-md">
+					Save changes
+				</button>
+			</div>
+		</div>
+	);
 }

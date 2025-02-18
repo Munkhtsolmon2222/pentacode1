@@ -18,7 +18,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { getUserId } from "@/utils/userId";
+import { jwtDecode } from "jwt-decode";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -30,12 +30,13 @@ const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
 });
-
+type DecodedToken = {
+  userId?: string;
+};
 export function Login() {
-	const [type, setType] = useState("password");
-	const [error, setError] = useState("");
-	const [userId, setUserId] = useState<string>();
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -43,42 +44,45 @@ export function Login() {
     defaultValues: { email: "", password: "" },
   });
 
-	const verifyUser = async (email: string, password: string) => {
-		try {
-			const response = await fetch("http://localhost:5000/auth/sign-in", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ email, password }),
-				credentials: "include",
-			});
-
+  const verifyUser = async (email: string, password: string) => {
+    setIsLoading(true);
+    setError("");
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-in`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "https://penta-code-frontend.vercel.app",
+          },
+          body: JSON.stringify({ email, password }),
+          credentials: "include",
+        }
+      );
       const data = await response.json();
-      console.log("Response:", data);
 
-			if (data.message === "Email not found") {
-				console.log("Error: Email does not exist.");
-				setError("Email does not exist.");
-			} else if (data.message === "Incorrect password") {
-				console.log("Error: Password is incorrect.");
-				setError("Password is incorrect.");
-			} else {
-				console.log("Login successful!");
-				setError("Login successful!");
+      if (data.message === "Email not found") setError("Email does not exist.");
+      else if (data.message === "Incorrect password")
+        setError("Incorrect password.");
+      else {
+        const decodedToken: DecodedToken = jwtDecode(data.data.accessToken);
+        const userId = decodedToken.userId;
 
-				getUserId().then((userId) => {
-					setUserId(userId);
-				});
-
-				router.push("/home");
-			}
-		} catch (error) {
-			console.error("Error verifying user:", error);
-		}
-	};
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
+        if (userId) {
+          localStorage.setItem("userId", userId);
+          router.push("/home");
+        } else {
+          throw new Error("Invalid token structure: userId missing.");
+        }
+      }
+    } catch {
+      setError("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const onSubmit = (values: z.infer<typeof formSchema>) =>
     verifyUser(values.email, values.password);
 
   return (

@@ -12,7 +12,6 @@ import { VscError } from "react-icons/vsc";
 import { string, z } from "zod";
 import Complete from "./compelete";
 import { Button } from "@/components/ui/button";
-import { getUserId } from "@/utils/userId";
 import RecentSupportProfile from "@/app/_components/supporters/RecentSupportersProfile";
 import {
   Dialog,
@@ -44,12 +43,13 @@ export default function ViewPageExplore() {
     socialURLOrBuyMeACoffee: "",
     recipientId: "",
   });
-  const [userId, setUserId] = useState<string>();
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    const storedUserId: string | null = localStorage.getItem("userId");
+    setUserId(storedUserId);
+  }, []);
 
   useEffect(() => {
-    getUserId().then((userId) => {
-      setUserId(userId);
-    });
     const savedImage = localStorage.getItem("coverImage");
     if (!savedImage) {
       setImageUrl(savedImage);
