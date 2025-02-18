@@ -41,7 +41,9 @@ export default function RecentSupportProfile({
 					<h4 className="font-semibold text-lg">{userData?.name}</h4>
 					<h4>bought ${transaction.amount} coffee</h4>
 				</div>
-				<h4 className="mt-1 text-lg">{transaction?.specialMessage}</h4>
+				<h4 className="mt-1 text-lg text-[#09090B]">
+					{transaction?.specialMessage}
+				</h4>
 			</div>
 		</div>
 	);
