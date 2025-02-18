@@ -101,7 +101,7 @@ export default function ViewPageExplore() {
       !newDonation.amount ||
       !newDonation.specialMessage.trim() ||
       !newDonation.socialURLOrBuyMeACoffee ||
-      !!error.socialURLOrBuyMeACoffee
+      error.socialURLOrBuyMeACoffee
     );
   };
 
@@ -281,9 +281,6 @@ export default function ViewPageExplore() {
                   <div className="flex justify-center my-6">
                     <img src="QR.png" alt="" />
                   </div>
-                  <DialogFooter>
-                    <Button type="submit">Save changes</Button>
-                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
@@ -457,7 +454,7 @@ export default function ViewPageExplore() {
                           Support
                         </button> */}
                         <button
-                          disabled={handleDisabled()}
+                          disabled={!!handleDisabled()}
                           onClick={async () => {
                             await addDonation(
                               userId,
@@ -471,11 +468,11 @@ export default function ViewPageExplore() {
                             setScan(true);
                           }}
                           className={`w-full p-2 rounded-md font-md 
-  ${
-    handleDisabled()
-      ? "bg-gray-400 cursor-not-allowed"
-      : "bg-[#18181B] text-white hover:bg-[#18181B]"
-  }`}
+                          ${
+                            handleDisabled()
+                              ? "bg-gray-400 cursor-not-allowed"
+                              : "bg-[#18181B] text-white hover:bg-[#18181B]"
+                          }`}
                         >
                           Support
                         </button>
