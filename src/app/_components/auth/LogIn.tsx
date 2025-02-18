@@ -63,7 +63,6 @@ export function Login() {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Origin: "https://penta-code-frontend.vercel.app",
 					},
 					body: JSON.stringify({ email, password }),
 				}
