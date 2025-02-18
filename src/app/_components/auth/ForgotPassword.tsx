@@ -151,7 +151,7 @@ export function ForgotPassword() {
 										<InputOTP
 											maxLength={6}
 											value={userOtp}
-											onChange={(value: any) => setUserOtp(value)}
+											onChange={(value) => setUserOtp(value)}
 										>
 											<InputOTPGroup>
 												<InputOTPSlot index={0} />

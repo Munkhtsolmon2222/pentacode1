@@ -408,7 +408,7 @@ export default function ViewPageExplore() {
 															key={amount}
 															onClick={() => onChangeAmount(amount)}
 															className="w-20 bg-[#F4F4F5] rounded-md text-[#09090B] font-md 
-                 hover:border-[#18181B] flex justify-center items-center gap-2"
+               hover:border-[#18181B] flex justify-center items-center gap-2"
 														>
 															<FiCoffee /> ${amount}
 														</Button>
@@ -465,11 +465,11 @@ export default function ViewPageExplore() {
 														setScan(true);
 													}}
 													className={`w-full p-2 rounded-md font-md 
-                          ${
-														handleDisabled()
-															? "bg-[#18181B] opacity-20 text-[#FAFAFA] cursor-not-allowed"
-															: "bg-[#18181B] text-[#FAFAFA] hover:bg-[#18181B]"
-													}`}
+                        ${
+													handleDisabled()
+														? "bg-[#18181B] opacity-20 text-[#FAFAFA] cursor-not-allowed"
+														: "bg-[#18181B] text-[#FAFAFA] hover:bg-[#18181B]"
+												}`}
 												>
 													Support
 												</button>
