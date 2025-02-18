@@ -14,16 +14,13 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { getUserId } from "@/utils/userId";
 
 export default function Home() {
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
-	const [userId, setUserId] = useState<string>();
-
+	const [userId, setUserId] = useState<string | null>(null);
 	useEffect(() => {
-		getUserId().then((userId) => {
-			setUserId(userId);
-		});
+		const storedUserId: string | null = localStorage.getItem("userId");
+		setUserId(storedUserId);
 	}, []);
 	const [selectedAmount, setSelectedAmount] = useState<string | null>(null);
 

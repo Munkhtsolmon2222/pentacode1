@@ -18,7 +18,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { getUserId } from "@/utils/userId";
+import { jwtDecode } from "jwt-decode";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
 	subsets: ["latin"],
@@ -30,7 +30,9 @@ const formSchema = z.object({
 	email: z.string().email(),
 	password: z.string().min(8),
 });
-
+type DecodedToken = {
+	userId?: string;
+};
 export function Login() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState("");
@@ -64,8 +66,15 @@ export function Login() {
 			else if (data.message === "Incorrect password")
 				setError("Incorrect password.");
 			else {
-				await getUserId();
-				router.push("/home");
+				const decodedToken: DecodedToken = jwtDecode(data.data.accessToken);
+				const userId = decodedToken.userId;
+
+				if (userId) {
+					localStorage.setItem("userId", userId);
+					router.push("/home");
+				} else {
+					throw new Error("Invalid token structure: userId missing.");
+				}
 			}
 		} catch {
 			setError("An error occurred. Please try again.");

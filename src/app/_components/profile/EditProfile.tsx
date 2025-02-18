@@ -1,5 +1,4 @@
 "use client";
-import { getUserId } from "@/utils/userId";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCamera } from "react-icons/fi";
