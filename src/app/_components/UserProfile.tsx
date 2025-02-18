@@ -11,6 +11,7 @@ import {
 import { User } from "../constants/type";
 import { useEffect, useState } from "react";
 import RecentSupport from "./supporters/RecentSupportersHome";
+import { accessToken } from "@/utils/accessToken";
 
 export default function UserProfile() {
 	const [userData, setUserData] = useState<User | null>(null);
@@ -38,7 +39,10 @@ export default function UserProfile() {
 			const res = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/profile/currentuser/${userId}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");
@@ -54,7 +58,10 @@ export default function UserProfile() {
 			const response = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/donation/total-earnings/${userId}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
 			);
 			if (!response.ok) throw new Error("Failed to fetch earnings data");

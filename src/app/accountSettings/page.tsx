@@ -5,6 +5,7 @@ import EditProfile from "../_components/profile/EditProfile";
 import { SideBar } from "../_components/Sidebar";
 
 import SidebarWrapper from "../_components/SideBarWrapper";
+import { accessToken } from "@/utils/accessToken";
 
 export default function AccountSettings() {
 	const [password, setPassword] = useState("");
@@ -44,8 +45,8 @@ export default function AccountSettings() {
 					method: "PUT",
 					headers: {
 						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
 					},
-					credentials: "include",
 					body: JSON.stringify({ password }),
 				}
 			);

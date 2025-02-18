@@ -22,6 +22,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import { accessToken } from "@/utils/accessToken";
 
 export default function ViewPageExplore() {
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -76,7 +77,10 @@ export default function ViewPageExplore() {
 			const res = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/profile/view/${params?.id}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");
@@ -153,9 +157,9 @@ export default function ViewPageExplore() {
 			`${process.env.NEXT_PUBLIC_API_URL}/donation`,
 			{
 				method: "POST",
-				credentials: "include",
 				headers: {
 					"Content-Type": "application/json",
+					Authorization: "Bearer " + accessToken,
 				},
 
 				body: JSON.stringify({
@@ -197,7 +201,10 @@ export default function ViewPageExplore() {
 			const res = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/donation/${userData?.userId}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
 import { z } from "zod";
-
+import Cookies from "js-cookie";
 export default function EditProfile({ userId }: any) {
 	const profileSchema = z.object({
 		photo: z.string().url({ message: "Please upload an image" }),
@@ -35,6 +35,7 @@ export default function EditProfile({ userId }: any) {
 		type: "success" | "error" | null;
 		message: string;
 	}>({ type: null, message: "" });
+	const accessToken = Cookies.get("accessToken");
 	const fetchUserData = async () => {
 		if (!userId) {
 			console.warn("No userId found, skipping fetch.");
@@ -44,7 +45,10 @@ export default function EditProfile({ userId }: any) {
 			const response = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/profile/currentuser/${userId}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
 			);
 			if (!response.ok) throw new Error("Failed to fetch user data");
@@ -107,8 +111,10 @@ export default function EditProfile({ userId }: any) {
 				`${process.env.NEXT_PUBLIC_API_URL}/profile/${userId}`,
 				{
 					method: "PUT",
-					headers: { "Content-Type": "application/json" },
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 					body: JSON.stringify({
 						avatarImage: form.photo,
 						name: form.name,

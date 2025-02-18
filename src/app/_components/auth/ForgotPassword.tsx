@@ -4,6 +4,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { accessToken } from "@/utils/accessToken";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
 	subsets: ["latin"],
@@ -34,8 +35,10 @@ export function ForgotPassword() {
 				`${process.env.NEXT_PUBLIC_API_URL}/auth/forgot-password`,
 				{
 					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 					body: JSON.stringify({ email }),
 				}
 			);

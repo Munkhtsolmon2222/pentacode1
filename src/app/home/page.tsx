@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { Transaction, User } from "../constants/type";
 import UserProfile from "../_components/UserProfile";
 import { Checkbox } from "@/components/ui/checkbox";
-import { getCookie } from "cookies-next";
-import { jwtDecode } from "jwt-decode";
 import RecentSupport from "../_components/supporters/RecentSupportersHome";
 import {
 	Select,
@@ -14,6 +12,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { accessToken } from "@/utils/accessToken";
 
 export default function Home() {
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -36,7 +35,10 @@ export default function Home() {
 			const res = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/donation/received/${userId}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");

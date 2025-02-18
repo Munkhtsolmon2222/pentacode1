@@ -7,13 +7,12 @@ import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { getCookie } from "cookies-next";
+import { setCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 import dynamic from "next/dynamic";
-
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import loading from "./loading.json";
-
+import { cookies } from "next/headers";
 const plusJakartaSans = Plus_Jakarta_Sans({
 	subsets: ["latin"],
 	weight: ["400", "500", "700"],
@@ -37,7 +36,7 @@ export function SignUp() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [responses, setResponses] = useState<response>();
 	const router = useRouter();
-	const [userId, setUserId] = useState<string>();
+
 	const [touched, setTouched] = useState({
 		username: false,
 		email: false,
@@ -81,7 +80,6 @@ export function SignUp() {
 				`${process.env.NEXT_PUBLIC_API_URL}/auth/sign-up`,
 				{
 					method: "POST",
-					credentials: "include",
 					headers: {
 						"Content-Type": "application/json",
 					},
@@ -107,6 +105,8 @@ export function SignUp() {
 				const userId = decodedToken.userId;
 
 				if (userId) {
+					setCookie("accessToken", response?.data?.accessToken);
+					setCookie("refreshToken", response?.data?.refreshToken);
 					localStorage.setItem("userId", userId);
 					router.push(`/profileSetup/${userId}`);
 				} else {

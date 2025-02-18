@@ -8,6 +8,7 @@ import EditProfileDialogue from "../_components/profile/EditProfileDialogue";
 import { User } from "../constants/type";
 import { getCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
+import { accessToken } from "@/utils/accessToken";
 
 export default function ViewPage() {
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -20,14 +21,22 @@ export default function ViewPage() {
 	useEffect(() => {
 		const storedUserId: string | null = localStorage.getItem("userId");
 		setUserId(storedUserId);
+		console.log(storedUserId);
 	}, []);
-
+	console.log(userId);
 	const fetchData = async () => {
+		if (!userId) {
+			console.warn("No userId found, skipping fetch.");
+			return;
+		}
 		try {
 			const res = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/profile/currentuser/${userId}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");
@@ -40,7 +49,7 @@ export default function ViewPage() {
 
 	useEffect(() => {
 		fetchData();
-	}, []);
+	}, [userId]);
 	console.log(userData);
 
 	useEffect(() => {

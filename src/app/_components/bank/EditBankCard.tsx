@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-
+import Cookies from "js-cookie";
 const formSchema = z.object({
 	country: z.string().min(1, "Country is required"),
 	firstName: z.string().min(1, "First name is required"),
@@ -36,7 +36,7 @@ export default function EditBankCard({ userId }: { userId: any }) {
 		type: "success" | "error";
 		text: string;
 	} | null>(null);
-
+	const accessToken = Cookies.get("accessToken");
 	const {
 		register,
 		handleSubmit,
@@ -56,8 +56,10 @@ export default function EditBankCard({ userId }: { userId: any }) {
 				`${process.env.NEXT_PUBLIC_API_URL}/bank-card/${userId}`,
 				{
 					method: "PUT",
-					headers: { "Content-Type": "application/json" },
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 					body: JSON.stringify(data),
 				}
 			);
@@ -89,7 +91,10 @@ export default function EditBankCard({ userId }: { userId: any }) {
 			const response = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/bank-card/${userId}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
 			);
 			if (!response.ok) throw new Error("Failed to fetch card data");

@@ -13,6 +13,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { accessToken } from "@/utils/accessToken";
 
 export default function Header() {
 	const [userData, setUserData] = useState<User | null>(null);
@@ -30,7 +31,10 @@ export default function Header() {
 			const res = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/profile/currentuser/${userId}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");

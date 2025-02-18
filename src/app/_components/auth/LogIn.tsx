@@ -15,10 +15,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
+import { setCookie } from "cookies-next";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
 	subsets: ["latin"],
@@ -38,6 +39,14 @@ export function Login() {
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
+	const [cookieStore, setCookieStore] = useState<any>();
+	// const getCookies = async () => {
+	// 	const cookieStore = Cookies();
+	// 	setCookieStore(cookieStore);
+	// };
+	// useEffect(() => {
+	// 	getCookies();
+	// }, []);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -69,6 +78,8 @@ export function Login() {
 				const userId = decodedToken.userId;
 
 				if (userId) {
+					setCookie("accessToken", data.data.accessToken);
+					setCookie("refreshToken", data.data.refreshToken);
 					localStorage.setItem("userId", userId);
 					router.push("/home");
 				} else {
