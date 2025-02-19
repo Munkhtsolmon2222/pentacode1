@@ -36,13 +36,13 @@ export default function RecentSupportProfile({
 	console.log(userData);
 	return (
 		<div className="w-full flex gap-3 p-2 ">
-			<img className="w-10 h-10 rounded-full" src={userData?.avatarImage} />
+			<img className="w-8 h-8 rounded-full" src={userData?.avatarImage} />
 			<div className="flex flex-col">
-				<div className="w-full flex gap-2 text-lg">
-					<h4 className="font-semibold text-lg">{userData?.name}</h4>
+				<div className="w-full flex gap-2 text-sm">
+					<h4 className="font-semibold text-sm">{userData?.name}</h4>
 					<h4>bought ${transaction.amount} coffee</h4>
 				</div>
-				<h4 className="mt-1 text-lg text-[#09090B]">
+				<h4 className="mt-1 text-sm text-[#09090B]">
 					{transaction?.specialMessage}
 				</h4>
 			</div>
