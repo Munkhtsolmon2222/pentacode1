@@ -36,6 +36,7 @@ export default function ViewPageExplore() {
   const [recipientDonation, setRecipientDonation] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [scan, setScan] = useState(false);
+  const [supporters, setSupporters] = useState(false);
   const params = useParams();
   const [newDonation, setNewDonation] = useState({
     donorId: "",
@@ -234,13 +235,17 @@ export default function ViewPageExplore() {
     supporterFetchData();
   }, [userData]);
   console.log(transactions);
+  // const seemore = () => {
+  //   setSupporters((prevState = prevState + 7));
+  // };
+
   return (
     <div className="w-full min-h-screen">
       {buttonClicked ? (
         <div className="w-full flex flex-col justify-center items-center gap-4 mt-8">
           <div className=" flex flex-col items-center p-2">
             <div className="w-[64px] h-[64px] rounded-full bg-[#18BA51] flex justify-center items-center">
-              <CheckCircle2 className="text-white" />
+              <CheckCircle2 className="text-[#FAFAFA]" />
             </div>
             <p className="font-bold mt-4 px-1 py-2">Donation Complete ! </p>
           </div>
@@ -262,7 +267,7 @@ export default function ViewPageExplore() {
           </div>
           <div className="flex justify-center items-center p-4">
             <button
-              className="bg-[#18181B] p-4 text-white border rounded-lg"
+              className="bg-[#18181B] p-4 text-[#FAFAFA] border rounded-lg"
               onClick={() => window.location.reload()}
             >
               Return to explore
@@ -279,10 +284,10 @@ export default function ViewPageExplore() {
                 </DialogTrigger>
                 <DialogContent className="">
                   <DialogHeader>
-                    <DialogTitle className="flex justify-center text-[#161616] text-3xl">
+                    <DialogTitle className="flex justify-center text-[#161616] text-lg">
                       Scan QR code
                     </DialogTitle>
-                    <DialogDescription className="flex justify-center text-[#161616] text-lg">
+                    <DialogDescription className="flex justify-center text-[#161616] text-md">
                       Scan the QR code to complete your donation
                     </DialogDescription>
                   </DialogHeader>
@@ -325,15 +330,15 @@ export default function ViewPageExplore() {
                   </div>
                   <div className="w-full flex justify-center gap-6 -my-20 relative">
                     <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
-                      <div className="min-h-[20rem] gap-3 border rounded-md p-4">
+                      <div className=" gap-3 border rounded-md p-4">
                         <div className="flex justify-between border-b-[1px] pb-6 mt-4">
                           <div className="flex items-center gap-2 ml-4">
                             <img
-                              className="w-12 h-12 rounded-full"
+                              className="w-8 h-8 rounded-full"
                               src={userData?.avatarImage}
                               alt="Jake"
                             />
-                            <p className="font-bold text-2xl">
+                            <p className="font-bold text-lg">
                               {userData?.name}
                             </p>
                           </div>
@@ -343,40 +348,41 @@ export default function ViewPageExplore() {
                           )}
                         </div>
                         <div className="mt-10 ml-4">
-                          <p className="text-xl text-[#18181B] font-semibold">
+                          <p className="text-md text-[#18181B] font-semibold">
                             About {userData?.name}
                           </p>
-                          <p className="w-full mt-8 text-lg">
+                          <p className="w-full my-8 text-sm">
                             {userData?.about}
                           </p>
                         </div>
                       </div>
-                      <div className="gap-2 border rounded-md mt-4 p-4">
-                        <p className="text-xl font-semibold p-2 mt-2 ml-2">
+                      <div className="gap-3 border rounded-md mt-4 p-4">
+                        <p className="text-md font-semibold p-2 mt-2 ml-2">
                           Social media URL
                         </p>
                         <input
-                          className="w-full mt-1 p-4 text-lg"
+                          className="w-full my-4 ml-2 p-2 text-sm outline-none"
                           type="url"
+                          placeholder="https://buymecoffee.com/spacerulz44"
                           value={userData?.socialMediaURL}
                         />
                       </div>
 
-                      <div className="max-h-[20rem] gap-6 border rounded-md mt-4 overflow-y-auto custom-scrollbar">
-                        <h1 className="text-xl font-semibold p-6 ml-2 sticky top-0 bg-white">
+                      <div className="max-h-[20rem] gap-6 border rounded-md mt-4 overflow-y-auto custom-scrollbar relative">
+                        <h1 className="text-md font-semibold p-6 ml-2 sticky top-0 bg-white">
                           Recent Supporters
                         </h1>
 
                         {recipientDonation ? (
                           <div className="w-full min-h-[10rem] border rounded-md mt-6 flex flex-col items-center justify-center">
                             <FaHeart />
-                            <p className="mt-2 text-lg">
+                            <p className="mt-2 text-md">
                               Be the first one to support {userData?.name}
                             </p>
                           </div>
                         ) : (
                           <div className="w-full p-2 gap-2">
-                            {transactions?.map((transaction) => (
+                            {transactions?.slice(0, 3).map((transaction) => (
                               <RecentSupportProfile
                                 transaction={transaction}
                                 key={transaction.id}
@@ -384,21 +390,23 @@ export default function ViewPageExplore() {
                             ))}
                           </div>
                         )}
+
                         <Button
-                          className="w-full text-[#18181B] p-6"
+                          onClick={() => setSupporters(!supporters)}
+                          className="w-full text-[#18181B] bg-[#FAFAFA] absolute p-6"
                           variant={"outline"}
                         >
-                          See more
+                          {supporters ? "See less" : "See more"}
                           <ChevronDown />
                         </Button>
                       </div>
                     </div>
                     <div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
                       <div className="mb-4">
-                        <p className="text-3xl font-bold mt-2">
+                        <p className="text-lg font-bold mt-2">
                           Buy {userData?.name} a Coffee
                         </p>
-                        <p className="text-[#09090B] text-lg mt-5">
+                        <p className="text-[#09090B] text-md mt-5">
                           Select amount:
                         </p>
                         <div className="w-[100%] text-bold flex gap-4 mt-2">
@@ -407,7 +415,7 @@ export default function ViewPageExplore() {
                               variant={"secondary"}
                               key={amount}
                               onClick={() => onChangeAmount(amount)}
-                              className="w-20 bg-[#F4F4F5] rounded-md text-[#09090B] font-md 
+                              className="w-20 bg-[#F4F4F5] rounded-md text-[#09090B] text-sm 
                hover:border-[#18181B] flex justify-center items-center gap-2"
                             >
                               <FiCoffee /> ${amount}
@@ -416,7 +424,7 @@ export default function ViewPageExplore() {
                         </div>
                       </div>
                       <div className="mb-6">
-                        <p className="text-[#09090B] text-lg mt-10">
+                        <p className="text-[#09090B] text-md mt-10">
                           Enter BuyMeCoffee or social account URL:
                         </p>
                         <input
@@ -424,27 +432,27 @@ export default function ViewPageExplore() {
                           type="url"
                           name="socialURLOrBuyMeACoffee"
                           onChange={onChange}
-                          className={`border rounded-md w-full p-2 mt-1 text-md outline-none${
+                          className={`border rounded-md w-full p-2 mt-1 text-sm outline-none${
                             error.socialURLOrBuyMeACoffee
                               ? "border-red-500"
                               : ""
                           }`}
                         />
                         {error.socialURLOrBuyMeACoffee && (
-                          <div className="text-red-500 text-lg flex items-center gap-1 pt-2">
+                          <div className="text-red-500 text-md flex items-center gap-1 pt-2">
                             <VscError />
                             {error.socialURLOrBuyMeACoffee}
                           </div>
                         )}
                       </div>
                       <div className="mb-10">
-                        <p className="text-[#09090B] text-lg">
+                        <p className="text-[#09090B] text-md">
                           Special message:
                         </p>
                         <textarea
                           onChange={onChangeMessage}
                           value={newDonation.specialMessage}
-                          className="w-full border rounded-md px-4 py-2 mt-2 outline-none text-lg"
+                          className="w-full border rounded-md px-4 py-2 mt-2 outline-none text-sm"
                           placeholder="Please write your message here"
                         />
                       </div>
@@ -464,7 +472,7 @@ export default function ViewPageExplore() {
                             setIsClicked(true);
                             setScan(true);
                           }}
-                          className={`w-full p-2 rounded-md font-md 
+                          className={`w-full p-2 rounded-md text-sm 
                         ${
                           handleDisabled()
                             ? "bg-[#18181B] opacity-20 text-[#FAFAFA] cursor-not-allowed"
