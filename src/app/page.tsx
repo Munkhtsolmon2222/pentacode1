@@ -1,4 +1,6 @@
-import { Sree_Krushnadevaraya } from "next/font/google";
+import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Youtube, Instagram } from "lucide-react";
 import React from "react";
 
 export type Icon = string;
@@ -501,6 +503,7 @@ export default function Home() {
               <button className="hover:text-black font-semibold">
                 Resources ▾
               </button>
+              {/* Dropdown can be added here */}
             </div>
             <a href="#" className="hover:text-black font-semibold">
               Privacy
@@ -510,9 +513,20 @@ export default function Home() {
             </a>
           </nav>
           <div className="flex gap-3">
-            <button className="text-black hover:opacity-75">✖</button>
-            <button className="text-black hover:opacity-75">▶</button>
-            <button className="text-black hover:opacity-75">📸</button>
+            <div className="flex gap-6 bg-cream p-4">
+              <a href="#" className="text-black hover:opacity-75">
+                <FontAwesomeIcon
+                  className="w-[32px] h-[32px]"
+                  icon={faXTwitter}
+                />
+              </a>
+              <a href="#" className="text-black hover:opacity-75">
+                <Youtube size={32} />
+              </a>
+              <a href="#" className="text-black hover:opacity-75">
+                <Instagram size={32} />
+              </a>
+            </div>
           </div>
         </footer>
       </div>
