@@ -5,16 +5,16 @@ export function HomeSkeleton() {
         <div className="flex gap-4 items-center">
           <div className="w-10 h-10 rounded-full bg-gray-300 animate-pulse"></div>
           <div>
-            <div className="w-36 h-4 bg-gray-300 animate-pulse"></div>
-            <div className="w-[200px] h-4 bg-gray-300 animate-pulse mt-2"></div>
+            <div className="w-36 h-4 bg-gray-300 animate-pulse rounded-md"></div>
+            <div className="w-[200px] h-4 bg-gray-300 animate-pulse mt-2 rounded-md"></div>
           </div>
         </div>
         <div>
-          <div className="w-20 h-4 bg-gray-300 animate-pulse"></div>
-          <div className="w-36 h-4 mt-2 bg-gray-300 animate-pulse"></div>
+          <div className="w-20 h-4 bg-gray-300 animate-pulse rounded-md"></div>
+          <div className="w-36 h-4 mt-2 bg-gray-300 animate-pulse rounded-md"></div>
         </div>
       </div>
-      <div className="w-[400px] h-4 bg-gray-300 animate-pulse mt-4"></div>
+      <div className="w-[400px] h-4 bg-gray-300 animate-pulse mt-4 rounded-md"></div>
     </div>
   );
 }
