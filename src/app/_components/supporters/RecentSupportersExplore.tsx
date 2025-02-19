@@ -9,8 +9,8 @@ export default function RecentSupportExplore({
   creator: Creator;
 }) {
   return (
-    <div className="w-[90%] mx-auto mt-16 p-5 max-h-56 border border-solid rounded-lg">
-      <div className="w-[90% mx-auto]">
+    <div className="w-[80%] mx-auto mt-16 p-5 max-h-56 border border-solid rounded-lg">
+      <div>
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center">
             <img

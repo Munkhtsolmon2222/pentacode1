@@ -14,11 +14,13 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { accessToken } from "@/utils/accessToken";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
 	const [userData, setUserData] = useState<User | null>(null);
 	const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
 	const [userId, setUserId] = useState<string | null>(null);
+	const pathName = usePathname();
 	useEffect(() => {
 		const storedUserId: string | null = localStorage.getItem("userId");
 		setUserId(storedUserId);
@@ -49,7 +51,7 @@ export default function Header() {
 	useEffect(() => {
 		console.log("useeffect");
 		fetchData();
-	}, [userId]);
+	}, [pathName]);
 
 	const logout = () => {
 		deleteCookie("accessToken");
