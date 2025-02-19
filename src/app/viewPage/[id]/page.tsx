@@ -35,6 +35,8 @@ export default function ViewPageExplore() {
 	const [userData, setUserData] = useState<User>();
 	const [recipientDonation, setRecipientDonation] = useState(false);
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
+	const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
+	const [supporters, setSupporters] = useState(3);
 	const [scan, setScan] = useState(false);
 	const params = useParams();
 	const accessToken = Cookies.get("accessToken");
@@ -236,9 +238,13 @@ export default function ViewPageExplore() {
 		supporterFetchData();
 	}, [userData]);
 	console.log(transactions);
-	// const seemore = () => {
-	//   setSupporters((prevState = prevState + 7));
-	// };
+	const seeMore = () => {
+		if (supporters > 3) {
+			setSupporters(3);
+		} else {
+			setSupporters(supporters + 7);
+		}
+	};
 
 	return (
 		<div className="w-full min-h-screen">
@@ -383,21 +389,23 @@ export default function ViewPageExplore() {
 													</div>
 												) : (
 													<div className="w-full p-2 gap-2">
-														{transactions?.slice(0, 3).map((transaction) => (
-															<RecentSupportProfile
-																transaction={transaction}
-																key={transaction.id}
-															/>
-														))}
+														{transactions
+															?.slice(0, supporters)
+															.map((transaction) => (
+																<RecentSupportProfile
+																	transaction={transaction}
+																	key={transaction.id}
+																/>
+															))}
 													</div>
 												)}
 
 												<Button
-													onClick={() => setSupporters(!supporters)}
-													className="w-full text-[#18181B] bg-[#FAFAFA] absolute p-6"
-													variant={"outline"}
+													onClick={seeMore}
+													className="w-full mb-4 sticky bg-[#FAFAFA] text-[#18181B] text-sm p-6"
+													variant={"secondary"}
 												>
-													{supporters ? "See less" : "See more"}
+													{supporters > 3 ? "See less" : "See more"}
 													<ChevronDown />
 												</Button>
 											</div>
