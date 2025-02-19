@@ -94,14 +94,11 @@ export function SignUp() {
         }
       );
       const response = await user.json();
-
       if (response.message === "Internal server error") {
         handleContinue();
       } else {
         setResponses(response);
       }
-
-      setIsLoading(false);
 
       if (response.message === "Successfully added") {
         const decodedToken: DecodedToken = jwtDecode(response.data.accessToken);
@@ -172,7 +169,8 @@ export function SignUp() {
               <div className="flex p-[24px]">
                 <Button
                   className="block mx-auto w-full box-border p-2 rounded-xl mt-[20px] bg-primary text-white"
-                  disabled={!isUsernameValid || isLoading}
+                  type="submit"
+                  disabled={isLoading}
                   onClick={() => {
                     if (isUsernameValid) {
                       addUser(username, email, password);
@@ -239,7 +237,7 @@ export function SignUp() {
                 <Button
                   className="block mx-auto w-full box-border p-2 rounded-xl mt-[20px] bg-primary text-white"
                   disabled={
-                    !handleCheckEmail() || !handleCheckPassword() || isLoading
+                    !handleCheckEmail() || !handleCheckPassword() || !isLoading
                   }
                   onClick={() => {
                     addUser(username, email, password);

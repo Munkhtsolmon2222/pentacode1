@@ -4,7 +4,7 @@ import RecentSupportExplore from "../_components/supporters/RecentSupportersExpl
 import { SearchIcon, UserIcon } from "lucide-react";
 import { Creator } from "../constants/type";
 import { accessToken } from "@/utils/accessToken";
-import { Skeleton } from "../_components/Skeleton";
+import { Skeleton } from "../_components/skeletons/ExploreSkeleton";
 
 export default function Explore() {
   const [creators, setCreators] = useState<Creator[]>([]);
