@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LuCoffee } from "react-icons/lu";
 import { User } from "../constants/type";
-import { getCookie, deleteCookie } from "cookies-next";
+import { deleteCookie } from "cookies-next";
 import { ChevronDown } from "lucide-react";
 import {
 	DropdownMenu,
@@ -13,14 +13,16 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { accessToken } from "@/utils/accessToken";
 import { usePathname } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function Header() {
 	const [userData, setUserData] = useState<User | null>(null);
 	const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
 	const [userId, setUserId] = useState<string | null>(null);
 	const pathName = usePathname();
+	const accessToken = Cookies.get("accessToken");
+
 	useEffect(() => {
 		const storedUserId: string | null = localStorage.getItem("userId");
 		setUserId(storedUserId);
@@ -51,7 +53,7 @@ export default function Header() {
 	useEffect(() => {
 		console.log("useeffect");
 		fetchData();
-	}, [pathName]);
+	}, [userId]);
 
 	const logout = () => {
 		deleteCookie("accessToken");
@@ -65,7 +67,7 @@ export default function Header() {
 		<div className="bg-white p-4 absolute top-0 w-full z-10">
 			<div className="flex justify-between w-[90%] mx-20">
 				<div className="flex gap-2 items-center font-bold">
-					<Link href="/">
+					<Link href="/home">
 						<div className="flex gap-2 items-center font-bold h-10">
 							<LuCoffee className="text-2xl" />
 							Buy Me Coffee

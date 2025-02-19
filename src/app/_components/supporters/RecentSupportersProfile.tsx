@@ -1,6 +1,6 @@
 "use client";
 import { Transaction, User } from "@/app/constants/type";
-import { accessToken } from "@/utils/accessToken";
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 
 export default function RecentSupportProfile({
@@ -9,6 +9,7 @@ export default function RecentSupportProfile({
 	transaction: Transaction;
 }) {
 	const [userData, setUserData] = useState<User | null>(null);
+	const accessToken = Cookies.get("accessToken");
 
 	const profileFetchData = async () => {
 		try {

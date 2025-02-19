@@ -22,7 +22,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { accessToken } from "@/utils/accessToken";
+import Cookies from "js-cookie";
 
 export default function ViewPageExplore() {
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -37,6 +37,7 @@ export default function ViewPageExplore() {
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
 	const [scan, setScan] = useState(false);
 	const params = useParams();
+	const accessToken = Cookies.get("accessToken");
 	const [newDonation, setNewDonation] = useState({
 		donorId: "",
 		amount: 0,

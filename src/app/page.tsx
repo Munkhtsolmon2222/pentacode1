@@ -25,46 +25,67 @@ export default function Home() {
 				Accept support. Start a membership. Setup a shop. It's easier than you
 				think.
 			</p>
-			<button className="mt-5 bg-yellow-400 text-black px-6 py-3 rounded-full text-lg font-semibold hover:bg-yellow-500">
+			<button
+				className="mt-5 bg-yellow-400 text-black px-6 py-3 rounded-full text-lg font-semibold hover:bg-yellow-500 transform hover:scale-105 transition duration-300 ease-in-out
+has context menu"
+			>
 				Start my page
 			</button>
-			<p className="text-gray-500 mt-2 text-black">
+			<p className="text-gray-500 mt-2">
 				It's free and takes less than a minute!
 			</p>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-				<div className="bg-white shadow-lg p-5 rounded-lg">
+				<div
+					className="bg-white shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
+has context menu"
+				>
 					<p className="font-semibold text-black">
 						Cara is building a new platform for artists
 					</p>
 					<p className="text-gray-500">❤️ 8,780 supporters</p>
 				</div>
-				<div className="bg-white shadow-lg p-5 rounded-lg">
-					<p className="font-semibold text-black">
+				<div
+					className="bg-white shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
+has context menu"
+				>
+					<p className="font-semibold text-black ">
 						Kaleigh Cohen is creating indoor cycling and strength workouts on
 						YouTube!
 					</p>
 					<p className="text-gray-500">❤️ 4,488 supporters</p>
 				</div>
-				<div className="bg-white shadow-lg p-5 rounded-lg">
+				<div
+					className="bg-white shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
+has context menu"
+				>
 					<p className="font-semibold text-black">
 						Teacher Stefano is creating YouTube videos and Podcast
 					</p>
 					<p className="text-gray-500">❤️ 641 supporters</p>
 				</div>
-				<div className="bg-white shadow-lg p-5 rounded-lg">
+				<div
+					className="bg-white shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
+has context menu"
+				>
 					<p className="font-semibold text-black">
 						The Thrill Of The Thrift is creating thrifting videos
 					</p>
 					<p className="text-gray-500">❤️ 112 supporters</p>
 				</div>
-				<div className="bg-white shadow-lg p-5 rounded-lg">
+				<div
+					className="bg-white shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
+has context menu"
+				>
 					<p className="font-semibold text-black">
 						Beach Talk Radio is a Dinky Little Podcast
 					</p>
 					<p className="text-gray-500">❤️ 1,805 supporters</p>
 				</div>
-				<div className="bg-white shadow-lg p-5 rounded-lg">
+				<div
+					className="bg-white shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
+has context menu"
+				>
 					<p className="font-semibold text-black">
 						Simple Politics is helping people have better conversations about
 						politics

@@ -11,11 +11,12 @@ import {
 import { User } from "../constants/type";
 import { useEffect, useState } from "react";
 import RecentSupport from "./supporters/RecentSupportersHome";
-import { accessToken } from "@/utils/accessToken";
-
+import { usePathname } from "next/navigation";
+import Cookies from "js-cookie";
 export default function UserProfile() {
 	const [userData, setUserData] = useState<User | null>(null);
 	const [totalValue, setTotalValue] = useState<string | null>(null);
+	const pathName = usePathname();
 	const [userValue, setUserValue] = useState({
 		totalEarnings30Days: 0,
 		totalEarnings90Days: 0,
@@ -26,15 +27,13 @@ export default function UserProfile() {
 		const storedUserId: string | null = localStorage.getItem("userId");
 		setUserId(storedUserId);
 	}, []);
-	useEffect(() => {
-		fetchData();
-		fetchTotalEarnings();
-	}, [userId]);
+	const accessToken = Cookies.get("accessToken");
 	const fetchData = async () => {
 		if (!userId) {
 			console.warn("No userId found, skipping fetch.");
 			return;
 		}
+		console.log(accessToken, "userProfile");
 		try {
 			const res = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/profile/currentuser/${userId}`,
@@ -96,9 +95,13 @@ export default function UserProfile() {
 		}
 		return "$0";
 	};
-
+	useEffect(() => {
+		console.log("checking");
+		fetchData();
+		fetchTotalEarnings();
+	}, [userId, pathName]);
 	return (
-		<div className="w-full bg-gray-primary text-black p-4">
+		<div className="w-full bg-gray-primary text-black p-4 mt-10">
 			<div className="max-w-[80%] mx-auto mt-16 p-5 border border-solid rounded-lg">
 				<div className="flex justify-between items-center">
 					<div className="w-12 h-12 rounded-full flex gap-3 items-center">

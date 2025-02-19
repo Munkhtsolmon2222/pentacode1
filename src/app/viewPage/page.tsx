@@ -6,9 +6,7 @@ import { FaHeart } from "react-icons/fa";
 import { FiCoffee } from "react-icons/fi";
 import EditProfileDialogue from "../_components/profile/EditProfileDialogue";
 import { User } from "../constants/type";
-import { getCookie } from "cookies-next";
-import { jwtDecode } from "jwt-decode";
-import { accessToken } from "@/utils/accessToken";
+import Cookies from "js-cookie";
 
 export default function ViewPage() {
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -18,6 +16,7 @@ export default function ViewPage() {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [userData, setUserData] = useState<User>();
 	const [userId, setUserId] = useState<string | null>(null);
+	const accessToken = Cookies.get("accessToken");
 	useEffect(() => {
 		const storedUserId: string | null = localStorage.getItem("userId");
 		setUserId(storedUserId);

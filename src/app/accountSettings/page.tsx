@@ -5,7 +5,7 @@ import EditProfile from "../_components/profile/EditProfile";
 import { SideBar } from "../_components/Sidebar";
 
 import SidebarWrapper from "../_components/SideBarWrapper";
-import { accessToken } from "@/utils/accessToken";
+import Cookies from "js-cookie";
 
 export default function AccountSettings() {
 	const [password, setPassword] = useState("");
@@ -14,6 +14,7 @@ export default function AccountSettings() {
 	const [success, setSuccess] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [userId, setUserId] = useState<string | null>(null);
+	const accessToken = Cookies.get("accessToken");
 	useEffect(() => {
 		const storedUserId: string | null = localStorage.getItem("userId");
 		setUserId(storedUserId);
