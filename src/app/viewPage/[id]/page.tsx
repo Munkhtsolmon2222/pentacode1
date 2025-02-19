@@ -38,6 +38,7 @@ export default function ViewPageExplore() {
   const [scan, setScan] = useState(false);
   const [supporters, setSupporters] = useState(false);
   const params = useParams();
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [newDonation, setNewDonation] = useState({
     donorId: "",
     amount: 0,
@@ -138,6 +139,7 @@ export default function ViewPageExplore() {
   };
 
   const onChangeAmount = (amount: number) => {
+    setSelectedAmount(amount);
     setNewDonation((prev) => ({ ...prev, amount }));
   };
 
@@ -412,11 +414,14 @@ export default function ViewPageExplore() {
                         <div className="w-[100%] text-bold flex gap-4 mt-2">
                           {[1, 2, 5, 10].map((amount) => (
                             <Button
-                              variant={"secondary"}
                               key={amount}
                               onClick={() => onChangeAmount(amount)}
-                              className="w-20 bg-[#F4F4F5] rounded-md text-[#09090B] text-sm 
-               hover:border-[#18181B] flex justify-center items-center gap-2"
+                              className={`w-20  rounded-md  text-sm ${
+                                selectedAmount == amount
+                                  ? "bg-black text-white"
+                                  : "bg-[#F4F4F5] text-[#09090B]"
+                              } 
+               hover:border-[#18181B] flex justify-center items-center gap-2`}
                             >
                               <FiCoffee /> ${amount}
                             </Button>
