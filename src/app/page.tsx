@@ -485,7 +485,36 @@ export default function Home() {
         </div>
       </div>
       <div>
-        <footer>Buy me coffee</footer>
+        <footer className="bg-cream px-6 py-4 flex justify-between items-center text-gray-600 text-sm">
+          <p>© Buy Me a Coffee</p>
+          <nav className="flex gap-4">
+            <a href="#" className="hover:text-black font-semibold">
+              About
+            </a>
+            <a href="#" className="hover:text-black font-semibold">
+              Help Center
+            </a>
+            <a href="#" className="hover:text-black font-semibold">
+              Apps
+            </a>
+            <div className="relative group">
+              <button className="hover:text-black font-semibold">
+                Resources ▾
+              </button>
+            </div>
+            <a href="#" className="hover:text-black font-semibold">
+              Privacy
+            </a>
+            <a href="#" className="hover:text-black font-semibold">
+              Terms
+            </a>
+          </nav>
+          <div className="flex gap-3">
+            <button className="text-black hover:opacity-75">✖</button>
+            <button className="text-black hover:opacity-75">▶</button>
+            <button className="text-black hover:opacity-75">📸</button>
+          </div>
+        </footer>
       </div>
     </div>
   );
