@@ -83,7 +83,6 @@ export default function ViewPage() {
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-
       const data = new FormData();
       data.append("file", file);
       data.append("upload_preset", "food-delivery");
@@ -107,6 +106,44 @@ export default function ViewPage() {
   useEffect(() => {
     setImageUrl(previewImg);
   }, [isSaved, previewImg]);
+
+  const supporterFetchData = async () => {
+    if (!userId) {
+      console.warn("No userId found, skipping fetch.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/donation/${userData?.userId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + accessToken,
+          },
+        }
+      );
+      if (!res.ok) throw new Error("Failed to fetch user data");
+
+      const resJson = await res.json();
+      console.log("API Response:", resJson);
+
+      setTransactions(
+        Array.isArray(resJson.allDonations) ? resJson.allDonations : []
+      );
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      setTransactions([]);
+      setRecipientDonation(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    supporterFetchData();
+  }, [userData]);
+  console.log(transactions);
 
   return (
     <div className="w-full h-screen">
@@ -171,7 +208,7 @@ export default function ViewPage() {
               </div>
               <button
                 onClick={() => setModalOpen(true)}
-                className="w-[12%] rounded-md bg-[#F4F4F5] p-2"
+                className=" rounded-md bg-[#F4F4F5] p-2"
               >
                 Edit page
               </button>
@@ -193,8 +230,8 @@ export default function ViewPage() {
               value={userData?.socialMediaURL}
             />
           </div>
-          <div className=" gap-6 border rounded-md mt-4 p-4">
-            <h1 className="text-xl font-semibold p-2 mt-4 ml-2">
+          <div className="max-h-[20rem] gap-6 border rounded-md mt-4 overflow-y-auto custom-scrollbar">
+            <h1 className="text-xl font-semibold p-6 ml-2 sticky top-0 bg-white">
               Recent Supporters
             </h1>
             {recipientDonation ? (
@@ -214,7 +251,10 @@ export default function ViewPage() {
                 ))}
               </div>
             )}
-            <Button className="w-full text-[#18181B] p-6" variant={"outline"}>
+            <Button
+              className="w-full mb-4 sticky bott text-[#18181B] p-5"
+              variant={"outline"}
+            >
               See more
               <ChevronDown />
             </Button>
@@ -226,18 +266,18 @@ export default function ViewPage() {
               Buy {userData?.name} a Coffee
             </p>
             <p className="text-[#09090B] text-lg mt-5">Select amount:</p>
-            <div className="w-[100%] flex gap-4 mt-4 ">
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md flex justify-center items-center gap-2">
+            <div className=" flex gap-4 mt-4 ">
+              <button className="p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md flex justify-center items-center gap-2">
                 <FiCoffee /> $1
               </button>
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md flex justify-center items-center gap-2">
+              <button className=" p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md flex justify-center items-center gap-2">
                 <FiCoffee /> $2
               </button>
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md flex justify-center items-center gap-2">
+              <button className=" p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md flex justify-center items-center gap-2">
                 <FiCoffee />
                 $5
               </button>
-              <button className="w-20 p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md flex justify-center items-center gap-2">
+              <button className=" p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-md flex justify-center items-center gap-2">
                 {" "}
                 <FiCoffee />
                 $10
