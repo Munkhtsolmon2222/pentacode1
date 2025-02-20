@@ -1,7 +1,9 @@
+"use client";
 import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Youtube, Instagram } from "lucide-react";
 import Link from "next/link";
+import { motion } from "motion/react";
 import React from "react";
 
 export type Icon = string;
@@ -27,10 +29,7 @@ export default function Home() {
         think.
       </p>
       <Link href="/signup">
-        <button
-          className="mt-5 bg-yellow-400 text-black px-6 py-3 rounded-full text-lg font-semibold hover:bg-yellow-500 transform hover:scale-105 transition duration-300 ease-in-out
-has context menu"
-        >
+        <button className="mt-5 bg-yellow-400 text-black px-6 py-3 rounded-full text-lg font-semibold hover:bg-yellow-500 transform hover:scale-105 transition duration-300 ease-in-out has context menu">
           Start my page
         </button>
       </Link>
@@ -96,93 +95,102 @@ has context menu"
           </p>
         </div>
       </div>
-
-      <div className=" flex items-center justify-center p-6">
-        <div className="bg-white p-8 rounded-3xl shadow-xl  w-[1128px] h-[810px] text-center">
-          <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-            SUPPORT
-          </p>
-          <h1 className="text-3xl font-bold mt-2 text-black">
-            Give your audience <br /> an easy way to say thanks.
-          </h1>
-          <p className="text-gray-600 mt-4 w-[936px] mx-auto">
-            Buy Me a Coffee makes supporting fun and easy. In just a couple of
-            taps, your fans can make the payment (buy you a coffee) and leave a
-            message.
-          </p>
-          {/* <div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+      >
+        <div className=" flex items-center justify-center p-6">
+          <div className="bg-white p-8 rounded-3xl shadow-xl  w-[1128px] h-[810px] text-center">
+            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+              SUPPORT
+            </p>
+            <h1 className="text-3xl font-bold mt-2 text-black">
+              Give your audience <br /> an easy way to say thanks.
+            </h1>
+            <p className="text-gray-600 mt-4 w-[936px] mx-auto">
+              Buy Me a Coffee makes supporting fun and easy. In just a couple of
+              taps, your fans can make the payment (buy you a coffee) and leave
+              a message.
+            </p>
+            {/* <div>
             <img src="screenshot1.png" />
           </div> */}
-          <div className="relative mt-8 bg-white p-6 rounded-xl shadow-lg mx-auto w-[386px] h-[359px]">
-            <h2 className="text-lg font-semibold text-black">
-              Buy Juliet a coffee
-            </h2>
+            <div className="relative mt-8 bg-white p-6 rounded-xl shadow-lg mx-auto w-[386px] h-[359px]">
+              <h2 className="text-lg font-semibold text-black">
+                Buy Juliet a coffee
+              </h2>
 
-            <div className="flex items-center justify-center space-x-2 mt-4">
-              <button className="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-full font-bold">
-                1
-              </button>
-              <button className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full font-bold">
-                3
-              </button>
-              <button className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full font-bold">
-                5
-              </button>
+              <div className="flex items-center justify-center space-x-2 mt-4">
+                <button className="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-full font-bold">
+                  1
+                </button>
+                <button className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full font-bold">
+                  3
+                </button>
+                <button className="w-10 h-10 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full font-bold">
+                  5
+                </button>
+                <input
+                  type="number"
+                  className="w-16 h-10 border rounded-md text-center"
+                  placeholder="1"
+                />
+              </div>
+
               <input
-                type="number"
-                className="w-16 h-10 border rounded-md text-center"
-                placeholder="1"
+                type="text"
+                className="w-full mt-4 border p-3 rounded-md"
+                placeholder="Say something nice..."
               />
+              <button className="w-full bg-red-500 text-white py-3 rounded-lg mt-4 font-semibold">
+                Support $3
+              </button>
             </div>
 
-            <input
-              type="text"
-              className="w-full mt-4 border p-3 rounded-md"
-              placeholder="Say something nice..."
-            />
-            <button className="w-full bg-red-500 text-white py-3 rounded-lg mt-4 font-semibold">
-              Support $3
-            </button>
-          </div>
+            <div className="relative mt-6 space-y-3">
+              <div className="absolute -left-24 bottom-0 bg-white p-3 shadow-md rounded-lg flex items-center space-x-2">
+                <span className="bg-green-200 p-2 rounded-full">☕</span>
+                <p className="text-sm font-medium text-black">
+                  Cathy G bought a coffee. <br />
+                  <span className="text-gray-500">Thanks Cathy! ❤️</span>
+                </p>
+              </div>
 
-          <div className="relative mt-6 space-y-3">
-            <div className="absolute -left-24 bottom-0 bg-white p-3 shadow-md rounded-lg flex items-center space-x-2">
-              <span className="bg-green-200 p-2 rounded-full">☕</span>
-              <p className="text-sm font-medium text-black">
-                Cathy G bought a coffee. <br />
-                <span className="text-gray-500">Thanks Cathy! ❤️</span>
-              </p>
-            </div>
+              <div className="absolute -left-20 top-1/2 transform -translate-y-1/2 bg-white p-3 shadow-md rounded-lg flex items-center space-x-2">
+                <span className="bg-yellow-200 p-2 rounded-full">☕</span>
+                <p className="text-sm font-medium  text-black">
+                  Anie bought 10 coffees
+                </p>
+              </div>
 
-            <div className="absolute -left-20 top-1/2 transform -translate-y-1/2 bg-white p-3 shadow-md rounded-lg flex items-center space-x-2">
-              <span className="bg-yellow-200 p-2 rounded-full">☕</span>
-              <p className="text-sm font-medium  text-black">
-                Anie bought 10 coffees
-              </p>
-            </div>
+              <div className="absolute -right-20 top-1/4 bg-white p-3 shadow-md rounded-lg flex items-center space-x-2">
+                <span className="bg-yellow-200 p-2 rounded-full ">☕</span>
+                <p className="text-sm font-medium text-black">
+                  Alex bought 25 coffees <br />{" "}
+                  <span className="text-gray-500">Thanks Cathy! ❤️</span>
+                </p>
+              </div>
 
-            <div className="absolute -right-20 top-1/4 bg-white p-3 shadow-md rounded-lg flex items-center space-x-2">
-              <span className="bg-yellow-200 p-2 rounded-full ">☕</span>
-              <p className="text-sm font-medium text-black">
-                Alex bought 25 coffees <br />{" "}
-                <span className="text-gray-500">Thanks Cathy! ❤️</span>
-              </p>
-            </div>
-
-            <div className="w-[250px] absolute -right-24 bottom-0 bg-white p-3 shadow-md rounded-lg">
-              <p className="text-sm font-medium  text-black">
-                <strong>Tony Steel bought 3 coffees.</strong>
-              </p>
-              <p className="text-gray-500 text-sm mt-1 ">
-                Absolutely love the show! I'm already waiting for next week's
-                episode, lol. Thank you and keep doing what you're doing.
-              </p>
+              <div className="w-[250px] absolute -right-24 bottom-0 bg-white p-3 shadow-md rounded-lg">
+                <p className="text-sm font-medium  text-black">
+                  <strong>Tony Steel bought 3 coffees.</strong>
+                </p>
+                <p className="text-gray-500 text-sm mt-1 ">
+                  Absolutely love the show! I'm already waiting for next week's
+                  episode, lol. Thank you and keep doing what you're doing.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="relative mt-6 space-y-3">
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+        className="relative mt-6 space-y-3"
+      >
         <div className="mt-16 p-10 bg-white rounded-3xl w-[1128px] h-[834px] shadow-lg ">
           <p className="text-gray-500 uppercase text-center">Memberships</p>
           <h2 className="text-3xl font-bold text-center  text-black text-64 font-cr-bold mx-auto leading-80 w-11/12">
@@ -250,8 +258,13 @@ has context menu"
             </div>
           </div>
         </div>
-      </div>
-      <div className="flex flex-col items-center bg-white rounded-2xl shadow-lg mt-[50px] w-[1128px] h-[834px] p-6">
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+        className="flex flex-col items-center bg-white rounded-2xl shadow-lg mt-[50px] w-[1128px] h-[834px] p-6"
+      >
         <div className="text-center mb-6">
           <h2 className="text-lg font-semibold uppercase text-gray-500">
             Shop
@@ -276,7 +289,7 @@ has context menu"
                 .PDF
               </span>
               <div className="flex justify-center">
-                <img src="book.png" alt="" className="h-16" />
+                <img src="/assets/book.png" alt="" className="h-16" />
               </div>
             </div>
             <div className="mt-4">
@@ -325,9 +338,14 @@ has context menu"
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="w-[1128px] h-[809.41px]  flex flex-col items-center bg-white rounded-lg shadow-md mt-[50px] p-8">
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 2 }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+        className="w-[1128px] h-[809.41px]  flex flex-col items-center bg-white rounded-lg shadow-md mt-[50px] p-8"
+      >
         <div className="text-center ">
           <h3 className="text-gray-500 uppercase tracking-widest font-semibold text-sm">
             Posts, Audio & Email
@@ -346,7 +364,7 @@ has context menu"
 				</div> */}
         <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-6 items-start">
           <div className="col-span-2 bg-white shadow-md rounded-xl overflow-hidden relative">
-            <img src="aylagch.png" alt="" className="w-full" />
+            <img src="/assets/aylagch.png" alt="" className="w-full" />
             <div className="absolute inset-0 flex items-center justify-center">
               <button className="bg-white p-3 rounded-full shadow-lg">
                 ▶️
@@ -362,7 +380,7 @@ has context menu"
             <div className="absolute top-2 left-2 w-full h-full bg-yellow-300 rounded-lg transform translate-x-2 translate-y-2"></div>
             <div className="absolute top-4 left-4 w-full h-full bg-green-300 rounded-lg transform translate-x-2 translate-y-2"></div>
             <div className="relative bg-white shadow-md rounded-xl overflow-hidden">
-              <img src="gar.png" alt="" className="w-full" />
+              <img src="/assets/gar.png" alt="" className="w-full" />
               <div className="p-3">
                 <h3 className="font-bold text-black">Senak peaks 👀</h3>
                 <p className="text-sm text-gray-500 flex justify-between">
@@ -390,7 +408,7 @@ has context menu"
           <div className="bg-green-600 p-4 rounded-xl flex items-center space-x-4 w-full max-w-lg">
             <div className="w-20 h-20 rounded-lg overflow-hidden">
               <img
-                src="javhlan.png"
+                src="/assets/javhlan.png"
                 alt=""
                 className="w-full h-full object-cover"
               />
@@ -424,8 +442,12 @@ has context menu"
             </div>
           </div>
         </div>
-      </div>
-      <div className="flex justify-center items-center w-full max-w-[1600px] h-[500px]">
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        className="flex justify-center items-center w-full max-w-[1600px] h-[500px]"
+      >
         <div className="p-12 text-center">
           <h1 className="text-4xl font-bold text-gray-900">
             Designed for creators,
@@ -467,9 +489,14 @@ has context menu"
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="bg-beige-100 mt-[50px] flex items-center justify-center p-6">
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 2 }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+        className="bg-beige-100 mt-[50px] flex items-center justify-center p-6"
+      >
         <div className="bg-white  w-[1128px] h-[742px] rounded-2xl shadow-lg p-10">
           <h2 className="text-3xl font-bold text-center text-gray-900">
             Make 20% or more,
@@ -510,8 +537,12 @@ has context menu"
             />
           </div>
         </div>
-      </div>
-      <div>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 2 }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+      >
         <footer className="bg-cream px-6 py-4 flex justify-between items-center text-gray-600 text-sm">
           <p>© Buy Me a Coffee</p>
           <nav className="flex gap-4">
@@ -554,7 +585,7 @@ has context menu"
             </div>
           </div>
         </footer>
-      </div>
+      </motion.div>
     </div>
   );
 }
