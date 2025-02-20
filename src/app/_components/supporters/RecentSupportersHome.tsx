@@ -71,8 +71,8 @@ export default function RecentSupport({
 				<div className="text-end">
 					{transaction.donorId == userId && (
 						<div>
-							<h3 className="font-bold text-green-600">
-								+ ${transaction?.amount}
+							<h3 className="font-bold text-red-600">
+								- ${transaction?.amount}
 							</h3>
 							<p className="text-xs text-gray-500">
 								{timeAgo(transaction?.updatedAt)}
@@ -81,8 +81,8 @@ export default function RecentSupport({
 					)}
 					{transaction.donorId !== userId && (
 						<div>
-							<h3 className="font-bold text-red-600">
-								- ${transaction?.amount}
+							<h3 className="font-bold text-green-600">
+								+ ${transaction?.amount}
 							</h3>
 							<p className="text-xs text-gray-500">
 								{timeAgo(transaction?.updatedAt)}

@@ -62,7 +62,7 @@ export default function UserProfile() {
 		if (alert) {
 			timeOut = setTimeout(() => {
 				setAlert(false);
-			}, 10000);
+			}, 3000);
 		}
 		return () => {
 			clearTimeout(timeOut);
@@ -146,6 +146,20 @@ export default function UserProfile() {
 					>
 						<LuCopy /> Share page link
 					</button>
+					{alert && (
+						<motion.div
+							initial={{ y: -200 }}
+							animate={{ y: 200 }}
+							transition={{ duration: 6 }}
+							exit={{ opacity: 0, y: 0 }}
+							className="fixed bottom-5 right-5"
+						>
+							<Alert>
+								<Terminal className="h-4 w-4" />
+								<AlertTitle>Link copied to clipboard!</AlertTitle>
+							</Alert>
+						</motion.div>
+					)}
 				</div>
 				<div className="max-w-[80%] mx-auto border border-solid bg-[#E4E4E7] mt-6"></div>
 				<div className="flex items-center gap-4 pt-7">
