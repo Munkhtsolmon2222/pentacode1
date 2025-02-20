@@ -50,7 +50,7 @@ export default function RecentSupport({
 			<div className="flex justify-between items-center">
 				<div className="flex gap-4 items-center">
 					<img
-						className="w-10 h-10 rounded-full"
+						className="w-10 h-10 object-cover rounded-full"
 						src={userData?.avatarImage}
 						alt={`${userData?.name}'s avatar`}
 					/>

@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import RecentSupport from "./supporters/RecentSupportersHome";
 import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
+import { motion } from "motion/react";
 export default function UserProfile() {
 	const [userData, setUserData] = useState<User | null>(null);
 	const [totalValue, setTotalValue] = useState<string | null>(null);
@@ -99,15 +100,21 @@ export default function UserProfile() {
 		console.log("checking");
 		fetchData();
 		fetchTotalEarnings();
-	}, [userId, pathName]);
+	}, [userId]);
 	return (
-		<div className="w-full bg-gray-primary text-black p-4 mt-10">
+		<motion.div
+			initial={{ opacity: 0, y: 200, x: 200 }}
+			animate={{ opacity: 1, y: 0, x: 0 }}
+			exit={{ opacity: 0, y: 200, x: 200 }}
+			transition={{ duration: 0.5, ease: "easeInOut" }}
+			className="w-full bg-gray-primary text-black p-4 mt-10"
+		>
 			<div className="max-w-[80%] mx-auto mt-16 p-5 border border-solid rounded-lg">
 				<div className="flex justify-between items-center">
 					<div className="w-12 h-12 rounded-full flex gap-3 items-center">
 						<img
 							src={userData?.avatarImage}
-							className="rounded-full  h-10 w-10 "
+							className="rounded-full  h-full w-full object-cover "
 						/>
 						<div className="flex flex-col">
 							<h4 className="font-semibold">{userData?.name}</h4>
@@ -141,6 +148,6 @@ export default function UserProfile() {
 					{renderEarnings()}
 				</p>
 			</div>
-		</div>
+		</motion.div>
 	);
 }

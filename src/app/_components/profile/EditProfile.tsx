@@ -142,14 +142,14 @@ export default function EditProfile({ userId }: any) {
 		}
 	};
 	return (
-		<div className="p-4 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
+		<div className="p-4 max-w-[1000px] rounded-lg border-[#E4E4E7] border mx-auto">
 			<p className="text-lg font-bold">Edit Profile</p>
 			{feedbackMessage.type && (
 				<div
-					className={`mt-4 p-2 rounded-md text-sm ${
+					className={` rounded-md text-sm ${
 						feedbackMessage.type === "success"
-							? "bg-green-100 text-green-700"
-							: "bg-red-100 text-red-700"
+							? " text-green-500"
+							: " text-red-500"
 					}`}
 				>
 					{feedbackMessage.message}
