@@ -18,8 +18,9 @@ import { usePathname } from "next/navigation";
 
 export default function Home() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [userId, setUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
   useEffect(() => {
     const storedUserId: string | null = localStorage.getItem("userId");
     setUserId(storedUserId);

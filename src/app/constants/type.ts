@@ -13,6 +13,7 @@ export type Creator = {
   name: string;
   about: string;
   socialMediaURL: string;
+  userId: string;
 };
 export type Transaction = {
   id: string;
