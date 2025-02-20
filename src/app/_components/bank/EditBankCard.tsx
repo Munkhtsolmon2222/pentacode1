@@ -116,7 +116,7 @@ export default function EditBankCard({ userId }: { userId: any }) {
 	}, [userId]);
 
 	return (
-		<Card className="w-full max-w-lg mx-auto mt-8 p-6">
+		<Card className="w-full max-w-[1000px] mx-auto mt-8 p-6">
 			<CardContent>
 				<h2 className="text-xl font-bold">Payment details</h2>
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

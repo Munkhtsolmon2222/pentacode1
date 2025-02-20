@@ -75,18 +75,18 @@ export default function Header() {
 					</Link>
 				</div>
 
-				<div className="flex justify-between items-center max-w-[168px] relative">
+				<div className="flex justify-between items-center max-w-[168px] h-10 relative">
 					{userData && (
 						<div
 							className="flex items-center gap-2 cursor-pointer"
 							onClick={() => setDropdownOpen((prev) => !prev)}
 						>
 							<img
-								className="w-10 h-10 rounded-full"
+								className="w-10 h-10 object-cover rounded-full "
 								src={userData.avatarImage}
 								alt="User Avatar"
 							/>
-							<h4>{userData.name}</h4>
+							<h4 className=" whitespace-nowrap ">{userData.name}</h4>
 							<div className="mt-2">
 								<DropdownMenu>
 									<DropdownMenuTrigger>

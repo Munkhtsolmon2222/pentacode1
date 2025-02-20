@@ -1,12 +1,15 @@
 "use client";
 import { Transaction, User } from "@/app/constants/type";
 import Cookies from "js-cookie";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function RecentSupport({
   transaction,
+  userId,
 }: {
   transaction: Transaction;
+  userId: string | null;
 }) {
   const [userData, setUserData] = useState<User | null>(null);
   const accessToken = Cookies.get("accessToken");
@@ -34,38 +37,58 @@ export default function RecentSupport({
     profileFetchData();
   }, [transaction]);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const timeAgo = (date: string | Date): string => {
+    const now = new Date();
+    const past = new Date(date);
+    const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    return `${Math.floor(diffInSeconds / 86400)} days ago`;
   };
 
   return (
-    <div className="w-full mt-4 p-5 border border-solid rounded-lg">
+    <div className="w-full mx-auto mt-4 p-5 border border-solid rounded-lg">
       <div className="flex justify-between items-center">
-        <div className="flex gap-4 items-center">
-          <img
-            className="w-10 h-10 rounded-full"
-            src={userData?.avatarImage}
-            alt={`${userData?.name}'s avatar`}
-          />
-          <div>
-            <h1 className="font-semibold text-sm">{userData?.name}</h1>
-            <p className="text-xs text-gray-500">
-              {transaction?.socialURLOrBuyMeACoffee}
-            </p>
+        <Link href={`/viewPage/${userData?.id}`}>
+          <div className="flex gap-4 items-center">
+            <img
+              className="w-10 h-10 object-cover rounded-full"
+              src={userData?.avatarImage}
+              alt={`${userData?.name}'s avatar`}
+            />
+            <div>
+              <h1 className="font-semibold text-sm">{userData?.name}</h1>
+              <p className="text-xs text-gray-500">
+                {transaction?.socialURLOrBuyMeACoffee}
+              </p>
+            </div>
           </div>
-        </div>
+        </Link>
         <div className="text-end">
-          <h3 className="font-bold text-green-600">+ ${transaction?.amount}</h3>
-          <p className="text-xs text-gray-500">
-            {formatDate(transaction?.updatedAt)}
-          </p>
+          {transaction.donorId == userId && (
+            <div>
+              <h3 className="font-bold text-red-600">
+                - ${transaction?.amount}
+              </h3>
+              <p className="text-xs text-gray-500">
+                {timeAgo(transaction?.updatedAt)}
+              </p>
+            </div>
+          )}
+          {transaction.donorId !== userId && (
+            <div>
+              <h3 className="font-bold text-green-600">
+                + ${transaction?.amount}
+              </h3>
+              <p className="text-xs text-gray-500">
+                {timeAgo(transaction?.updatedAt)}
+              </p>
+            </div>
+          )}
         </div>
       </div>
       {transaction?.specialMessage && (

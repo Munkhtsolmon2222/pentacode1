@@ -5,11 +5,17 @@ import { SearchIcon, UserIcon } from "lucide-react";
 import { Creator } from "../constants/type";
 import Cookies from "js-cookie";
 import { Skeleton } from "../_components/skeletons/ExploreSkeleton";
-
+import { AnimatePresence, motion } from "motion/react";
 export default function Explore() {
   const [creators, setCreators] = useState<Creator[]>([]);
   const [search, setSearch] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
+
   const accessToken = Cookies.get("accessToken");
+  useEffect(() => {
+    const storedUserId: string | null = localStorage.getItem("userId");
+    setUserId(storedUserId);
+  }, []);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -37,13 +43,21 @@ export default function Explore() {
   useEffect(() => {
     fetchData();
   }, []);
-  console.log(creators);
   const filteredCreators = creators.filter((user) =>
     user.name.toLowerCase().includes(search.toLowerCase())
   );
+  const otherCreators = filteredCreators.filter(
+    (user) => userId !== user.userId
+  );
   return (
     <div className="w-[80%] fixed right-0 top-0 ml-8 h-screen bg-gray-primary text-black p-4 overflow-y-auto custom-scrollbar">
-      <div className="w-[80%] gap-6 flex flex-col mt-10">
+      <motion.div
+        initial={{ opacity: 0, y: 200, x: 200 }}
+        animate={{ opacity: 1, y: 0, x: 0 }}
+        exit={{ opacity: 0, y: 200, x: 200 }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+        className="w-[80%] gap-6 flex flex-col mt-10"
+      >
         <h4 className="text-xl font-bold text-[#18181B] mt-10">
           Explore creators
         </h4>
@@ -56,10 +70,11 @@ export default function Explore() {
             className="outline-none pl-2 text-[#71717A] h-[36px]"
           />
         </div>
-      </div>
-      {filteredCreators.length > 0 ? (
+      </motion.div>
+
+      {otherCreators.length > 0 ? (
         <div className="w-full gap-6">
-          {filteredCreators.map((creator) => (
+          {otherCreators.map((creator) => (
             <RecentSupportExplore key={creator.id} creator={creator} />
           ))}
         </div>

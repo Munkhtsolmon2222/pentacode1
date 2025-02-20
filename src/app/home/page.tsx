@@ -18,7 +18,9 @@ import { usePathname } from "next/navigation";
 
 export default function Home() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+
   useEffect(() => {
     const storedUserId: string | null = localStorage.getItem("userId");
     setUserId(storedUserId);
@@ -28,6 +30,7 @@ export default function Home() {
   console.log("User ID:", userId);
   const accessToken = Cookies.get("accessToken");
   const fetchData = async () => {
+    setIsLoading(true);
     if (!userId) {
       console.warn("No userId found, skipping fetch.");
       return;
@@ -51,11 +54,13 @@ export default function Home() {
       setTransactions(
         Array.isArray(resJson.donations) ? resJson.donations : []
       );
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching transactions:", error);
       setTransactions([]);
     }
   };
+
   const filteredTransactions = selectedAmount
     ? transactions.filter(
         (transaction) => `$${transaction.amount}` === selectedAmount
@@ -76,7 +81,7 @@ export default function Home() {
         <div className="w-full mt-4 text-xl font-bold">Recent transactions</div>
         <div>
           <Select onValueChange={setSelectedAmount}>
-            <SelectTrigger className=" flex border rounded-lg mt-4 p-2 gap-2">
+            <SelectTrigger className=" flex border rounded-lg p-2">
               <SelectValue className="text-lg" placeholder="Amount" />
             </SelectTrigger>
             <SelectContent>
@@ -90,27 +95,29 @@ export default function Home() {
           </Select>
         </div>
       </div>
-
+      {isLoading && (
+        <div className="w-full my-auto p-5 overflow-y-auto custom-scrollbar mx-auto mt-4">
+          <HomeSkeleton />
+          <HomeSkeleton />
+          <HomeSkeleton />
+          <HomeSkeleton />
+          <HomeSkeleton />
+          <HomeSkeleton />
+        </div>
+      )}
       {transactions.length > 0 ? (
-        <div className="w-[80%] p-3 overflow-y-auto custom-scrollbar mx-auto ">
-          {filteredTransactions.map((transaction) => (
-            <RecentSupport key={transaction.id} transaction={transaction} />
+        <div className="w-[80%] mx-auto my-auto p-5 overflow-y-auto custom-scrollbar mt-4">
+          {filteredTransactions.map((transaction: any) => (
+            <RecentSupport
+              key={transaction.id}
+              transaction={transaction}
+              userId={userId}
+            />
           ))}
         </div>
       ) : (
-        <div className="w-full my-auto mx-auto p-5 text-center text-gray-500 mt-4">
-          {transactions && (
-            <>
-              <HomeSkeleton />
-              <HomeSkeleton />
-              <HomeSkeleton />
-              <HomeSkeleton />
-              <HomeSkeleton />
-              <HomeSkeleton />
-            </>
-          )}
-          {(!transactions || selectedAmount) &&
-            "Donation information is not available"}
+        <div className="w-[80%] my-auto mx-auto p-5 text-center text-gray-500 mt-4">
+          <div>Donation information is not available</div>
         </div>
       )}
     </div>
