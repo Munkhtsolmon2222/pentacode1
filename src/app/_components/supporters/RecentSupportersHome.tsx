@@ -1,6 +1,7 @@
 "use client";
 import { Transaction, User } from "@/app/constants/type";
 import Cookies from "js-cookie";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function RecentSupport({
@@ -48,19 +49,21 @@ export default function RecentSupport({
 	return (
 		<div className="w-full mx-auto mt-4 p-5 border border-solid rounded-lg">
 			<div className="flex justify-between items-center">
-				<div className="flex gap-4 items-center">
-					<img
-						className="w-10 h-10 object-cover rounded-full"
-						src={userData?.avatarImage}
-						alt={`${userData?.name}'s avatar`}
-					/>
-					<div>
-						<h1 className="font-semibold text-sm">{userData?.name}</h1>
-						<p className="text-xs text-gray-500">
-							{transaction?.socialURLOrBuyMeACoffee}
-						</p>
+				<Link href={`/viewPage/${userData?.id}`}>
+					<div className="flex gap-4 items-center">
+						<img
+							className="w-10 h-10 object-cover rounded-full"
+							src={userData?.avatarImage}
+							alt={`${userData?.name}'s avatar`}
+						/>
+						<div>
+							<h1 className="font-semibold text-sm">{userData?.name}</h1>
+							<p className="text-xs text-gray-500">
+								{transaction?.socialURLOrBuyMeACoffee}
+							</p>
+						</div>
 					</div>
-				</div>
+				</Link>
 				<div className="text-end">
 					<h3 className="font-bold text-green-600">+ ${transaction?.amount}</h3>
 					<p className="text-xs text-gray-500">

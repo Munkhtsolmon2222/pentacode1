@@ -54,6 +54,10 @@ export default function UserProfile() {
 	};
 
 	const fetchTotalEarnings = async () => {
+		if (!userId) {
+			console.warn("No userId found, skipping fetch.");
+			return;
+		}
 		try {
 			const response = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/donation/total-earnings/${userId}`,
@@ -69,8 +73,9 @@ export default function UserProfile() {
 			setUserValue({
 				totalEarnings30Days: resJson.totalEarnings30Days,
 				totalEarnings90Days: resJson.totalEarnings90Days,
-				totalEarningsAllTime: resJson.totalEarningsAllTime,
+				totalEarningsAllTime: resJson.totalEarnings90Days,
 			});
+			console.log("30day", resJson);
 		} catch (error) {
 			console.error(error);
 		}
@@ -88,24 +93,27 @@ export default function UserProfile() {
 	};
 	const renderEarnings = () => {
 		if (totalValue === "30day") {
-			return `$${userValue.totalEarnings30Days || "0"}`;
+			return `$${userValue.totalEarnings30Days}`;
 		} else if (totalValue === "90days") {
-			return `$${userValue.totalEarnings90Days || "0"}`;
+			return `$${userValue.totalEarnings90Days}`;
 		} else if (totalValue === "Alltime") {
-			return `$${userValue.totalEarningsAllTime || "0"}`;
+			return `$${userValue.totalEarningsAllTime}`;
 		}
-		return "$0";
+		return `${userValue.totalEarnings30Days}$`;
 	};
 	useEffect(() => {
 		console.log("checking");
 		fetchData();
-		fetchTotalEarnings();
 	}, [userId]);
+	useEffect(() => {
+		console.log("checkiafasdfasdfng");
+		fetchTotalEarnings();
+	}, [userId, totalValue]);
 	return (
 		<motion.div
-			initial={{ opacity: 0, y: 200, x: 200 }}
-			animate={{ opacity: 1, y: 0, x: 0 }}
-			exit={{ opacity: 0, y: 200, x: 200 }}
+			initial={{ opacity: 0, y: 200 }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, y: 200 }}
 			transition={{ duration: 0.5, ease: "easeInOut" }}
 			className="w-full bg-gray-primary text-black p-4 mt-10"
 		>
