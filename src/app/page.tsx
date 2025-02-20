@@ -134,22 +134,22 @@ export default function Home() {
 			>
 				<div className=" flex items-center justify-center pt-72">
 					<div className="bg-white p-8 rounded-3xl shadow-xl  w-[1128px] h-[810px] text-center">
-						<p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+						<p className="text-sm font-bold text-gray-500 uppercase tracking-wide">
 							SUPPORT
 						</p>
-						<h1 className="text-3xl font-bold mt-2 text-black">
+						<h1 className="text-6xl font-bold  mt-2 text-black">
 							Give your audience <br /> an easy way to say thanks.
 						</h1>
-						<p className="text-gray-600 mt-4 w-[936px] mx-auto">
+						<p className="text-gray-600 mt-4 pt-7 text-xl w-[936px] mx-auto">
 							Buy Me a Coffee makes supporting fun and easy. In just a couple of
-							taps, your fans can make the payment (buy you a coffee) and leave
-							a message.
+							taps, your fans <br /> can make the payment (buy you a coffee) and
+							leave a message.
 						</p>
 						{/* <div>
             <img src="screenshot1.png" />
           </div> */}
-						<div className="relative mt-8 bg-white p-6 rounded-xl shadow-lg mx-auto w-[386px] h-[359px]">
-							<h2 className="text-lg font-semibold text-black">
+						<div className="relative mt-8 bg-white p-6 rounded-[35px] border border-slate-100 shadow-lg mx-auto w-[386px] h-[359px]">
+							<h2 className="text-2xl text-start font-semibold text-black">
 								Buy Juliet a coffee
 							</h2>
 
@@ -172,25 +172,29 @@ export default function Home() {
 
 							<input
 								type="text"
-								className="w-full mt-4 border p-3 rounded-md"
+								className="w-full h-32 text-start -pt-14  mt-4 border pb-20 pl-3 rounded-md"
 								placeholder="Say something nice..."
 							/>
-							<button className="w-full bg-red-500 text-white py-3 rounded-lg mt-4 font-semibold">
+							<button className="w-full bg-red-500 text-white py-3 rounded-full mt-4 font-semibold">
 								Support $3
 							</button>
 						</div>
 
 						<div className="relative mt-6 space-y-3">
-							<div className="absolute -left-24 bottom-0 bg-white p-3 shadow-md rounded-lg flex items-center space-x-2">
-								<span className="bg-green-200 p-2 rounded-full">☕</span>
-								<p className="text-sm font-medium text-black">
+							<div className="absolute left-36 bottom-32 bg-white border border-slate-100  p-3 shadow-md rounded-3xl flex items-center space-x-2">
+								<span className="bg-green-200 p-2  w-9 h-9 rounded-full">
+									☕
+								</span>
+								<p className="text-sm p-3 font-medium text-black">
 									Cathy G bought a coffee. <br />
-									<span className="text-gray-500">Thanks Cathy! ❤️</span>
+									<span className="text-gray-500 ">Thanks Cathy! ❤️</span>
 								</p>
 							</div>
 
-							<div className="absolute -left-20 top-1/2 transform -translate-y-1/2 bg-white p-3 shadow-md rounded-lg flex items-center space-x-2">
-								<span className="bg-yellow-200 p-2 rounded-full">☕</span>
+							<div className="absolute left-28 bottom-56 bg-white p-3 shadow-md rounded-3xl border border-slate-100 flex items-center space-x-2">
+								<span className="bg-yellow-200 w-9 h-9 p-2 rounded-full">
+									☕
+								</span>
 								<p className="text-sm font-medium  text-black">
 									Anie bought 10 coffees
 								</p>
@@ -204,11 +208,14 @@ export default function Home() {
 								</p>
 							</div>
 
-							<div className="w-[250px] absolute -right-24 bottom-0 bg-white p-3 shadow-md rounded-lg">
+							<div className="w-[400px] absolute right-10 bottom-32 bg-white p-4 border border-slate-100 shadow-md rounded-xl">
 								<p className="text-sm font-medium  text-black">
+									<span className="bg-yellow-200 w-7 h-7 p-2 -ml-5 rounded-full ">
+										☕
+									</span>
 									<strong>Tony Steel bought 3 coffees.</strong>
 								</p>
-								<p className="text-gray-500 text-sm mt-1 ">
+								<p className="text-gray-500 text-start p-4 pl-10 text-sm mt-1 ">
 									Absolutely love the show! I'm already waiting for next week's
 									episode, lol. Thank you and keep doing what you're doing.
 								</p>
