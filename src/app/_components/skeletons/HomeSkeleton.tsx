@@ -1,6 +1,6 @@
 export function HomeSkeleton() {
   return (
-    <div className="w-[80%] h-[120px] p-3 overflow-y-auto custom-scrollbar mx-auto mt-4 bg-gray-100 animate-pulse rounded-lg">
+    <div className="w-[80%] h-[120px] my-auto p-5 overflow-y-auto custom-scrollbar mx-auto mt-4 bg-gray-100 animate-pulse rounded-lg">
       <div className="flex justify-between items-center">
         <div className="flex gap-4 items-center">
           <div className="w-10 h-10 rounded-full bg-gray-300 animate-pulse"></div>

@@ -251,7 +251,7 @@ export default function ViewPage() {
                     src={userData?.avatarImage}
                     alt="Jake"
                   />
-                  <p className="font-bold text-2xl">{userData?.name}</p>
+                  <p className="font-bold text-2xl">{userData?.name || ""}</p>
                 </div>
                 <button
                   onClick={() => setModalOpen(true)}
@@ -262,10 +262,10 @@ export default function ViewPage() {
                 {modalOpen && <EditProfileDialogue onClose={setModalOpen} />}
               </div>
               <div className="mt-10 ml-4">
-                <p className="text-md text-[#18181B] font-semibold">
-                  About {userData?.name}
+                <p className="text-lg text-[#18181B] font-semibold">
+                  About {userData?.name || ""}
                 </p>
-                <p className="w-full mt-8 text-sm">{userData?.about}</p>
+                <p className="w-full my-4 text-md">{userData?.about || ""}</p>
               </div>
             </div>
             <div className=" gap-3 border rounded-md mt-4 p-4 ">
@@ -276,51 +276,53 @@ export default function ViewPage() {
                 className="w-full my-4 p-2 rounded-md outline-none text-md ml-2"
                 type="url"
                 placeholder="https://buymecoffee.com/spacerulz44"
-                value={userData?.socialMediaURL}
+                value={userData?.socialMediaURL || ""}
+                readOnly
               />
             </div>
-            <div className="max-h-[20rem] gap-6 border rounded-md mt-4 overflow-y-auto custom-scrollbar overflow-hidden ">
-              <h1 className="text-md font-semibold p-6 ml-2 sticky top-0 bg-white">
-                Recent Supporters
-              </h1>
+            <div className="h-[20rem] gap-6 border rounded-md mt-4 overflow-y-auto custom-scrollbar overflow-hidden relative">
               <div>
-                {recipientDonation ? (
-                  <div className="w-full min-h-[10rem] border rounded-md mt-6 flex flex-col items-center justify-center">
-                    <FaHeart />
-                    <p className="mt-2 text-sm ">
+                <h1 className="text-lg font-semibold p-6 sticky top-0 bg-white">
+                  Recent Supporters
+                </h1>
+
+                {recipientDonation || transactions.length === 0 ? (
+                  <div className="p-12 mx-6 border rounded-lg mt-8 flex flex-col items-center justify-center text-[#18181B]">
+                    <FaHeart className="text-2xl" />
+                    <p className="mt-6 text-lg">
                       Be the first one to support {userData?.name}
                     </p>
                   </div>
                 ) : (
-                  <div className="w-full p-2 gap-2">
+                  <div className="w-full p-4 gap-2">
                     {transactions?.slice(0, supporters).map((transaction) => (
                       <RecentSupportProfile
                         transaction={transaction}
                         key={transaction.id}
                       />
                     ))}
+                    {transactions.length >= 3 && (
+                      <Button
+                        onClick={seeMore}
+                        className="w-full mb-2 bg-[#FAFAFA] text-[#18181B] text-md p-6"
+                        variant={"secondary"}
+                      >
+                        {supporters > 3 ? "See less" : "See more"}
+                        <ChevronDown />
+                      </Button>
+                    )}
                   </div>
                 )}
-              </div>
-              <div className="max-w-[950px] px-12">
-                <Button
-                  onClick={seeMore}
-                  className="w-full mb-4 sticky bg-[#FAFAFA] text-[#18181B] text-sm p-6"
-                  variant={"secondary"}
-                >
-                  {supporters > 3 ? "See less" : "See more"}
-                  <ChevronDown />
-                </Button>
               </div>
             </div>
           </div>
           <div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
             <div className="mb-4">
-              <p className="text-lg font-bold mt-2">
+              <p className="text-2xl font-bold mt-2">
                 Buy {userData?.name} a Coffee
               </p>
-              <p className="text-[#09090B] text-sm mt-5">Select amount:</p>
-              <div className=" flex gap-4 mt-4 text-sm">
+              <p className="text-[#09090B] text-md mt-5">Select amount:</p>
+              <div className=" flex gap-4 mt-2 text-sm">
                 <button className="p-2 bg-[#F4F4F5] rounded-md text-[#18181B] font-sm flex justify-center items-center gap-2">
                   <FiCoffee /> $1
                 </button>
@@ -339,24 +341,24 @@ export default function ViewPage() {
               </div>
             </div>
             <div className="mb-7">
-              <p className="text-[#09090B] text-sm mt-6">
+              <p className="text-[#09090B] text-md mt-6">
                 Enter BuyMeCoffee or social account URL:
               </p>
               <input
-                className="w-full border rounded-md p-2 mt-4 outline-none text-sm "
+                className="w-full border rounded-md p-2 mt-2 outline-none text-md "
                 placeholder="bymecoffee@gmail.com"
                 type="url"
               />
             </div>
             <div className="mb-10">
-              <p className="text-[#09090B] text-sm ">Special message:</p>
+              <p className="text-[#09090B] text-md ">Special message:</p>
               <textarea
-                className="w-full border rounded-md px-4 py-2 mt-4 outline-none text-sm "
+                className="w-full border rounded-md px-4 py-2 mt-2 outline-none text-md"
                 placeholder="Please write your message here"
               />
             </div>
             <div className="flex items-center mt-4">
-              <button className="w-full bg-gray-300 text-white rounded-md text-sm p-2">
+              <button className="w-full bg-gray-300 text-white rounded-md text-md p-2">
                 Support
               </button>
             </div>
