@@ -2,9 +2,6 @@
 import { useEffect, useState } from "react";
 import EditBankCard from "../_components/bank/EditBankCard";
 import EditProfile from "../_components/profile/EditProfile";
-import { SideBar } from "../_components/Sidebar";
-
-import SidebarWrapper from "../_components/SideBarWrapper";
 import Cookies from "js-cookie";
 
 export default function AccountSettings() {
@@ -69,9 +66,11 @@ export default function AccountSettings() {
 	console.log(userId);
 	return (
 		<div className="w-[95%] fixed right-0 top-9  h-screen overflow-auto">
-			<h3 className="font-bold max-w-lg mx-auto py-10 text-2xl ">My account</h3>
+			<h3 className="font-bold max-w-[1000px] mx-auto py-10 text-2xl ">
+				My account
+			</h3>
 			<EditProfile userId={userId} />
-			<div className="max-w-lg mx-auto border border-[#E4E4E7] rounded-lg mt-8">
+			<div className="max-w-[1000px] mx-auto border border-[#E4E4E7] rounded-lg mt-8">
 				<p className="p-6 font-bold"> Set a new password</p>
 				<div className="px-6">
 					<p className="">New Password</p>
@@ -106,7 +105,7 @@ export default function AccountSettings() {
 				</div>
 			</div>
 			<EditBankCard userId={userId} />
-			<div className="p-4 mt-8 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
+			<div className="p-4 mt-8 mb-32 max-w-[1000px] rounded-lg border-[#E4E4E7] border mx-auto">
 				<p className="text-lg font-bold">Success page</p>
 				<div className="mt-4">
 					<label className="font-medium">Confirmation message</label>
