@@ -89,7 +89,7 @@ export default function UserProfile() {
 			setUserValue({
 				totalEarnings30Days: resJson.totalEarnings30Days,
 				totalEarnings90Days: resJson.totalEarnings90Days,
-				totalEarningsAllTime: resJson.totalEarningsAllTime,
+				totalEarningsAllTime: resJson.totalEarnings90Days,
 			});
 		} catch (error) {
 			console.error(error);
