@@ -1,6 +1,6 @@
 export function Skeleton() {
   return (
-    <div className="w-[80%] mx-auto mt-16 p-5 h-40 bg-gray-100 animate-pulse rounded-lg">
+    <div className="w-[80%] mx-auto mt-6 p-5 h-52 bg-gray-100 animate-pulse rounded-lg">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
           <div className="w-10 h-10 rounded-full bg-gray-300 animate-pulse"></div>

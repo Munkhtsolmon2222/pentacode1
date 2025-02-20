@@ -9,7 +9,7 @@ export default function RecentSupportExplore({
   creator: Creator;
 }) {
   return (
-    <div className="w-[80%] mx-auto mt-16 p-5 max-h-56 border border-solid rounded-lg">
+    <div className="w-[80%] mx-auto mt-6 p-8 max-h-56 border border-solid rounded-lg">
       <div>
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center">
@@ -26,14 +26,14 @@ export default function RecentSupportExplore({
             </button>
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
           <div>
             <h4 className="font-bold text-md">About {creator?.name}</h4>
-            <p className="pt-2 text-sm text-gray-600">{creator?.about}</p>
+            <p className="pt-2 text-md text-gray-600">{creator?.about}</p>
           </div>
-          <div>
+          <div className="">
             <h4 className="font-semibold text-md">Social Media URL</h4>
-            <p className="pt-2 text-sm text-gray-600">
+            <p className="pt-2 text-md text-gray-600">
               {creator?.socialMediaURL}
             </p>
           </div>

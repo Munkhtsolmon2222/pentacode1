@@ -23,6 +23,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Cookies from "js-cookie";
+import Link from "next/link";
+import { QRScan } from "./qr";
 
 export default function ViewPageExplore() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -38,6 +40,7 @@ export default function ViewPageExplore() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [supporters, setSupporters] = useState(3);
   const [scan, setScan] = useState(false);
+  const [button, setButton] = useState(false);
   const params = useParams();
   const accessToken = Cookies.get("accessToken");
   const [newDonation, setNewDonation] = useState({
@@ -238,6 +241,7 @@ export default function ViewPageExplore() {
     supporterFetchData();
   }, [userData]);
   console.log(transactions);
+
   const seeMore = () => {
     if (supporters > 3) {
       setSupporters(3);
@@ -246,25 +250,33 @@ export default function ViewPageExplore() {
     }
   };
 
+  useEffect(() => {
+    setButton(true);
+  }, []);
+
   return (
     <div className="w-full min-h-screen">
       {buttonClicked ? (
-        <div className="w-full flex flex-col justify-center items-center gap-4 mt-20">
+        <div className="w-full flex flex-col justify-center items-center gap-4 mt-40">
           <div className=" flex flex-col items-center p-2">
             <div className="w-[64px] h-[64px] rounded-full bg-[#18BA51] flex justify-center items-center">
               <CheckCircle2 className="text-[#FAFAFA]" />
             </div>
-            <p className="font-bold mt-4 px-1 py-2">Donation Complete ! </p>
+            <p className="font-bold text-lg mt-4 px-1 py-1">
+              Donation Complete !{" "}
+            </p>
           </div>
 
-          <div className="max-w-[510px] p-4 border rounded-md">
+          <div className=" max-w-[520px] p-2 border rounded-md">
             <div className="flex gap-2 m-2">
               <img
                 className="w-10 h-10 flex rounded-full "
                 src={userData?.avatarImage}
                 alt="User"
               />
-              <p className="mt-2 text-[#09090B]">{userData?.name}:</p>
+              <p className="mt-2 text-[#09090B] font-semibold">
+                {userData?.name}:
+              </p>
             </div>
             <p className="m-2">
               Thank you for supporting me! It means a lot to have your support.
@@ -273,67 +285,38 @@ export default function ViewPageExplore() {
             </p>
           </div>
           <div className="flex justify-center items-center p-4">
-            <button
-              className="bg-[#18181B] p-4 text-[#FAFAFA] border rounded-lg"
-              onClick={() => window.location.reload()}
-            >
-              Return to explore
-            </button>
+            <Link href="/explore">
+              <button className="bg-[#18181B] p-2 text-[#FAFAFA] text-sm border rounded-lg">
+                Return to explore
+              </button>
+            </Link>
           </div>
         </div>
       ) : (
         <div>
           {scan ? (
-            <div>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline">Edit Profile</Button>
-                </DialogTrigger>
-                <DialogContent className="">
-                  <DialogHeader>
-                    <DialogTitle className="flex justify-center text-[#161616] text-lg">
-                      Scan QR code
-                    </DialogTitle>
-                    <DialogDescription className="flex justify-center text-[#161616] text-md">
-                      Scan the QR code to complete your donation
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="flex justify-center my-6">
-                    <img src="QR.png" alt="" />
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
+            <QRScan />
           ) : (
             <div>
               {loading && <div className="text-center p-4 ">Loading...</div>}
               {!loading && userData && (
                 <div>
-                  <div className="w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center">
-                    <div
-                      style={{
-                        backgroundImage: `url(${imageUrl || previewImg})`,
-                      }}
-                      className="w-full h-full bg-cover bg-no-repeat relative"
-                    >
-                      {userData?.backgroundImage ? (
-                        <div className="flex absolute right-10 top-4">
-                          <label
-                            className={`w-[150px] h-[40px] bg-[#F4F4F5] text-[#18181B] rounded-md flex justify-center items-center gap-2 bg-cover bg-center`}
-                            style={{
-                              backgroundImage: `url(${userData.backgroundImage})`,
-                            }}
-                          ></label>
-                        </div>
-                      ) : (
-                        <div
-                          className="w-[100%] h-[100%] bg-[#18181B] text-[#FAFAFA] rounded-md flex justify-center items-center gap-2 bg-cover bg-center"
-                          style={{
-                            backgroundImage: `url("https://miro.medium.com/v2/resize:fit:4800/format:webp/1*EPdXV6DAFtthI3w-d0XUcg.jpeg")`,
-                          }}
-                        ></div>
-                      )}
-                    </div>
+                  <div className="w-full h-[400px] bg-[#F4F4F5] flex justify-center items-center">
+                    {userData?.backgroundImage ? (
+                      <div
+                        style={{
+                          backgroundImage: `url(${userData.backgroundImage})`,
+                        }}
+                        className="flex w-full h-full bg-cover bg-no-repeat relative top-4"
+                      ></div>
+                    ) : (
+                      <div
+                        className="w-[100%] h-[100%] bg-[#18181B] text-[#FAFAFA] rounded-md flex justify-center items-center gap-2 bg-cover bg-center"
+                        style={{
+                          backgroundImage: `url("https://miro.medium.com/v2/resize:fit:4800/format:webp/1*EPdXV6DAFtthI3w-d0XUcg.jpeg")`,
+                        }}
+                      ></div>
+                    )}
                   </div>
                   <div className="w-full flex justify-center gap-6 -my-20 relative">
                     <div className="w-[45%] h-[50rem] bg-[#ffffff] rounded-md">
@@ -342,11 +325,11 @@ export default function ViewPageExplore() {
                           <div className="flex items-center gap-2 ml-4">
                             <img
                               className="w-8 h-8 rounded-full"
-                              src={userData?.avatarImage}
+                              src={userData?.avatarImage || ""}
                               alt="Jake"
                             />
-                            <p className="font-bold text-lg">
-                              {userData?.name}
+                            <p className="font-bold text-2xl">
+                              {userData?.name || ""}
                             </p>
                           </div>
 
@@ -355,75 +338,82 @@ export default function ViewPageExplore() {
                           )}
                         </div>
                         <div className="mt-10 ml-4">
-                          <p className="text-md text-[#18181B] font-semibold">
-                            About {userData?.name}
+                          <p className="text-lg text-[#18181B] font-semibold">
+                            About {userData?.name || ""}
                           </p>
-                          <p className="w-full my-8 text-sm">
-                            {userData?.about}
+                          <p className="w-full my-8 text-md">
+                            {userData?.about || ""}
                           </p>
                         </div>
                       </div>
                       <div className="gap-3 border rounded-md mt-4 p-4">
-                        <p className="text-md font-semibold p-2 mt-2 ml-2">
+                        <p className="text-lg font-semibold p-2 mt-2 ml-2">
                           Social media URL
                         </p>
                         <input
-                          className="w-full my-4 ml-2 p-2 text-sm outline-none"
+                          className="w-full my-4 ml-2 p-2 text-md outline-none"
                           type="url"
                           placeholder="https://buymecoffee.com/spacerulz44"
-                          value={userData?.socialMediaURL}
+                          value={userData?.socialMediaURL || ""}
+                          readOnly
                         />
                       </div>
 
-                      <div className="max-h-[20rem] gap-6 border rounded-md mt-4 overflow-y-auto custom-scrollbar relative">
-                        <h1 className="text-md font-semibold p-6 ml-2 sticky top-0 bg-white">
-                          Recent Supporters
-                        </h1>
+                      <div className="h-[20rem] gap-6 border rounded-md mt-4 overflow-y-auto custom-scrollbar overflow-hidden relative">
+                        <div className="">
+                          <h1 className="text-lg font-semibold p-6 sticky top-0 bg-white">
+                            Recent Supporters
+                          </h1>
 
-                        {recipientDonation ? (
-                          <div className="w-full min-h-[10rem] border rounded-md mt-6 flex flex-col items-center justify-center">
-                            <FaHeart />
-                            <p className="mt-2 text-md">
-                              Be the first one to support {userData?.name}
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="w-full p-2 gap-2">
-                            {transactions
-                              ?.slice(0, supporters)
-                              .map((transaction) => (
-                                <RecentSupportProfile
-                                  transaction={transaction}
-                                  key={transaction.id}
-                                />
-                              ))}
-                          </div>
-                        )}
-
-                        <Button
-                          onClick={seeMore}
-                          className="w-full mb-4 bg-[#FAFAFA] text-[#18181B] text-sm p-6"
-                          variant={"secondary"}
-                        >
-                          {supporters > 3 ? "See less" : "See more"}
-                          <ChevronDown />
-                        </Button>
+                          {recipientDonation ? (
+                            <div className="w-full p-12 border rounded-lg mt-8 flex flex-col items-center justify-center text-[#18181B]">
+                              <FaHeart className="text-2xl" />
+                              <p className="mt-6 text-lg">
+                                Be the first one to support
+                                {userData?.name}
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="w-full p-4 gap-2">
+                              {transactions
+                                ?.slice(0, supporters)
+                                .map((transaction) => (
+                                  <RecentSupportProfile
+                                    transaction={transaction}
+                                    key={transaction.id}
+                                  />
+                                ))}
+                              {transactions.length >= 3 ? (
+                                <Button
+                                  onClick={seeMore}
+                                  className="w-full mb-2 bg-[#FAFAFA] text-[#18181B] text-md p-6"
+                                  variant={"secondary"}
+                                >
+                                  {supporters > 3 ? "See less" : "See more"}
+                                  <ChevronDown />
+                                </Button>
+                              ) : (
+                                <div></div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                     <div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
                       <div className="mb-4">
-                        <p className="text-lg font-bold mt-2">
-                          Buy {userData?.name} a Coffee
+                        <p className="text-2xl font-bold mt-2">
+                          Buy {userData?.name || ""} a Coffee
                         </p>
                         <p className="text-[#09090B] text-md mt-5">
                           Select amount:
                         </p>
-                        <div className="w-[100%] text-bold flex gap-4 mt-2">
+                        <div className="w-[100%] text-bold text-md flex gap-4 mt-2">
                           {[1, 2, 5, 10].map((amount) => (
                             <Button
                               key={amount}
                               onClick={() => onChangeAmount(amount)}
-                              className={`w-20  rounded-md  text-sm ${
+                              className={`w-20  rounded-md text-md ${
                                 selectedAmount == amount
                                   ? "bg-black text-white"
                                   : "bg-[#F4F4F5] text-[#09090B]"
@@ -444,7 +434,7 @@ export default function ViewPageExplore() {
                           type="url"
                           name="socialURLOrBuyMeACoffee"
                           onChange={onChange}
-                          className={`border rounded-md w-full p-2 mt-1 text-sm outline-none${
+                          className={`border rounded-md w-full p-2 mt-1 text-md outline-none${
                             error.socialURLOrBuyMeACoffee
                               ? "border-red-500"
                               : ""
@@ -463,8 +453,8 @@ export default function ViewPageExplore() {
                         </p>
                         <textarea
                           onChange={onChangeMessage}
-                          value={newDonation.specialMessage}
-                          className="w-full border rounded-md px-4 py-2 mt-2 outline-none text-sm"
+                          value={newDonation.specialMessage || ""}
+                          className="w-full border rounded-md px-4 py-2 mt-2 outline-none text-md"
                           placeholder="Please write your message here"
                         />
                       </div>
@@ -474,17 +464,17 @@ export default function ViewPageExplore() {
                           disabled={!!handleDisabled()}
                           onClick={async () => {
                             await addDonation(
-                              userId,
+                              userId || "",
                               newDonation.amount,
-                              newDonation.specialMessage,
-                              newDonation.socialURLOrBuyMeACoffee,
+                              newDonation.specialMessage || "",
+                              newDonation.socialURLOrBuyMeACoffee || "",
                               userData?.userId ?? ""
                             );
                             setButtonClicked(true);
                             setIsClicked(true);
                             setScan(true);
                           }}
-                          className={`w-full p-2 rounded-md text-sm 
+                          className={`w-full p-2 rounded-md text-md
                         ${
                           handleDisabled()
                             ? "bg-[#18181B] opacity-20 text-[#FAFAFA] cursor-not-allowed"

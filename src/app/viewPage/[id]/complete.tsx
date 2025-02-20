@@ -1,6 +1,7 @@
 "use client";
 import { User } from "@/app/constants/type";
 import { CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -49,13 +50,42 @@ export default function Complete() {
       </div>
 
       <div className="flex justify-center items-center mt-4">
-        <button
-          className="bg-[#18181B] p-4 text-white border border-bg-[#E4E4E7] rounded-md"
-          onClick={() => window.location.reload()}
-        >
-          Return to explore
-        </button>
+        <Link href="/explore">
+          <button
+            className="bg-[#18181B] p-4 text-white border border-bg-[#E4E4E7] rounded-md"
+            // onClick={() => window.location.reload()}
+          >
+            Return to explore
+          </button>
+        </Link>
       </div>
     </div>
   );
 }
+// import { Button } from "@/components/ui/button";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogDescription,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogTrigger,
+// } from "@/components/ui/dialog";
+
+// export const QRScan = () => {
+//   return (
+//     <div className="mt-40 bg-red-500 p-4">
+//       <div className="flex justify-center text-[#161616] text-lg">
+//         Scan QR code
+//       </div>
+//       <div className="flex justify-center text-[#161616] text-md">
+//         Scan the QR code to complete your donation
+//       </div>
+//       <div className="flex justify-center my-6">
+//         <button>
+//           <img src="QR.png" alt="" />
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
