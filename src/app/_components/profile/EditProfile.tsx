@@ -42,6 +42,7 @@ export default function EditProfile({ userId }: any) {
 			return;
 		}
 		try {
+			console.log(accessToken, "account");
 			const response = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/profile/currentuser/${userId}`,
 				{

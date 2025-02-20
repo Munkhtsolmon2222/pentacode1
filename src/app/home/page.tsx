@@ -12,7 +12,9 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { accessToken } from "@/utils/accessToken";
+import Cookies from "js-cookie";
+import { HomeSkeleton } from "../_components/skeletons/HomeSkeleton";
+import { usePathname } from "next/navigation";
 
 export default function Home() {
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -22,15 +24,15 @@ export default function Home() {
 		setUserId(storedUserId);
 	}, []);
 	const [selectedAmount, setSelectedAmount] = useState<string | null>(null);
-
+	const pathname = usePathname();
 	console.log("User ID:", userId);
-
+	const accessToken = Cookies.get("accessToken");
 	const fetchData = async () => {
 		if (!userId) {
 			console.warn("No userId found, skipping fetch.");
 			return;
 		}
-
+		console.log(accessToken, "home");
 		try {
 			const res = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/donation/received/${userId}`,
@@ -62,7 +64,8 @@ export default function Home() {
 
 	useEffect(() => {
 		fetchData();
-	}, [userId]);
+		console.log("wooorkinggg");
+	}, [userId, pathname]);
 
 	console.log("Transactions:", transactions);
 
@@ -95,9 +98,20 @@ export default function Home() {
 					))}
 				</div>
 			) : (
-				<p className="text-center text-gray-500">
-					{selectedAmount || "Donation information is not available"}
-				</p>
+				<div className="w-full my-auto mx-auto p-5 text-center text-gray-500 mt-4">
+					{transactions && (
+						<>
+							<HomeSkeleton />
+							<HomeSkeleton />
+							<HomeSkeleton />
+							<HomeSkeleton />
+							<HomeSkeleton />
+							<HomeSkeleton />
+						</>
+					)}
+					{(!transactions || selectedAmount) &&
+						"Donation information is not available"}
+				</div>
 			)}
 		</div>
 	);

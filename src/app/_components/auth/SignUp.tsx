@@ -94,14 +94,11 @@ export function SignUp() {
         }
       );
       const response = await user.json();
-
       if (response.message === "Internal server error") {
         handleContinue();
       } else {
         setResponses(response);
       }
-
-      setIsLoading(false);
 
       if (response.message === "Successfully added") {
         const decodedToken: DecodedToken = jwtDecode(response.data.accessToken);
@@ -129,10 +126,10 @@ export function SignUp() {
           <Button variant="secondary">Log in</Button>
         </Link>
       </div>
-      <div className="max-w-md mx-auto mt-[160px] text-black space-y-4">
+      <div className="max-w-md mx-auto mt-[200px] text-black space-y-4">
         <div className="w-full max-w-md space-y-6 p-6 bg-white shadow-lg rounded-lg">
           {!showEmailPassword && (
-            <div>
+            <div className="space-y-2">
               <b className="text-[24px]">Create Your Account</b>
               <p className="text-[12px] text-gray-500">
                 Choose a username for your page
@@ -169,10 +166,11 @@ export function SignUp() {
                 </div>
               )}
 
-              <div className="flex p-[24px]">
+              <div className="flex">
                 <Button
-                  className="block mx-auto w-full box-border p-2 rounded-xl mt-[20px] bg-primary text-white"
-                  disabled={!isUsernameValid || isLoading}
+                  className="w-full block mx-auto box-border py-2 mt-[20px] bg-primary text-white"
+                  type="submit"
+                  disabled={isLoading}
                   onClick={() => {
                     if (isUsernameValid) {
                       addUser(username, email, password);
@@ -186,12 +184,12 @@ export function SignUp() {
           )}
 
           {showEmailPassword && (
-            <div>
+            <div className="space-y-2">
               <b className="text-[24px]">Welcome, {username}</b>
               <p className="text-[12px] text-gray-500">
                 Connect email and set a password
               </p>
-              <label className="pl-[20px] text-sm font-bold">E-mail</label>
+              <label className="text-sm font-bold">E-mail</label>
               <Input
                 className="block mx-auto w-full p-4 h-10 border-2 border-black-500 rounded-lg"
                 id="mail"
@@ -209,7 +207,7 @@ export function SignUp() {
               )}
 
               <div className="relative">
-                <label className="pl-[20px] text-sm font-bold">Password</label>
+                <label className="text-sm font-bold">Password</label>
                 <Input
                   className="block mx-auto w-full p-4 h-10 border-2 border-black-500 rounded-lg"
                   id="password"
@@ -235,11 +233,11 @@ export function SignUp() {
                 </div>
               </div>
 
-              <div className="flex p-[24px]">
+              <div className="flex">
                 <Button
-                  className="block mx-auto w-full box-border p-2 rounded-xl mt-[20px] bg-primary text-white"
+                  className="block mx-auto w-full box-border p-2 mt-[20px] bg-primary text-white"
                   disabled={
-                    !handleCheckEmail() || !handleCheckPassword() || isLoading
+                    !handleCheckEmail() || !handleCheckPassword() || !isLoading
                   }
                   onClick={() => {
                     addUser(username, email, password);

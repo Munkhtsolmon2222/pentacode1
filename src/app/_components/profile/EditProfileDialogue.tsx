@@ -6,7 +6,6 @@ import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
 import { z } from "zod";
 import Cookies from "js-cookie";
-import { accessToken } from "@/utils/accessToken";
 type EditProfileDialogueProps = {
 	onClose: (value: boolean) => void;
 };
@@ -28,6 +27,7 @@ export default function EditProfileDialogue({
 
 	const [userData, setUserData] = useState<any>(null);
 	const [userId, setUserId] = useState<string | null>(null);
+	const accessToken = Cookies.get("accessToken");
 
 	useEffect(() => {
 		const storedUserId: string | null = localStorage.getItem("userId");

@@ -4,7 +4,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { accessToken } from "@/utils/accessToken";
+import Cookies from "js-cookie";
 import {
 	InputOTP,
 	InputOTPGroup,
@@ -28,6 +28,7 @@ export function ForgotPassword() {
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [passwordChanged, setPasswordChanged] = useState(false);
+	const accessToken = Cookies.get("accessToken");
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
 		setResponses(null);

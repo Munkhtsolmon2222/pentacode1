@@ -1,6 +1,6 @@
 "use client";
 import { Transaction, User } from "@/app/constants/type";
-import { accessToken } from "@/utils/accessToken";
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 
 export default function RecentSupportProfile({
@@ -9,6 +9,7 @@ export default function RecentSupportProfile({
 	transaction: Transaction;
 }) {
 	const [userData, setUserData] = useState<User | null>(null);
+	const accessToken = Cookies.get("accessToken");
 
 	const profileFetchData = async () => {
 		try {
@@ -35,13 +36,13 @@ export default function RecentSupportProfile({
 	console.log(userData);
 	return (
 		<div className="w-full flex gap-3 p-2 ">
-			<img className="w-10 h-10 rounded-full" src={userData?.avatarImage} />
+			<img className="w-8 h-8 rounded-full" src={userData?.avatarImage} />
 			<div className="flex flex-col">
-				<div className="w-full flex gap-2 text-lg">
-					<h4 className="font-semibold text-lg">{userData?.name}</h4>
+				<div className="w-full flex gap-2 text-sm">
+					<h4 className="font-semibold text-sm">{userData?.name}</h4>
 					<h4>bought ${transaction.amount} coffee</h4>
 				</div>
-				<h4 className="mt-1 text-lg text-[#09090B]">
+				<h4 className="mt-1 text-sm text-[#09090B]">
 					{transaction?.specialMessage}
 				</h4>
 			</div>
