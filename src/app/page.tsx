@@ -3,7 +3,7 @@ import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Youtube, Instagram } from "lucide-react";
 import Link from "next/link";
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import React from "react";
 
 export type Icon = string;
@@ -18,81 +18,98 @@ interface FeatureProps {
 }
 
 export default function Home() {
+  const { scrollYProgress } = useScroll();
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+  const titleY = useTransform(scrollYProgress, [0, 0.1], [50, 0]);
+
+  const imageOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+
   return (
-    <div className="flex flex-col items-center justify-center p-10 bg-[#FAF8F2] min-h-screen">
-      <p className="text-black">⭐⭐⭐⭐⭐ Loved by 1,000,000+ creators</p>
-      <h1 className="text-4xl font-bold text-center text-black">
-        Fund your creative work
-      </h1>
-      <p className="text-blach text-lg text-center mt-2 text-black">
-        Accept support. Start a membership. Setup a shop. It's easier than you
-        think.
-      </p>
-      <Link href="/signup">
-        <button className="mt-5 bg-yellow-400 text-black px-6 py-3 rounded-full text-lg font-semibold hover:bg-yellow-500 transform hover:scale-105 transition duration-300 ease-in-out has context menu">
-          Start my page
-        </button>
-      </Link>
+    <div className="flex flex-col items-center justify-center p-10 bg-[#ffffff] min-h-screen">
+      <div className="absolute z-10 bottom-0 top-40 text-center">
+        <p className="text-black  tracking-widest ">
+          ⭐⭐⭐⭐⭐ Loved by 1,000,000+ creators
+        </p>
+        <h1 className="text-8xl font-bold pt-10 text-center text-black">
+          Fund your <br />
+          creative work
+        </h1>
+        <p className="text-blach text-lg text-center mt-2 text-black">
+          Accept support. Start a membership. Setup a shop. It's easier <br />
+          than you think.
+        </p>
+        <Link href="/signup">
+          <button className="mt-11 bg-yellow-400 text-black px-12 py-6 rounded-full text-lg font-semibold hover:bg-yellow-500 transform hover:scale-105 transition duration-300 ease-in-out has context menu">
+            Start my page
+          </button>
+        </Link>
 
-      <p className="text-gray-500 mt-2">
-        It's free and takes less than a minute!
-      </p>
+        <p className="text-gray-500 mt-2">
+          It's free and takes less than a minute!
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-        <div
-          className="bg-white shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
+      <div className=" flex justify-between w-full mt-10">
+        <div>
+          <motion.div
+            className="bg-white text-center max-w-[192px] max-h-[172px] shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
 has context menu"
-        >
-          <p className="font-semibold text-black">
-            Cara is building a new platform for artists
-          </p>
-          <p className="text-gray-500">❤️ 8,780 supporters</p>
+          >
+            <p className="font-semibold text-black">
+              Cara is building a new platform for artists
+            </p>
+            <p className="text-gray-500 pt-5">❤️ 8,780 supporters</p>
+          </motion.div>
+          <div
+            className="bg-white max-w-[192px] max-h-[172px] shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
+has context menu"
+          >
+            <p className="font-semibold text-black ">
+              Kaleigh Cohen is creating indoor cycling and strength workouts on
+              YouTube!
+            </p>
+            <p className="text-gray-500">❤️ 4,488 supporters</p>
+          </div>
+          <div
+            className="bg-white max-w-[192px] max-h-[172px] shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
+has context menu"
+          >
+            <p className="font-semibold text-black">
+              Teacher Stefano is creating YouTube videos and Podcast
+            </p>
+            <p className="text-gray-500">❤️ 641 supporters</p>
+          </div>
         </div>
-        <div
-          className="bg-white shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
+
+        <div>
+          <div
+            className="bg-white max-w-[192px] max-h-[172px] shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
 has context menu"
-        >
-          <p className="font-semibold text-black ">
-            Kaleigh Cohen is creating indoor cycling and strength workouts on
-            YouTube!
-          </p>
-          <p className="text-gray-500">❤️ 4,488 supporters</p>
-        </div>
-        <div
-          className="bg-white shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
+          >
+            <p className="font-semibold text-black">
+              The Thrill Of The Thrift is creating thrifting videos
+            </p>
+            <p className="text-gray-500">❤️ 112 supporters</p>
+          </div>
+          <div
+            className="bg-white max-w-[192px] max-h-[172px] shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
 has context menu"
-        >
-          <p className="font-semibold text-black">
-            Teacher Stefano is creating YouTube videos and Podcast
-          </p>
-          <p className="text-gray-500">❤️ 641 supporters</p>
-        </div>
-        <div
-          className="bg-white shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
+          >
+            <p className="font-semibold text-black">
+              Beach Talk Radio is a Dinky Little Podcast
+            </p>
+            <p className="text-gray-500">❤️ 1,805 supporters</p>
+          </div>
+          <div
+            className="bg-white max-w-[192px] max-h-[172px] shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
 has context menu"
-        >
-          <p className="font-semibold text-black">
-            The Thrill Of The Thrift is creating thrifting videos
-          </p>
-          <p className="text-gray-500">❤️ 112 supporters</p>
-        </div>
-        <div
-          className="bg-white shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
-has context menu"
-        >
-          <p className="font-semibold text-black">
-            Beach Talk Radio is a Dinky Little Podcast
-          </p>
-          <p className="text-gray-500">❤️ 1,805 supporters</p>
-        </div>
-        <div
-          className="bg-white shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out
-has context menu"
-        >
-          <p className="font-semibold text-black">
-            Simple Politics is helping people have better conversations about
-            politics
-          </p>
+          >
+            <p className="font-semibold text-black">
+              Simple Politics is helping people have better conversations about
+              politics
+            </p>
+          </div>
         </div>
       </div>
       <motion.div
@@ -100,7 +117,7 @@ has context menu"
         whileInView={{ opacity: 1 }}
         transition={{ duration: 1, ease: "easeInOut" }}
       >
-        <div className=" flex items-center justify-center p-6">
+        <div className=" flex items-center justify-center pt-72">
           <div className="bg-white p-8 rounded-3xl shadow-xl  w-[1128px] h-[810px] text-center">
             <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
               SUPPORT
