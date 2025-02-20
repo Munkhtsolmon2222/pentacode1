@@ -1,59 +1,81 @@
 "use client";
 import { Transaction, User } from "@/app/constants/type";
+import Cookies from "js-cookie";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function RecentSupport({
-  transaction,
+	transaction,
 }: {
-  transaction: Transaction;
+	transaction: Transaction;
 }) {
-  const [userData, setUserData] = useState<User | null>(null);
+	const [userData, setUserData] = useState<User | null>(null);
+	const accessToken = Cookies.get("accessToken");
 
-  const profileFetchData = async () => {
-    try {
-      const res = await fetch(
-        `http://localhost:5000/profile/viewHome/${transaction.donorId}`,
+	const profileFetchData = async () => {
+		try {
+			const res = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/profile/viewHome/${transaction.donorId}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
-      );
-      if (!res.ok) throw new Error("Failed to fetch user data");
-      const resJson = await res.json();
-      console.log(resJson);
-      setUserData(resJson);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  useEffect(() => {
-    profileFetchData();
-  }, [transaction]);
-  console.log(transaction);
+			);
+			if (!res.ok) throw new Error("Failed to fetch user data");
+			const resJson = await res.json();
+			setUserData(resJson);
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
-  return (
-    <div>
-      <div className=" mx-auto mt-4 pl-9 pt-7 flex justify-between">
-        <div className="w-10 h-10 rounded-full flex gap-2 items-center">
-          <img
-            className="rounded-full h-10 w-10"
-            src={userData?.avatarImage}
-            alt="User Avatar"
-          />
-          <div className="">
-            <h1 className="text-[#71717A] text-xs">{userData?.name}</h1>
-            <h3 className="text-[#71717A] text-xs">
-              {transaction?.socialURLOrBuyMeACoffee}
-            </h3>
-          </div>
-        </div>
-        <div className="text-end">
-          <h3 className="font-bold">+ ${transaction?.amount}</h3>
-          <h4 className="text-[#71717A] text-xs">{transaction?.updatedAt}</h4>
-        </div>
-      </div>
-      <p className=" pl-9 pt-4 mx-auto items-start">
-        {transaction?.specialMessage}
-      </p>
-    </div>
-  );
+	useEffect(() => {
+		profileFetchData();
+	}, [transaction]);
+
+	const formatDate = (dateString: string) => {
+		const date = new Date(dateString);
+		return date.toLocaleString("en-US", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+	};
+
+	return (
+		<div className="w-full mx-auto mt-4 p-5 border border-solid rounded-lg">
+			<div className="flex justify-between items-center">
+				<Link href={`/viewPage/${userData?.id}`}>
+					<div className="flex gap-4 items-center">
+						<img
+							className="w-10 h-10 object-cover rounded-full"
+							src={userData?.avatarImage}
+							alt={`${userData?.name}'s avatar`}
+						/>
+						<div>
+							<h1 className="font-semibold text-sm">{userData?.name}</h1>
+							<p className="text-xs text-gray-500">
+								{transaction?.socialURLOrBuyMeACoffee}
+							</p>
+						</div>
+					</div>
+				</Link>
+				<div className="text-end">
+					<h3 className="font-bold text-green-600">+ ${transaction?.amount}</h3>
+					<p className="text-xs text-gray-500">
+						{formatDate(transaction?.updatedAt)}
+					</p>
+				</div>
+			</div>
+			{transaction?.specialMessage && (
+				<p className="pt-4 text-sm text-gray-700">
+					{transaction?.specialMessage}
+				</p>
+			)}
+		</div>
+	);
 }

@@ -11,37 +11,38 @@ import {
 import { User } from "../constants/type";
 import { useEffect, useState } from "react";
 import RecentSupport from "./supporters/RecentSupportersHome";
-import { getUserId } from "@/utils/userId";
-
+import { usePathname } from "next/navigation";
+import Cookies from "js-cookie";
+import { motion } from "motion/react";
 export default function UserProfile() {
   const [userData, setUserData] = useState<User | null>(null);
   const [totalValue, setTotalValue] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string>();
+  const pathName = usePathname();
   const [userValue, setUserValue] = useState({
     totalEarnings30Days: 0,
     totalEarnings90Days: 0,
     totalEarningsAllTime: 0,
   });
-
+  const [userId, setUserId] = useState<string | null>(null);
   useEffect(() => {
-    getUserId().then((userId) => {
-      setUserId(userId);
-    });
+    const storedUserId: string | null = localStorage.getItem("userId");
+    setUserId(storedUserId);
   }, []);
-  useEffect(() => {
-    fetchData();
-    fetchTotalEarnings();
-  }, [userId]);
+  const accessToken = Cookies.get("accessToken");
   const fetchData = async () => {
     if (!userId) {
       console.warn("No userId found, skipping fetch.");
       return;
     }
+    console.log(accessToken, "userProfile");
     try {
       const res = await fetch(
-        `http://localhost:5000/profile/currentuser/${userId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/profile/currentuser/${userId}`,
         {
-          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + accessToken,
+          },
         }
       );
       if (!res.ok) throw new Error("Failed to fetch user data");
@@ -53,11 +54,18 @@ export default function UserProfile() {
   };
 
   const fetchTotalEarnings = async () => {
+    if (!userId) {
+      console.warn("No userId found, skipping fetch.");
+      return;
+    }
     try {
       const response = await fetch(
-        `http://localhost:5000/donation/total-earnings/${userId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/donation/total-earnings/${userId}`,
         {
-          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + accessToken,
+          },
         }
       );
       if (!response.ok) throw new Error("Failed to fetch earnings data");
@@ -65,8 +73,9 @@ export default function UserProfile() {
       setUserValue({
         totalEarnings30Days: resJson.totalEarnings30Days,
         totalEarnings90Days: resJson.totalEarnings90Days,
-        totalEarningsAllTime: resJson.totalEarningsAllTime,
+        totalEarningsAllTime: resJson.totalEarnings90Days,
       });
+      console.log("30day", resJson);
     } catch (error) {
       console.error(error);
     }
@@ -76,7 +85,7 @@ export default function UserProfile() {
     navigator.clipboard
       .writeText(userLink)
       .then(() => {
-        alert("Link huulagdlaa");
+        alert("Link copied to clipboard!");
       })
       .catch((err) => {
         console.error("Failed to copy: ", err);
@@ -84,21 +93,37 @@ export default function UserProfile() {
   };
   const renderEarnings = () => {
     if (totalValue === "30day") {
-      return `$${userValue.totalEarnings30Days || "0"}`;
+      return `$${userValue.totalEarnings30Days}`;
     } else if (totalValue === "90days") {
-      return `$${userValue.totalEarnings90Days || "0"}`;
+      return `$${userValue.totalEarnings90Days}`;
     } else if (totalValue === "Alltime") {
-      return `$${userValue.totalEarningsAllTime || "0"}`;
+      return `$${userValue.totalEarningsAllTime}`;
     }
-    return "$0";
+    return `${userValue.totalEarnings30Days}$`;
   };
-
+  useEffect(() => {
+    console.log("checking");
+    fetchData();
+  }, [userId]);
+  useEffect(() => {
+    console.log("checkiafasdfasdfng");
+    fetchTotalEarnings();
+  }, [userId, totalValue]);
   return (
-    <div className="w-full bg-gray-primary text-black p-4">
+    <motion.div
+      initial={{ opacity: 0, y: 200 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 200 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      className="w-full bg-gray-primary text-black p-4 mt-10"
+    >
       <div className="max-w-[80%] mx-auto mt-16 p-5 border border-solid rounded-lg">
         <div className="flex justify-between items-center">
           <div className="w-12 h-12 rounded-full flex gap-3 items-center">
-            <img src={userData?.avatarImage} className="rounded-full" />
+            <img
+              src={userData?.avatarImage}
+              className="rounded-full  h-full w-full object-cover "
+            />
             <div className="flex flex-col">
               <h4 className="font-semibold">{userData?.name}</h4>
               <a className="text-sm">{userData?.socialMediaURL}</a>
@@ -131,6 +156,6 @@ export default function UserProfile() {
           {renderEarnings()}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 }

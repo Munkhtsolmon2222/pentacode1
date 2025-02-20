@@ -2,26 +2,20 @@
 import { useEffect, useState } from "react";
 import EditBankCard from "../_components/bank/EditBankCard";
 import EditProfile from "../_components/profile/EditProfile";
-import { SideBar } from "../_components/Sidebar";
-
-import SidebarWrapper from "../_components/SideBarWrapper";
-import { getUserId } from "@/utils/userId";
+import Cookies from "js-cookie";
 
 export default function AccountSettings() {
-	const [userId, setUserId] = useState<string>();
-
-	useEffect(() => {
-		getUserId().then((userId) => {
-			setUserId(userId);
-		});
-	}, []);
-
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setError] = useState("");
 	const [success, setSuccess] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
-
+	const [userId, setUserId] = useState<string | null>(null);
+	const accessToken = Cookies.get("accessToken");
+	useEffect(() => {
+		const storedUserId: string | null = localStorage.getItem("userId");
+		setUserId(storedUserId);
+	}, []);
 	const updatePassword = async () => {
 		setError("");
 		setSuccess("");
@@ -44,13 +38,13 @@ export default function AccountSettings() {
 		setIsLoading(true);
 		try {
 			const response = await fetch(
-				`http://localhost:5000/auth/update-password/${userId}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/auth/update-password/${userId}`,
 				{
 					method: "PUT",
 					headers: {
 						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
 					},
-					credentials: "include",
 					body: JSON.stringify({ password }),
 				}
 			);
@@ -71,11 +65,12 @@ export default function AccountSettings() {
 	};
 	console.log(userId);
 	return (
-		<div className="pb-28">
-			<SideBar />
-			<h3 className="font-bold max-w-lg mx-auto py-10 text-2xl ">My account</h3>
+		<div className="w-[95%] fixed right-0 top-9  h-screen overflow-auto">
+			<h3 className="font-bold max-w-[1000px] mx-auto py-10 text-2xl ">
+				My account
+			</h3>
 			<EditProfile userId={userId} />
-			<div className="max-w-lg mx-auto border border-[#E4E4E7] rounded-lg mt-8">
+			<div className="max-w-[1000px] mx-auto border border-[#E4E4E7] rounded-lg mt-8">
 				<p className="p-6 font-bold"> Set a new password</p>
 				<div className="px-6">
 					<p className="">New Password</p>
@@ -110,7 +105,7 @@ export default function AccountSettings() {
 				</div>
 			</div>
 			<EditBankCard userId={userId} />
-			<div className="p-4 mt-8 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
+			<div className="p-4 mt-8 mb-32 max-w-[1000px] rounded-lg border-[#E4E4E7] border mx-auto">
 				<p className="text-lg font-bold">Success page</p>
 				<div className="mt-4">
 					<label className="font-medium">Confirmation message</label>

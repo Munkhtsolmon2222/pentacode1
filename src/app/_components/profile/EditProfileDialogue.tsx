@@ -1,12 +1,11 @@
 "use client";
 
-import { getUserId } from "@/utils/userId";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
 import { z } from "zod";
-
+import Cookies from "js-cookie";
 type EditProfileDialogueProps = {
 	onClose: (value: boolean) => void;
 };
@@ -27,7 +26,13 @@ export default function EditProfileDialogue({
 	});
 
 	const [userData, setUserData] = useState<any>(null);
-	const [userId, setUserId] = useState<string>();
+	const [userId, setUserId] = useState<string | null>(null);
+	const accessToken = Cookies.get("accessToken");
+
+	useEffect(() => {
+		const storedUserId: string | null = localStorage.getItem("userId");
+		setUserId(storedUserId);
+	}, []);
 
 	const [form, setForm] = useState({
 		photo: "",
@@ -51,9 +56,12 @@ export default function EditProfileDialogue({
 		setLoading(true);
 		try {
 			const res = await fetch(
-				`http://localhost:5000/profile/currentuser/${userId}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/profile/currentuser/${userId}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
 			);
 			if (!res.ok) throw new Error("Failed to fetch user data");
@@ -67,11 +75,8 @@ export default function EditProfileDialogue({
 	};
 
 	useEffect(() => {
-		getUserId().then((userId) => {
-			setUserId(userId);
-			fetchUserData();
-		});
-	}, []);
+		fetchUserData();
+	}, [userId]);
 
 	useEffect(() => {
 		if (userData) {
@@ -121,7 +126,10 @@ export default function EditProfileDialogue({
 				`https://api.cloudinary.com/v1_1/do0qq0f0b/upload`,
 				{
 					method: "POST",
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 					body: data,
 				}
 			);
@@ -145,11 +153,11 @@ export default function EditProfileDialogue({
 
 		setLoading(true);
 		try {
-			await fetch(`http://localhost:5000/profile/${userId}`, {
+			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile/${userId}`, {
 				headers: {
 					"Content-Type": "application/json",
+					Authorization: "Bearer " + accessToken,
 				},
-				credentials: "include",
 				method: "PUT",
 				body: JSON.stringify({
 					name,

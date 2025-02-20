@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { Transaction, User } from "../constants/type";
 import UserProfile from "../_components/UserProfile";
 import { Checkbox } from "@/components/ui/checkbox";
-import { getCookie } from "cookies-next";
-import { jwtDecode } from "jwt-decode";
 import RecentSupport from "../_components/supporters/RecentSupportersHome";
 import {
   Select,
@@ -14,32 +12,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getUserId } from "@/utils/userId";
+import Cookies from "js-cookie";
+import { HomeSkeleton } from "../_components/skeletons/HomeSkeleton";
+import { usePathname } from "next/navigation";
 
 export default function Home() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [userId, setUserId] = useState<string>();
-
+  const [userId, setUserId] = useState<string | null>(null);
   useEffect(() => {
-    getUserId().then((userId) => {
-      setUserId(userId);
-    });
+    const storedUserId: string | null = localStorage.getItem("userId");
+    setUserId(storedUserId);
   }, []);
   const [selectedAmount, setSelectedAmount] = useState<string | null>(null);
-
+  const pathname = usePathname();
   console.log("User ID:", userId);
-
+  const accessToken = Cookies.get("accessToken");
   const fetchData = async () => {
     if (!userId) {
       console.warn("No userId found, skipping fetch.");
       return;
     }
-
+    console.log(accessToken, "home");
     try {
       const res = await fetch(
-        `http://localhost:5000/donation/received/${userId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/donation/received/${userId}`,
         {
-          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + accessToken,
+          },
         }
       );
       if (!res.ok) throw new Error("Failed to fetch user data");
@@ -63,13 +64,14 @@ export default function Home() {
 
   useEffect(() => {
     fetchData();
-  }, [userId]);
+    console.log("wooorkinggg");
+  }, [userId, pathname]);
 
   console.log("Transactions:", transactions);
 
   return (
     <div className="w-[80%] ml-4 fixed right-0 top-0 h-screen flex flex-col bg-gray-primary text-black p-4 overflow-y-auto custom-scrollbar">
-      <UserProfile userId={userId} />
+      <UserProfile />
       <div className="flex w-[80%] mx-auto p-4 justify-between">
         <div className="w-full mt-6 font-bold">Recent transactions</div>
         <div>
@@ -90,15 +92,26 @@ export default function Home() {
       </div>
 
       {transactions.length > 0 ? (
-        <div className="w-[78%] my-auto p-5 overflow-y-auto custom-scrollbar mx-auto mt-10 border border-solid rounded-lg">
+        <div className="w-[80%] my-auto p-5 overflow-y-auto custom-scrollbar mx-auto mt-4">
           {filteredTransactions.map((transaction) => (
             <RecentSupport key={transaction.id} transaction={transaction} />
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-500">
-          {selectedAmount || "Donation information is not available"}
-        </p>
+        <div className="w-full my-auto mx-auto p-5 text-center text-gray-500 mt-4">
+          {transactions && (
+            <>
+              <HomeSkeleton />
+              <HomeSkeleton />
+              <HomeSkeleton />
+              <HomeSkeleton />
+              <HomeSkeleton />
+              <HomeSkeleton />
+            </>
+          )}
+          {(!transactions || selectedAmount) &&
+            "Donation information is not available"}
+        </div>
       )}
     </div>
   );

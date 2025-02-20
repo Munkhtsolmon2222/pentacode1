@@ -8,7 +8,7 @@ export default function SidebarWrapper() {
 
 	const hideSidebar =
 		pathname.startsWith("/viewPage") ||
-		["/login", "/signup", "/forgot-password"].includes(pathname);
+		["/login", "/signup", "/forgot-password", "/"].includes(pathname);
 
 	if (hideSidebar) return null;
 	if (hideSidebar) return null;

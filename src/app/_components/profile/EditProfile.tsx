@@ -1,12 +1,11 @@
 "use client";
-import { getUserId } from "@/utils/userId";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCamera } from "react-icons/fi";
 import { VscError } from "react-icons/vsc";
 import { z } from "zod";
-
-export default function EditProfile({ userId }) {
+import Cookies from "js-cookie";
+export default function EditProfile({ userId }: any) {
 	const profileSchema = z.object({
 		photo: z.string().url({ message: "Please upload an image" }),
 		name: z
@@ -36,16 +35,21 @@ export default function EditProfile({ userId }) {
 		type: "success" | "error" | null;
 		message: string;
 	}>({ type: null, message: "" });
+	const accessToken = Cookies.get("accessToken");
 	const fetchUserData = async () => {
 		if (!userId) {
 			console.warn("No userId found, skipping fetch.");
 			return;
 		}
 		try {
+			console.log(accessToken, "account");
 			const response = await fetch(
-				`http://localhost:5000/profile/currentuser/${userId}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/profile/currentuser/${userId}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
 			);
 			if (!response.ok) throw new Error("Failed to fetch user data");
@@ -104,17 +108,22 @@ export default function EditProfile({ userId }) {
 			return;
 		}
 		try {
-			const response = await fetch(`http://localhost:5000/profile/${userId}`, {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				credentials: "include",
-				body: JSON.stringify({
-					avatarImage: form.photo,
-					name: form.name,
-					about: form.about,
-					socialMediaURL: form.socialMedia,
-				}),
-			});
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_API_URL}/profile/${userId}`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
+					body: JSON.stringify({
+						avatarImage: form.photo,
+						name: form.name,
+						about: form.about,
+						socialMediaURL: form.socialMedia,
+					}),
+				}
+			);
 			if (!response.ok) {
 				throw new Error("Failed to update profile");
 			}
@@ -133,14 +142,14 @@ export default function EditProfile({ userId }) {
 		}
 	};
 	return (
-		<div className="p-4 max-w-lg rounded-lg border-[#E4E4E7] border mx-auto">
+		<div className="p-4 max-w-[1000px] rounded-lg border-[#E4E4E7] border mx-auto">
 			<p className="text-lg font-bold">Edit Profile</p>
 			{feedbackMessage.type && (
 				<div
-					className={`mt-4 p-2 rounded-md text-sm ${
+					className={` rounded-md text-sm ${
 						feedbackMessage.type === "success"
-							? "bg-green-100 text-green-700"
-							: "bg-red-100 text-red-700"
+							? " text-green-500"
+							: " text-red-500"
 					}`}
 				>
 					{feedbackMessage.message}

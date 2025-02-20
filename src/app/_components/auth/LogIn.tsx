@@ -6,171 +6,167 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "../context/AuthContext";
-import { getCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
-import { getUserId } from "@/utils/userId";
+import { setCookie } from "cookies-next";
+
 const plusJakartaSans = Plus_Jakarta_Sans({
-	subsets: ["latin"],
-	weight: ["400", "500", "700"],
-	variable: "--font-plus-jakarta",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-plus-jakarta",
 });
-let refreshToken;
-let decoded;
 
 const formSchema = z.object({
-	email: z.string().email(),
-	password: z.string().min(8),
+  email: z.string().email(),
+  password: z.string().min(8),
 });
-
+type DecodedToken = {
+  userId?: string;
+};
 export function Login() {
-	const [type, setType] = useState("password");
-	const [error, setError] = useState("");
-	const [userId, setUserId] = useState<string>();
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const [cookieStore, setCookieStore] = useState<any>();
+  // const getCookies = async () => {
+  // 	const cookieStore = Cookies();
+  // 	setCookieStore(cookieStore);
+  // };
+  // useEffect(() => {
+  // 	getCookies();
+  // }, []);
 
-	const router = useRouter();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
-		defaultValues: {
-			email: "",
-			password: "",
-		},
-	});
+  const verifyUser = async (email: string, password: string) => {
+    setIsLoading(true);
+    setError("");
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/sign-in`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+      const data = await response.json();
 
-	const verifyUser = async (email: string, password: string) => {
-		try {
-			const response = await fetch("http://localhost:5000/auth/sign-in", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ email, password }),
-				credentials: "include",
-			});
+      if (data.message === "Email not found") setError("Email does not exist.");
+      else if (data.message === "Incorrect password")
+        setError("Incorrect password.");
+      else {
+        const decodedToken: DecodedToken = jwtDecode(data.data.accessToken);
+        const userId = decodedToken.userId;
 
-			const data = await response.json();
-			console.log("Response:", data);
+        if (userId) {
+          setCookie("accessToken", data.data.accessToken);
+          setCookie("refreshToken", data.data.refreshToken);
+          localStorage.setItem("userId", userId);
+          router.push("/home");
+        } else {
+          throw new Error("Invalid token structure: userId missing.");
+        }
+      }
+    } catch {
+      setError("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const onSubmit = (values: z.infer<typeof formSchema>) =>
+    verifyUser(values.email, values.password);
 
-			if (data.message === "Email not found") {
-				console.log("Error: Email does not exist.");
-				setError("Email does not exist.");
-			} else if (data.message === "Incorrect password") {
-				console.log("Error: Password is incorrect.");
-				setError("Password is incorrect.");
-			} else {
-				console.log("Login successful!");
-				setError("Login successful!");
+  return (
+    <div className={`${plusJakartaSans.variable} font-sans`}>
+      <div className="flex justify-end items-center p-6 mx-6">
+        <Link href="/signup">
+          <Button variant="secondary">Sign up</Button>
+        </Link>
+      </div>
+      <div className="flex flex-col items-center justify-center">
+        <div className="mt-[160px] w-full max-w-md space-y-6 p-6 bg-white shadow-lg rounded-lg">
+          <h2 className="text-2xl font-bold text-center">Welcome Back</h2>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter email here" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-				getUserId().then((userId) => {
-					setUserId(userId);
-					router.push("/home");
-				});
-			}
-		} catch (error) {
-			console.error("Error verifying user:", error);
-		}
-	};
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold">Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter password here"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-2 text-gray-500 hover:text-gray-700"
+                        >
+                          {showPassword ? <Eye /> : <EyeClosed />}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		verifyUser(values.email, values.password);
-	}
+              {error && (
+                <p className="text-red-500 text-sm text-center">{error}</p>
+              )}
 
-	function changeType() {
-		setType((prevType) => (prevType === "password" ? "text" : "password"));
-	}
+              <Button className="w-full" type="submit" disabled={isLoading}>
+                {isLoading ? "Loading..." : "Continue"}
+              </Button>
+            </form>
+          </Form>
 
-	return (
-		<div className={`${plusJakartaSans.variable} font-sans min-h-screen`}>
-			<div className="flex justify-end items-center p-6 mx-6">
-				<Link href="/signup">
-					<Button variant="secondary">Sign up</Button>
-				</Link>
-			</div>
-			<div className="max-w-md mx-auto mt-[180px] text-black space-y-4">
-				<div className="w-[360px] mx-auto text-black">
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-							<p className="text-[24px] font-bold">Welcome back</p>
-							<FormField
-								control={form.control}
-								name="email"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>
-											<div className="font-bold">Email</div>
-										</FormLabel>
-										<FormControl>
-											<Input placeholder="Enter email here" {...field} />
-										</FormControl>
-										<FormMessage />
-										{error == "Email does not exist." && (
-											<div className="block mx-auto w-[90%] text-red-500 text-[12px]">
-												{error}
-											</div>
-										)}
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="password"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>
-											<div className="font-bold">Password</div>
-										</FormLabel>
-										<FormControl>
-											<div className="relative">
-												<Input
-													placeholder="Enter password here"
-													type={type}
-													{...field}
-												/>
-												<div
-													onClick={changeType}
-													className="absolute top-2 left-[300px] text-gray-400 hover:text-gray-600 cursor-pointer"
-												>
-													{type === "text" ? <Eye /> : <EyeClosed />}
-												</div>
-											</div>
-										</FormControl>
-										<FormMessage />
-										{error == "Password is incorrect." && (
-											<div className="block mx-auto w-[90%] text-red-500 text-[12px]">
-												{error}
-												<Link href="/forgot-password">
-													<p className="text-black hover:underline">
-														Forgot password?
-													</p>
-												</Link>
-											</div>
-										)}
-									</FormItem>
-								)}
-							/>
-							<Button
-								className="block mx-auto w-full p-2 bg-primary text-white"
-								type="submit"
-							>
-								Continue
-							</Button>
-						</form>
-					</Form>
-				</div>
-			</div>
-		</div>
-	);
+          <p className="text-center text-sm">
+            <Link
+              href="/forgot-password"
+              className="text-blue-600 hover:underline"
+            >
+              Forgot password
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -8,7 +8,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import loading from "./loading.json";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { z } from "zod";
-
+import Cookies from "js-cookie";
 export default function CreateProfile({ setStep }: any) {
 	const profileSchema = z.object({
 		photo: z.string().url({ message: "Please upload an image" }),
@@ -99,6 +99,7 @@ export default function CreateProfile({ setStep }: any) {
 			return true;
 		}
 	};
+	const accessToken = Cookies.get("accessToken");
 	const addProfile = async (
 		name: string,
 		about: string,
@@ -109,12 +110,12 @@ export default function CreateProfile({ setStep }: any) {
 		console.log("yvuulj bn");
 		setStep(2);
 		const response = await fetch(
-			`http://localhost:5000/profile/${params.userId}`,
+			`${process.env.NEXT_PUBLIC_API_URL}/profile/${params.userId}`,
 			{
 				headers: {
 					"Content-Type": "application/json",
+					Authorization: "Bearer " + accessToken,
 				},
-				credentials: "include",
 				method: "POST",
 				body: JSON.stringify({
 					name,
@@ -136,7 +137,7 @@ export default function CreateProfile({ setStep }: any) {
 				/>
 			)}
 			{!isLoading && (
-				<div>
+				<div className="w-[80%] mx-auto mt-4">
 					<p className="text-lg font-bold">Complete your profile page</p>
 					<h4 className="mt-4 font-medium">Add photo</h4>
 					<label

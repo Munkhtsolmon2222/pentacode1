@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-
+import Cookies from "js-cookie";
 const formSchema = z.object({
 	country: z.string().min(1, "Country is required"),
 	firstName: z.string().min(1, "First name is required"),
@@ -30,13 +30,13 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function EditBankCard({ userId }: { userId: string }) {
+export default function EditBankCard({ userId }: { userId: any }) {
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState<{
 		type: "success" | "error";
 		text: string;
 	} | null>(null);
-
+	const accessToken = Cookies.get("accessToken");
 	const {
 		register,
 		handleSubmit,
@@ -53,11 +53,13 @@ export default function EditBankCard({ userId }: { userId: string }) {
 		setMessage(null);
 		try {
 			const response = await fetch(
-				`http://localhost:5000/bank-card/${userId}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/bank-card/${userId}`,
 				{
 					method: "PUT",
-					headers: { "Content-Type": "application/json" },
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 					body: JSON.stringify(data),
 				}
 			);
@@ -87,9 +89,12 @@ export default function EditBankCard({ userId }: { userId: string }) {
 		}
 		try {
 			const response = await fetch(
-				`http://localhost:5000/bank-card/${userId}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/bank-card/${userId}`,
 				{
-					credentials: "include",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + accessToken,
+					},
 				}
 			);
 			if (!response.ok) throw new Error("Failed to fetch card data");
@@ -111,7 +116,7 @@ export default function EditBankCard({ userId }: { userId: string }) {
 	}, [userId]);
 
 	return (
-		<Card className="w-full max-w-lg mx-auto mt-8 p-6">
+		<Card className="w-full max-w-[1000px] mx-auto mt-8 p-6">
 			<CardContent>
 				<h2 className="text-xl font-bold">Payment details</h2>
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
