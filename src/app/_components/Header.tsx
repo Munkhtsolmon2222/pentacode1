@@ -82,7 +82,7 @@ export default function Header() {
 							onClick={() => setDropdownOpen((prev) => !prev)}
 						>
 							<img
-								className="w-10 h-10 rounded-full "
+								className="w-10 h-10 object-cover rounded-full "
 								src={userData.avatarImage}
 								alt="User Avatar"
 							/>

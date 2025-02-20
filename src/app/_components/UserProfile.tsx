@@ -8,11 +8,14 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Terminal } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { User } from "../constants/type";
 import { useEffect, useState } from "react";
-import RecentSupport from "./supporters/RecentSupportersHome";
 import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
+import { motion } from "motion/react";
+
 export default function UserProfile() {
 	const [userData, setUserData] = useState<User | null>(null);
 	const [totalValue, setTotalValue] = useState<string | null>(null);
@@ -23,6 +26,8 @@ export default function UserProfile() {
 		totalEarningsAllTime: 0,
 	});
 	const [userId, setUserId] = useState<string | null>(null);
+	const [alert, setAlert] = useState(false);
+
 	useEffect(() => {
 		const storedUserId: string | null = localStorage.getItem("userId");
 		setUserId(storedUserId);
@@ -52,7 +57,23 @@ export default function UserProfile() {
 		}
 	};
 
+	useEffect(() => {
+		let timeOut: NodeJS.Timeout;
+		if (alert) {
+			timeOut = setTimeout(() => {
+				setAlert(false);
+			}, 3000);
+		}
+		return () => {
+			clearTimeout(timeOut);
+		};
+	}, [alert]);
+
 	const fetchTotalEarnings = async () => {
+		if (!userId) {
+			console.warn("No userId found, skipping fetch.");
+			return;
+		}
 		try {
 			const response = await fetch(
 				`${process.env.NEXT_PUBLIC_API_URL}/donation/total-earnings/${userId}`,
@@ -68,19 +89,18 @@ export default function UserProfile() {
 			setUserValue({
 				totalEarnings30Days: resJson.totalEarnings30Days,
 				totalEarnings90Days: resJson.totalEarnings90Days,
-				totalEarningsAllTime: resJson.totalEarningsAllTime,
+				totalEarningsAllTime: resJson.totalEarnings90Days,
 			});
 		} catch (error) {
 			console.error(error);
 		}
 	};
-	const userLink = `http://localhost:3000/user/${userId}`;
+
 	const handleShareLink = () => {
+		setAlert(true);
 		navigator.clipboard
-			.writeText(userLink)
-			.then(() => {
-				alert("Link copied to clipboard!");
-			})
+			.writeText(window.location.hostname + "/user/" + `${userId}`)
+			.then(() => {})
 			.catch((err) => {
 				console.error("Failed to copy: ", err);
 			});
@@ -93,7 +113,7 @@ export default function UserProfile() {
 		} else if (totalValue === "Alltime") {
 			return `$${userValue.totalEarningsAllTime || "0"}`;
 		}
-		return "$0";
+		return `${userValue.totalEarnings30Days}$`;
 	};
 	useEffect(() => {
 		console.log("checking");
@@ -101,13 +121,19 @@ export default function UserProfile() {
 		fetchTotalEarnings();
 	}, [userId, pathName]);
 	return (
-		<div className="w-full bg-gray-primary text-black p-4 mt-10">
+		<motion.div
+			initial={{ opacity: 0, y: 200 }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, y: 200 }}
+			transition={{ duration: 0.5, ease: "easeInOut" }}
+			className="w-full bg-gray-primary text-black p-4 mt-10"
+		>
 			<div className="max-w-[80%] mx-auto mt-16 p-5 border border-solid rounded-lg">
 				<div className="flex justify-between items-center">
 					<div className="w-12 h-12 rounded-full flex gap-3 items-center">
 						<img
 							src={userData?.avatarImage}
-							className="rounded-full  h-10 w-10 "
+							className="rounded-full  h-full w-full object-cover "
 						/>
 						<div className="flex flex-col">
 							<h4 className="font-semibold">{userData?.name}</h4>
@@ -120,6 +146,20 @@ export default function UserProfile() {
 					>
 						<LuCopy /> Share page link
 					</button>
+					{alert && (
+						<motion.div
+							initial={{ y: -200 }}
+							animate={{ y: 200 }}
+							transition={{ duration: 6 }}
+							exit={{ opacity: 0, y: 0 }}
+							className="fixed bottom-5 right-5"
+						>
+							<Alert>
+								<Terminal className="h-4 w-4" />
+								<AlertTitle>Link copied to clipboard!</AlertTitle>
+							</Alert>
+						</motion.div>
+					)}
 				</div>
 				<div className="max-w-[80%] mx-auto border border-solid bg-[#E4E4E7] mt-6"></div>
 				<div className="flex items-center gap-4 pt-7">
@@ -141,6 +181,6 @@ export default function UserProfile() {
 					{renderEarnings()}
 				</p>
 			</div>
-		</div>
+		</motion.div>
 	);
 }
