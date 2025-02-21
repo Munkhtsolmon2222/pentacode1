@@ -24,7 +24,16 @@ export default function Home() {
 
 	const imageOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 	const imageScale = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-	const translateX1 = useTransform(scrollYProgress, [0, 0.08], [0, -800]);
+	const translateX1 = useTransform(scrollYProgress, [0, 0.06], [0, -800]);
+	const translateY = useTransform(scrollYProgress, [0, 0.08], [0, -800]);
+	const translateY2 = useTransform(scrollYProgress, [0, 0.08], [0, 800]);
+	const translateX2 = useTransform(scrollYProgress, [0, 0.06], [0, 800]);
+	const translateY3 = useTransform(scrollYProgress, [0, 0.08], [0, -800]);
+	const translateY4 = useTransform(scrollYProgress, [0, 0.08], [0, 800]);
+
+	
+	
+
 	return (
 		<div className="flex flex-col items-center justify-center p-10 bg-[#ffffff] min-h-screen">
 			<div className="absolute z-10 bottom-0 top-40 text-center">
@@ -57,9 +66,11 @@ export default function Home() {
 						style={{
 							top: "20px",
 							left: "0.5px",
-							transform: "rotate(2deg)",
+							transform: "rotate(-10deg)",
 							x: translateX1,
+							y: translateY,
 						}}
+						transition={{ ease: "easeOut", duration: 0.6 }}
 					>
 						<p className="font-semibold text-black">
 							Cara is building a new platform for artists
@@ -74,6 +85,7 @@ export default function Home() {
 							transform: "rotate(-10deg)",
 							x: translateX1,
 						}}
+						transition={{ type: "spring", stiffness: 100, damping: 20 }}
 					>
 						<p className="font-semibold text-black">
 							Kaleigh Cohen is creating indoor cycling and strength workouts on
@@ -88,7 +100,9 @@ export default function Home() {
 							left: "0.1px",
 							transform: "rotate(5deg)",
 							x: translateX1,
+							y: translateY2,
 						}}
+						transition={{ type: "spring", stiffness: 100, damping: 20 }}
 					>
 						<p className="font-semibold text-black">
 							Teacher Stefano is creating YouTube videos and Podcast
@@ -98,33 +112,55 @@ export default function Home() {
 				</div>
 
 				<div className="relative flex justify-end h-[400px]">
-					<div
-						className="bg-white text-center w-[192px] h-[172px] shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out absolute"
-						style={{ top: "20px", right: "120px", transform: "rotate(5deg)" }}
-					>
-						<p className="font-semibold text-black">
-							The Thrill Of The Thrift is creating thrifting videos
-						</p>
-						<p className="text-gray-500 pt-5">❤️ 112 supporters</p>
-					</div>
-					<div
-						className="bg-white text-center w-[192px] h-[172px] shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out absolute"
-						style={{ top: "200px", right: "-40px", transform: "rotate(5deg)" }}
-					>
-						<p className="font-semibold text-black">
-							Beach Talk Radio is a Dinky Little Podcast
-						</p>
-						<p className="text-gray-500">❤️ 1,805 supporters</p>
-					</div>
-					<div
-						className="bg-white text-center w-[192px] h-[172px] shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out absolute"
-						style={{ top: "380px", right: "100px", transform: "rotate(-5deg)" }}
-					>
-						<p className="font-semibold text-black">
-							Simple Politics is helping people have better conversations about
-							politics
-						</p>
-					</div>
+				<motion.div
+  className="bg-white text-center w-[192px] h-[172px] shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out absolute"
+  style={{
+    top: "20px",
+    right: "120px",
+    transform: "rotate(5deg)",
+    x: translateX2,
+    y: translateY3,
+  }}
+  transition={{ type: "spring", stiffness: 100, damping: 20 }}
+>
+  <p className="font-semibold text-black">
+    The Thrill Of The Thrift is creating thrifting videos
+  </p>
+  <p className="text-gray-500 pt-5">❤️ 112 supporters</p>
+</motion.div>
+
+<motion.div
+  className="bg-white text-center w-[192px] h-[172px] shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out absolute"
+  style={{
+    top: "200px",
+    right: "-40px",
+    transform: "rotate(5deg)",
+    x: translateX2,
+  }}
+  transition={{ type: "spring", stiffness: 100, damping: 20 }}
+>
+  <p className="font-semibold text-black">
+    Beach Talk Radio is a Dinky Little Podcast
+  </p>
+  <p className="text-gray-500">❤️ 1,805 supporters</p>
+</motion.div>
+
+<motion.div
+  className="bg-white text-center w-[192px] h-[172px] shadow-lg p-5 rounded-lg transform hover:scale-105 transition duration-300 ease-in-out absolute"
+  style={{
+    top: "380px",
+    right: "100px",
+    transform: "rotate(-5deg)",
+    x: translateX2,
+    y: translateY4,
+  }}
+  transition={{ type: "spring", stiffness: 100, damping: 20 }}
+>
+  <p className="font-semibold text-black">
+    Simple Politics is helping people have better conversations about politics
+  </p>
+</motion.div>
+
 				</div>
 			</div>
 			<motion.div
