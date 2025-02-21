@@ -276,7 +276,7 @@ export default function ViewPage() {
                 className="w-full my-4 p-2 rounded-md outline-none text-md ml-2"
                 type="url"
                 placeholder="https://buymecoffee.com/spacerulz44"
-                value={userData?.socialMediaURL || ""}
+                defaultValue={userData?.socialMediaURL || ""}
                 readOnly
               />
             </div>

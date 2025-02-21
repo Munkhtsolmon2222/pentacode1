@@ -344,16 +344,17 @@ export default function ViewPageExplore() {
                   </div>
 
                   <div className="h-[20rem] gap-6 border rounded-md mt-4 overflow-y-auto custom-scrollbar overflow-hidden relative">
-                    <div>
+                    <div className="">
                       <h1 className="text-lg font-semibold p-6 sticky top-0 bg-white">
                         Recent Supporters
                       </h1>
 
-                      {recipientDonation || transactions.length === 0 ? (
-                        <div className="p-12 mx-6 border rounded-lg mt-8 flex flex-col items-center justify-center text-[#18181B]">
+                      {recipientDonation ? (
+                        <div className="w-full p-12 border rounded-lg mt-8 flex flex-col items-center justify-center text-[#18181B]">
                           <FaHeart className="text-2xl" />
                           <p className="mt-6 text-lg">
-                            Be the first one to support {userData?.name}
+                            Be the first one to support
+                            {userData?.name}
                           </p>
                         </div>
                       ) : (
@@ -366,7 +367,7 @@ export default function ViewPageExplore() {
                                 key={transaction.id}
                               />
                             ))}
-                          {transactions.length >= 3 && (
+                          {transactions.length >= 3 ? (
                             <Button
                               onClick={seeMore}
                               className="w-full mb-2 bg-[#FAFAFA] text-[#18181B] text-md p-6"
@@ -375,6 +376,8 @@ export default function ViewPageExplore() {
                               {supporters > 3 ? "See less" : "See more"}
                               <ChevronDown />
                             </Button>
+                          ) : (
+                            <div></div>
                           )}
                         </div>
                       )}
@@ -394,11 +397,12 @@ export default function ViewPageExplore() {
                         <Button
                           key={amount}
                           onClick={() => onChangeAmount(amount)}
-                          className={`w-20 rounded-md text-md ${
+                          className={`w-20  rounded-md text-md ${
                             selectedAmount == amount
-                              ? "bg-[#18181B] text-[#FAFAFA]"
+                              ? "bg-black text-white"
                               : "bg-[#F4F4F5] text-[#09090B]"
-                          } hover:border-[#18181B] flex justify-center items-center gap-2`}
+                          } 
+               hover:border-[#18181B] flex justify-center items-center gap-2`}
                         >
                           <FiCoffee /> ${amount}
                         </Button>
@@ -414,7 +418,7 @@ export default function ViewPageExplore() {
                       type="url"
                       name="socialURLOrBuyMeACoffee"
                       onChange={onChange}
-                      className={`border rounded-md w-full p-2 mt-1 text-md outline-none ${
+                      className={`border rounded-md w-full p-2 mt-1 text-md outline-none${
                         error.socialURLOrBuyMeACoffee ? "border-red-500" : ""
                       }`}
                     />
