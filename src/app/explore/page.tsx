@@ -88,6 +88,10 @@ export default function Explore() {
               <Skeleton />
               <Skeleton />
               <Skeleton />
+              <Skeleton />
+              <Skeleton />
+              <Skeleton />
+              <Skeleton />
             </>
           )}
           {!creators && (

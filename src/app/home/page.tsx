@@ -95,8 +95,8 @@ export default function Home() {
           </Select>
         </div>
       </div>
-      {isLoading && (
-        <div className="w-full my-auto p-4 overflow-y-auto custom-scrollbar mx-auto mt-4">
+      {isLoading ? (
+        <div className="w-full my-auto p-4 overflow-y-auto custom-scrollbar mx-auto">
           <HomeSkeleton />
           <HomeSkeleton />
           <HomeSkeleton />
@@ -104,8 +104,7 @@ export default function Home() {
           <HomeSkeleton />
           <HomeSkeleton />
         </div>
-      )}
-      {transactions.length > 0 ? (
+      ) : transactions.length > 0 ? (
         <div className="w-[80%] mx-auto my-auto p-4 overflow-y-auto custom-scrollbar">
           {filteredTransactions.map((transaction: any) => (
             <RecentSupport

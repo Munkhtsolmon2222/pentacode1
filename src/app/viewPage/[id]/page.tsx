@@ -259,7 +259,7 @@ export default function ViewPageExplore() {
           <div className=" max-w-[520px] p-2 border rounded-md">
             <div className="flex gap-2 m-2">
               <img
-                className="w-10 h-10 flex rounded-full "
+                className="w-10 h-10 flex rounded-full object-cover"
                 src={userData?.avatarImage}
                 alt="User"
               />
@@ -309,7 +309,7 @@ export default function ViewPageExplore() {
                     <div className="flex justify-between border-b-[1px] pb-6 mt-4">
                       <div className="flex items-center gap-2 ml-4">
                         <img
-                          className="w-8 h-8 rounded-full"
+                          className="w-8 h-8 rounded-full object-cover"
                           src={userData?.avatarImage || ""}
                           alt="Jake"
                         />
@@ -344,40 +344,42 @@ export default function ViewPageExplore() {
                   </div>
 
                   <div className="h-[20rem] gap-6 border rounded-md mt-4 overflow-y-auto custom-scrollbar overflow-hidden relative">
-              <div>
-                <h1 className="text-lg font-semibold p-6 sticky top-0 bg-white">
-                  Recent Supporters
-                </h1>
- 
-                {recipientDonation || transactions.length === 0 ? (
-                  <div className="p-12 mx-6 border rounded-lg mt-8 flex flex-col items-center justify-center text-[#18181B]">
-                    <FaHeart className="text-2xl" />
-                    <p className="mt-6 text-lg">
-                      Be the first one to support {userData?.name}
-                    </p>
+                    <div>
+                      <h1 className="text-lg font-semibold p-6 sticky top-0 bg-white">
+                        Recent Supporters
+                      </h1>
+
+                      {recipientDonation || transactions.length === 0 ? (
+                        <div className="p-12 mx-6 border rounded-lg mt-8 flex flex-col items-center justify-center text-[#18181B]">
+                          <FaHeart className="text-2xl" />
+                          <p className="mt-6 text-lg">
+                            Be the first one to support {userData?.name}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="w-full p-4 gap-2">
+                          {transactions
+                            ?.slice(0, supporters)
+                            .map((transaction) => (
+                              <RecentSupportProfile
+                                transaction={transaction}
+                                key={transaction.id}
+                              />
+                            ))}
+                          {transactions.length >= 3 && (
+                            <Button
+                              onClick={seeMore}
+                              className="w-full mb-2 bg-[#FAFAFA] text-[#18181B] text-md p-6"
+                              variant={"secondary"}
+                            >
+                              {supporters > 3 ? "See less" : "See more"}
+                              <ChevronDown />
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                ) : (
-                  <div className="w-full p-4 gap-2">
-                    {transactions?.slice(0, supporters).map((transaction) => (
-                      <RecentSupportProfile
-                        transaction={transaction}
-                        key={transaction.id}
-                      />
-                    ))}
-                    {transactions.length >= 3 && (
-                      <Button
-                        onClick={seeMore}
-                        className="w-full mb-2 bg-[#FAFAFA] text-[#18181B] text-md p-6"
-                        variant={"secondary"}
-                      >
-                        {supporters > 3 ? "See less" : "See more"}
-                        <ChevronDown />
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
                 </div>
                 <div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
                   <div className="mb-4">
@@ -452,14 +454,18 @@ export default function ViewPageExplore() {
               <Dialog open={showQR} onOpenChange={setShowQR}>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Scan QR Code to Complete Donation</DialogTitle>
-                    <DialogDescription>
-                      Please scan this QR code to confirm your donation to{" "}
-                      {userData?.name}
+                    <DialogTitle className="text-[30px] text-center">
+                      Scan QR Code
+                    </DialogTitle>
+                    <DialogDescription className="text-center">
+                      Scan the QR code to complete your donation to "
+                      {userData?.name}"
                     </DialogDescription>
                   </DialogHeader>
                   <div className="flex justify-center py-4">
-                    <QRScan />
+                    <div className="flex justify-center my-6 w-[296px] h-[296px]">
+                      <img src="/QR.png" alt="qr" />
+                    </div>
                   </div>
                   <DialogFooter>
                     <Button onClick={handleQRClose}>Close</Button>
