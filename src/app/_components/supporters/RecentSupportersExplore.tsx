@@ -14,7 +14,7 @@ export default function RecentSupportExplore({
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center">
             <img
-              className="w-10 h-10 rounded-full"
+              className="w-10 h-10 rounded-full object-cover"
               src={creator?.avatarImage}
               alt={`${creator.name}'s avatar`}
             />
@@ -29,9 +29,11 @@ export default function RecentSupportExplore({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
           <div>
             <h4 className="font-bold text-md">About {creator?.name}</h4>
-            <p className="pt-2 text-md text-gray-600">{creator?.about}</p>
+            <p className="pt-2 text-sm text-gray-600 md:text-md">
+              {creator?.about}
+            </p>
           </div>
-          <div className="">
+          <div>
             <h4 className="font-semibold text-md">Social Media URL</h4>
             <p className="pt-2 text-md text-gray-600">
               {creator?.socialMediaURL}
