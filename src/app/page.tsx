@@ -55,10 +55,8 @@ export default function Home() {
 	const handleExit = () => {
 		setIsExiting(true);
 	};
-	// State to hold the current background color
 	const [background, setBackground] = useState<any>("#ffffff");
 
-	// Update background color on scroll
 	useMotionValueEvent(bgColor, "change", (latest) => {
 		setBackground(latest);
 	});
@@ -468,7 +466,7 @@ export default function Home() {
 				{/* <div>
 					<img src="zurag22.png" className="mt-[50px] w-[936px] h-[481.41px]" />
 				</div> */}
-				<div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-6 items-start">
+				<div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-6 items-start w-[824px] h-[481.41]">
 					<div className="col-span-2 bg-white shadow-md rounded-xl overflow-hidden relative">
 						<img src="/assets/aylagch.png" alt="" className="w-full" />
 						<div className="absolute inset-0 flex items-center justify-center">
@@ -656,7 +654,6 @@ export default function Home() {
 					Start my page
 				</motion.button>
 
-				{/* AnimatePresence handles the exit transition */}
 				<AnimatePresence>
 					{isExiting && (
 						<motion.div
