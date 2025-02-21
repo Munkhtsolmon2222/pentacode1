@@ -81,14 +81,13 @@ export default function Home() {
 					Accept support. Start a membership. Setup a shop. It's easier <br />
 					than you think.
 				</p>
-				<Link href="/signup">
-					<button
-						onClick={handleExit}
-						className="mt-11 bg-yellow-400 text-black px-12 py-6 rounded-full text-lg font-semibold hover:bg-yellow-500 transform hover:scale-105 transition duration-300 ease-in-out has context menu"
-					>
-						Start my page
-					</button>
-				</Link>
+
+				<button
+					onClick={handleExit}
+					className="mt-11 bg-yellow-400 text-black px-12 py-6 rounded-full text-lg font-semibold hover:bg-yellow-500 transform hover:scale-105 transition duration-300 ease-in-out has context menu"
+				>
+					Start my page
+				</button>
 
 				<p className="text-gray-500 mt-2">
 					It's free and takes less than a minute!
@@ -693,7 +692,6 @@ export default function Home() {
 							<button className="hover:text-black font-semibold">
 								Resources ▾
 							</button>
-							{/* Dropdown can be added here */}
 						</div>
 						<a href="#" className="hover:text-black font-semibold">
 							Privacy
