@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CiDeliveryTruck } from "react-icons/ci";
 import { BsShopWindow } from "react-icons/bs";
 import { Youtube, Instagram } from "lucide-react";
+import { RiBankLine } from "react-icons/ri";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "motion/react";
 import React from "react";
@@ -235,10 +236,12 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="absolute -right-20 top-1/4 bg-white p-3 shadow-md rounded-lg flex items-center space-x-2">
-                <span className="bg-yellow-200 p-2 rounded-full ">☕</span>
+              <div className="absolute right-28 bottom-[279px] bg-white p-5 shadow-md rounded-lg flex items-center space-x-2">
+                <span className="bg-yellow-200 h-9 w-9 p-2 rounded-full ">
+                  ☕
+                </span>
                 <p className="text-sm font-medium text-black">
-                  Alex bought 25 coffees <br />{" "}
+                  Alex bought 25 coffees <br />
                   <span className="text-gray-500">Thanks Cathy! ❤️</span>
                 </p>
               </div>
@@ -265,15 +268,17 @@ export default function Home() {
         transition={{ duration: 1, ease: "easeInOut" }}
         className="relative mt-6 space-y-3"
       >
-        <div className="mt-16 p-10 bg-white rounded-3xl w-[1128px] h-[834px] shadow-lg ">
-          <p className="text-gray-500 uppercase text-center">Memberships</p>
-          <h2 className="text-3xl font-bold text-center  text-black text-64 font-cr-bold mx-auto leading-80 w-11/12">
+        <div className="mt-16 p-10 bg-white rounded-3xl mx-auto w-[1128px] h-[834px] shadow-lg ">
+          <p className="text-gray-500 uppercase tracking-widest font-bold text-center">
+            Memberships
+          </p>
+          <h2 className="text-6xl font-bold text-center  text-black p-3 text-64 font-cr-bold mx-auto leading-80 w-11/12">
             Start a membership for <br /> your biggest fans.
           </h2>
-          <p className=" text-black text-center mt-2 w-[702px] mx-auto">
-            Earn a recurring income by accepting monthly or yearly
-            subscriptions. Share exclusive content, or just give them a way to
-            support your work on an ongoing basis.
+          <p className=" text-black text-center text-xl p-2 mt-2 w-[702px] mx-auto">
+            Earn a recurring income by accepting monthly or yearly <br />
+            subscriptions. Share exclusive content, or just give them a <br />{" "}
+            way to support your work on an ongoing basis.
           </p>
           {/* <div className="mt-5 flex  w-[936px] h-[442px]">
 						<img
@@ -281,7 +286,7 @@ export default function Home() {
 							className="items-center justify-center"
 						/>
 					</div> */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
+          <div className="flex gap-6 mt-6">
             <div className="bg-white p-6 rounded-lg w-[270px] h-[387px] shadow-lg text-center">
               <img
                 src="https://cdn.buymeacoffee.com/assets/img/homepage/images/membership_banner_1.png"
@@ -289,7 +294,7 @@ export default function Home() {
               />
               <h3 className="font-semibold  text-black">Basic membership</h3>
               <p className="text-gray-500">$5/month</p>
-              <ul className="text-left text-gray-600 list-disc pl-5">
+              <ul className="text-left text-sm text-gray-600 list-disc pl-5">
                 <li>33% OFF all my eBooks & courses</li>
                 <li>Access to members-only content</li>
                 <li>Exclusive posts and messages</li>
@@ -298,19 +303,19 @@ export default function Home() {
                 Join
               </button>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center  w-[270px] h-[387px">
+            <div className="bg-white mx-auto p-6 rounded-lg shadow-lg text-center  w-[270px] h-[387px">
               <img
                 src="https://cdn.buymeacoffee.com/assets/img/homepage/images/membership_banner_2.png"
                 alt=""
               />
               <h3 className="font-semibold  text-black">Pro membership</h3>
               <p className="text-gray-500">$15/month</p>
-              <ul className="text-left text-gray-600 list-disc pl-5">
+              <ul className="text-left text-sm leading-relaxed text-gray-600 list-disc pl-5">
                 <li>Support me on a monthly basis</li>
                 <li>Email alert for new posts</li>
                 <li>Exclusive posts and messages</li>
               </ul>
-              <button className="mt-3 w-full bg-blue-500 text-white py-2 rounded-lg font-semibold">
+              <button className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg font-semibold">
                 Join
               </button>
             </div>
@@ -321,7 +326,7 @@ export default function Home() {
               />
               <h3 className="font-semibold  text-black">Advanced membership</h3>
               <p className="text-gray-500">$25/month</p>
-              <ul className="text-left text-gray-600 list-disc pl-5">
+              <ul className="text-left text-sm leading-loose text-gray-600 list-disc pl-5">
                 <li>Highly printable journal pages</li>
                 <li>Email alert for new posts</li>
                 <li>Work in progress updates</li>
@@ -340,44 +345,21 @@ export default function Home() {
         className="flex flex-col items-center bg-white rounded-2xl shadow-lg mt-[50px] w-[1128px] h-[834px] p-6"
       >
         <div className="text-center mb-6">
-          <h2 className="text-lg font-semibold uppercase text-gray-500">
-            Shop
-          </h2>
-          <h1 className="text-3xl font-bold text-black">
-            Introducing Shop, the creative way to sell.
+          <h2 className="text-md font-bold uppercase text-gray-500">Shop</h2>
+          <h1 className="text-6xl font-bold leading-tight text-black">
+            Introducing Shop, <br /> the creative way to sell.
           </h1>
-          <p className="text-gray-600 mt-2 max-w-xl">
+          <p className="p-6 mt-2  text-2xl">
             The things you’d like to sell probably do not belong in a Shopify
-            store. Shop is designed from the ground up with creators in mind.
-            Whether it’s a 1-1 Zoom call, art commissions, or an ebook, Shop is
-            for you.
+            store. Shop is <br /> designed from the ground up with creators in
+            mind. Whether it’s a 1-1 Zoom call, art
+            <br /> commissions, or an ebook, Shop is for you.
           </p>
         </div>
         {/* <div>
 					<img src="screenshot3.png" />
 				</div> */}
         <div className="items-center justify-center flex">
-          <div className="w-80 p-4 bg-white rounded-2xl shadow-lg">
-            <div className="bg-yellow-300 p-6 rounded-lg relative">
-              <span className="absolute top-2 left-2 bg-white text-xs px-2 py-1 rounded-md font-semibold text-black">
-                .PDF
-              </span>
-              <div className="flex justify-center">
-                <img src="/assets/book.png" alt="" className="h-16" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <h3 className="text-xl font-bold text-black">Design E-book</h3>
-              <p className="text-gray-700 font-semibold">$200</p>
-              <p className="text-black text-sm flex items-center gap-1">
-                ⭐ 4.9 (36)
-              </p>
-              <button className="w-full bg-yellow-400 text-black mt-4 p-2 rounded-md font-semibold">
-                Buy
-              </button>
-            </div>
-          </div>
-
           <div className="flex mt-6 gap-4 text-center">
             <div className="bg-white p-4 rounded-lg shadow-md">
               <div className="w-10 h-10 rounded-lg overflow-hidden"></div>
@@ -394,7 +376,27 @@ export default function Home() {
               <p className="text-sm text-gray-500">Earnings</p>
             </div>
           </div>
-
+          <div className="w-80 p-4 bg-white rounded-2xl shadow-lg">
+            <div className="bg-yellow-300 p-6 rounded-lg relative">
+              <span className="absolute top-2 left-2 bg-white text-xs px-2 py-1 rounded-md font-semibold text-black">
+                .PDF
+              </span>
+              <div className="flex justify-center">
+                <img src="/assets/book.png" alt="" className="h-16" />
+              </div>
+            </div>
+            <div className="mt-4">
+              <h3 className="text-xl font-bold text-black">Design E-book</h3>
+              <p className="text-gray-700 font-semibold">$200</p>
+              <RiBankLine />
+              <p className="text-black text-sm flex items-center gap-1">
+                ⭐ 4.9 (36)
+              </p>
+              <button className="w-full bg-yellow-400 text-black mt-4 p-2 rounded-md font-semibold">
+                Buy
+              </button>
+            </div>
+          </div>
           <div className="bg-white p-4 rounded-lg shadow-md mt-4 text-center">
             <p className="text-sm text-black">Liked it? Give rating</p>
             <div className="flex justify-center gap-1 mt-1">

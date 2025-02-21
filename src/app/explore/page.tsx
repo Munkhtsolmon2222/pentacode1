@@ -56,12 +56,12 @@ export default function Explore() {
         animate={{ opacity: 1, y: 0, x: 0 }}
         exit={{ opacity: 0, y: 200, x: 200 }}
         transition={{ duration: 0.5, ease: "easeInOut" }}
-        className="w-[80%] gap-6 flex flex-col mt-10"
+        className="w-[80%] pl-44 gap-6 flex flex-col mt-10"
       >
         <h4 className="text-xl font-bold text-[#18181B] mt-10">
           Explore creators
         </h4>
-        <div className="w-[243px] mt-4 pl-2 flex items-center border rounded-lg">
+        <div className="w-[243px] pl-2 flex items-center border rounded-lg">
           <SearchIcon className="text-[#71717A] h-4 w-4" />
           <input
             type="text"
