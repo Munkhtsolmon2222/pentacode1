@@ -192,7 +192,7 @@ export default function ViewPage() {
         />
       )}
       {!Loading && (
-        <div className="w-full h-[320px] bg-[#F4F4F5] flex justify-center items-center">
+        <div className="w-full h-[40%] bg-[#F4F4F5] flex justify-center items-center">
           {previewImg || bgImg ? (
             <div
               style={{
