@@ -75,13 +75,13 @@ export default function Home() {
   console.log("Transactions:", transactions);
 
   return (
-    <div className="w-[80%] ml-4 fixed right-0 top-0 h-screen flex flex-col bg-gray-primary text-black p-4 overflow-y-auto custom-scrollbar">
+    <div className="w-[80%] ml-4 fixed right-0 top-0 h-screen flex flex-col bg-gray-primary text-black p-2 overflow-y-auto custom-scrollbar">
       <UserProfile />
-      <div className="flex w-[80%] mx-auto p-3 justify-between">
-        <div className="w-full mt-4 text-xl font-bold">Recent transactions</div>
+      <div className="flex w-[80%] mx-auto p-4 justify-between">
+        <div className="w-full mt-2 text-xl font-bold">Recent transactions</div>
         <div>
           <Select onValueChange={setSelectedAmount}>
-            <SelectTrigger className=" flex border rounded-lg p-2">
+            <SelectTrigger className=" flex border rounded-lg p-2 gap-2">
               <SelectValue className="text-lg" placeholder="Amount" />
             </SelectTrigger>
             <SelectContent>
@@ -96,7 +96,7 @@ export default function Home() {
         </div>
       </div>
       {isLoading && (
-        <div className="w-full my-auto p-5 overflow-y-auto custom-scrollbar mx-auto mt-4">
+        <div className="w-full my-auto p-4 overflow-y-auto custom-scrollbar mx-auto mt-4">
           <HomeSkeleton />
           <HomeSkeleton />
           <HomeSkeleton />
@@ -106,7 +106,7 @@ export default function Home() {
         </div>
       )}
       {transactions.length > 0 ? (
-        <div className="w-[80%] mx-auto my-auto p-5 overflow-y-auto custom-scrollbar mt-4">
+        <div className="w-[80%] mx-auto my-auto p-4 overflow-y-auto custom-scrollbar">
           {filteredTransactions.map((transaction: any) => (
             <RecentSupport
               key={transaction.id}

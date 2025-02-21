@@ -38,7 +38,7 @@ export default function ViewPageExplore() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [supporters, setSupporters] = useState(3);
-  const [showQR, setShowQR] = useState(false); // Changed from 'scan' to 'showQR' for clarity
+  const [showQR, setShowQR] = useState(false);
   const [button, setButton] = useState(false);
   const params = useParams();
   const accessToken = Cookies.get("accessToken");
@@ -189,13 +189,13 @@ export default function ViewPageExplore() {
         newDonation.socialURLOrBuyMeACoffee || "",
         userData?.userId ?? ""
       );
-      setShowQR(true); // Show QR code after successful validation
+      setShowQR(true);
     }
   };
 
   const handleQRClose = () => {
     setShowQR(false);
-    setButtonClicked(true); // Show success message after QR closes
+    setButtonClicked(true);
   };
 
   const supporterFetchData = async () => {
@@ -240,10 +240,9 @@ export default function ViewPageExplore() {
     }
   };
 
-  useEffect(() => {
-    setButton(true);
-  }, []);
-
+  // useEffect(() => {
+  //   setButton(true);
+  // }, []);
   return (
     <div className="w-full min-h-screen">
       {buttonClicked ? (
@@ -287,7 +286,7 @@ export default function ViewPageExplore() {
           {loading && <div className="text-center p-4 ">Loading...</div>}
           {!loading && userData && (
             <div>
-              <div className="w-full h-[400px] bg-[#F4F4F5] flex justify-center items-center">
+              <div className="w-full h-[40%] bg-[#F4F4F5] flex justify-center items-center">
                 {userData?.backgroundImage ? (
                   <div
                     style={{
@@ -339,7 +338,7 @@ export default function ViewPageExplore() {
                       className="w-full my-4 ml-2 p-2 text-md outline-none"
                       type="url"
                       placeholder="https://buymecoffee.com/spacerulz44"
-                      value={userData?.socialMediaURL || ""}
+                      defaultValue={userData?.socialMediaURL || ""}
                       readOnly
                     />
                   </div>
@@ -354,7 +353,8 @@ export default function ViewPageExplore() {
                         <div className="w-full p-12 border rounded-lg mt-8 flex flex-col items-center justify-center text-[#18181B]">
                           <FaHeart className="text-2xl" />
                           <p className="mt-6 text-lg">
-                            Be the first one to support {userData?.name}
+                            Be the first one to support
+                            {userData?.name}
                           </p>
                         </div>
                       ) : (
@@ -397,11 +397,12 @@ export default function ViewPageExplore() {
                         <Button
                           key={amount}
                           onClick={() => onChangeAmount(amount)}
-                          className={`w-20 rounded-md text-md ${
+                          className={`w-20  rounded-md text-md ${
                             selectedAmount == amount
                               ? "bg-black text-white"
                               : "bg-[#F4F4F5] text-[#09090B]"
-                          } hover:border-[#18181B] flex justify-center items-center gap-2`}
+                          } 
+               hover:border-[#18181B] flex justify-center items-center gap-2`}
                         >
                           <FiCoffee /> ${amount}
                         </Button>
@@ -417,7 +418,7 @@ export default function ViewPageExplore() {
                       type="url"
                       name="socialURLOrBuyMeACoffee"
                       onChange={onChange}
-                      className={`border rounded-md w-full p-2 mt-1 text-md outline-none ${
+                      className={`border rounded-md w-full p-2 mt-1 text-md outline-none${
                         error.socialURLOrBuyMeACoffee ? "border-red-500" : ""
                       }`}
                     />

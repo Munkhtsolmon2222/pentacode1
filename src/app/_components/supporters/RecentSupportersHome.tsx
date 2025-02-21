@@ -51,7 +51,7 @@ export default function RecentSupport({
   };
 
   return (
-    <div className="w-full mx-auto mt-4 p-5 border border-solid rounded-lg">
+    <div className="w-full mx-auto mt-2 p-5 border border-solid rounded-lg">
       <div className="flex justify-between items-center">
         <Link href={`/viewPage/${userData?.id}`}>
           <div className="flex gap-4 items-center">
