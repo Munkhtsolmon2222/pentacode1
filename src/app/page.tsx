@@ -82,7 +82,10 @@ export default function Home() {
 					than you think.
 				</p>
 				<Link href="/signup">
-					<button className="mt-11 bg-yellow-400 text-black px-12 py-6 rounded-full text-lg font-semibold hover:bg-yellow-500 transform hover:scale-105 transition duration-300 ease-in-out has context menu">
+					<button
+						onClick={handleExit}
+						className="mt-11 bg-yellow-400 text-black px-12 py-6 rounded-full text-lg font-semibold hover:bg-yellow-500 transform hover:scale-105 transition duration-300 ease-in-out has context menu"
+					>
 						Start my page
 					</button>
 				</Link>
