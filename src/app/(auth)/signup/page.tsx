@@ -1,6 +1,8 @@
+"use client"
 import { SignUp } from "@/app/_components/auth/SignUp";
 import { Plus_Jakarta_Sans } from "next/font/google";
-
+import { AnimatePresence, motion, useAnimation } from "motion/react";
+import { useEffect } from "react";
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
@@ -8,10 +10,23 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export default function Page() {
+  const controls = useAnimation();
+
+  useEffect(() => {
+    // Animate the yellow background to slide out to the right
+    controls.start({ x: "100vw", transition: { duration: 1, ease: "easeInOut" } });
+  }, [controls]);
+
   return (
-    <div
-      className={`${plusJakartaSans.variable} font-sans flex w-full h-screen`}
-    >
+    <div className={`${plusJakartaSans.variable} font-sans flex w-full h-screen`}>
+      {/* Yellow background covering the page */}
+      <motion.div
+        initial={{ x: 0 }}
+        animate={controls} // Control the animation of the background
+        className="fixed top-0 left-0 w-full h-full bg-yellow-400 z-50"
+      />
+
+      {/* Left side with content */}
       <div className="w-[50%] h-screen bg-amber-400">
         <div className="flex justify-start items-start p-6 mx-6">
           <img
@@ -38,6 +53,7 @@ export default function Page() {
         </div>
       </div>
 
+      {/* Right side with sign-up */}
       <div className="w-[50%]">
         <SignUp />
       </div>

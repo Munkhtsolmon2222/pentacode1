@@ -3,8 +3,9 @@ import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Youtube, Instagram } from "lucide-react";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "motion/react";
-import React from "react";
+import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform } from "motion/react";
+import React, { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 export type Icon = string;
 export type Title = string;
@@ -30,12 +31,28 @@ export default function Home() {
 	const translateX2 = useTransform(scrollYProgress, [0, 0.06], [0, 800]);
 	const translateY3 = useTransform(scrollYProgress, [0, 0.08], [0, -800]);
 	const translateY4 = useTransform(scrollYProgress, [0, 0.08], [0, 800]);
-
+	const bgColor = useTransform(scrollYProgress, [0, 0.08, 1], ["#ffffff", "#ffe933", "#ffffff"]);
+	const [isExiting, setIsExiting] = useState(false);
+const pathname = usePathname()
+useEffect(() => {
+setIsExiting(false)
+}, [pathname])
+	const handleExit = () => {
+	  setIsExiting(true);
+	};
+	// State to hold the current background color
+	const [background, setBackground] = useState<any>("#ffffff");
+  
+	// Update background color on scroll
+	useMotionValueEvent(bgColor, "change", (latest) => {
+	  setBackground(latest);
+	});
 	
-	
-
+	const router = useRouter()
 	return (
-		<div className="flex flex-col items-center justify-center p-10 bg-[#ffffff] min-h-screen">
+		<motion.div   style={{
+			background: background,
+		  }} className="flex flex-col items-center justify-center p-10 min-h-screen">
 			<div className="absolute z-10 bottom-0 top-40 text-center">
 				<p className="text-black  tracking-widest ">
 					⭐⭐⭐⭐⭐ Loved by 1,000,000+ creators
@@ -611,11 +628,41 @@ export default function Home() {
 							titleClass="text-black"
 						/>
 					</div>
+					
 				</div>
+				
 			</motion.div>
+			
+			<div className="relative overflow-hidden">
+      <motion.button
+        onClick={handleExit}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 2, ease: "easeInOut" }}
+        className="m-[12rem] w-[300px] h-[150px] bg-yellow-400 text-black px-6 py-3 rounded-full text-[2rem] font-semibold hover:bg-yellow-500 transform hover:scale-105 transition duration-300 ease-in-out"
+      >
+        Start my page
+      </motion.button>
+
+      {/* AnimatePresence handles the exit transition */}
+      <AnimatePresence>
+        {isExiting && (
+          <motion.div
+		  onAnimationComplete={() => router.push("/signup")}
+            key="exitAnimation"
+            initial={{ x: "-100vw" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100vw" }}
+            transition={{ duration: 2, ease: "easeInOut" }}
+            className="fixed top-0 left-0 w-full h-full bg-yellow-400 z-50"
+          />
+        )}
+      </AnimatePresence>
+    </div>
+				
 			<motion.div
 				initial={{ opacity: 0 }}
-				whileInView={{ opacity: 2 }}
+				whileInView={{ opacity: 1 }}
 				transition={{ duration: 1, ease: "easeInOut" }}
 			>
 				<footer className="bg-cream px-6 py-4 flex justify-between items-center text-gray-600 text-sm">
@@ -661,7 +708,7 @@ export default function Home() {
 					</div>
 				</footer>
 			</motion.div>
-		</div>
+		</motion.div>
 	);
 }
 function Feature({ icon, title, description, titleClass = "" }: FeatureProps) {
