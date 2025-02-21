@@ -286,7 +286,7 @@ export default function ViewPageExplore() {
           {loading && <div className="text-center p-4 ">Loading...</div>}
           {!loading && userData && (
             <div>
-              <div className="w-full h-[40%] bg-[#F4F4F5] flex justify-center items-center">
+              <div className="w-full h-[400px] bg-[#F4F4F5] flex justify-center items-center">
                 {userData?.backgroundImage ? (
                   <div
                     style={{
@@ -344,45 +344,40 @@ export default function ViewPageExplore() {
                   </div>
 
                   <div className="h-[20rem] gap-6 border rounded-md mt-4 overflow-y-auto custom-scrollbar overflow-hidden relative">
-                    <div className="">
-                      <h1 className="text-lg font-semibold p-6 sticky top-0 bg-white">
-                        Recent Supporters
-                      </h1>
-
-                      {recipientDonation ? (
-                        <div className="w-full p-12 border rounded-lg mt-8 flex flex-col items-center justify-center text-[#18181B]">
-                          <FaHeart className="text-2xl" />
-                          <p className="mt-6 text-lg">
-                            Be the first one to support
-                            {userData?.name}
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="w-full p-4 gap-2">
-                          {transactions
-                            ?.slice(0, supporters)
-                            .map((transaction) => (
-                              <RecentSupportProfile
-                                transaction={transaction}
-                                key={transaction.id}
-                              />
-                            ))}
-                          {transactions.length >= 3 ? (
-                            <Button
-                              onClick={seeMore}
-                              className="w-full mb-2 bg-[#FAFAFA] text-[#18181B] text-md p-6"
-                              variant={"secondary"}
-                            >
-                              {supporters > 3 ? "See less" : "See more"}
-                              <ChevronDown />
-                            </Button>
-                          ) : (
-                            <div></div>
-                          )}
-                        </div>
-                      )}
-                    </div>
+              <div>
+                <h1 className="text-lg font-semibold p-6 sticky top-0 bg-white">
+                  Recent Supporters
+                </h1>
+ 
+                {recipientDonation || transactions.length === 0 ? (
+                  <div className="p-12 mx-6 border rounded-lg mt-8 flex flex-col items-center justify-center text-[#18181B]">
+                    <FaHeart className="text-2xl" />
+                    <p className="mt-6 text-lg">
+                      Be the first one to support {userData?.name}
+                    </p>
                   </div>
+                ) : (
+                  <div className="w-full p-4 gap-2">
+                    {transactions?.slice(0, supporters).map((transaction) => (
+                      <RecentSupportProfile
+                        transaction={transaction}
+                        key={transaction.id}
+                      />
+                    ))}
+                    {transactions.length >= 3 && (
+                      <Button
+                        onClick={seeMore}
+                        className="w-full mb-2 bg-[#FAFAFA] text-[#18181B] text-md p-6"
+                        variant={"secondary"}
+                      >
+                        {supporters > 3 ? "See less" : "See more"}
+                        <ChevronDown />
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
                 </div>
                 <div className="w-[40%] h-[60%] p-6 bg-[#ffffff] border rounded-md">
                   <div className="mb-4">
